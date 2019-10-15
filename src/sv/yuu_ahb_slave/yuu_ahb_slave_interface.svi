@@ -1,0 +1,115 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// For more information, see LICENCE in the main folder
+/////////////////////////////////////////////////////////////////////////////////////
+`ifndef YUU_AHB_SLAVE_INTERFACE_SVI
+`define YUU_AHB_SLAVE_INTERFACE_SVI
+
+interface yuu_ahb_slave_interface();
+  logic                           hclk;
+  logic                           hreset_n;
+  logic [`YUU_AHB_ADDR_WIDTH-1:0] haddr;
+  logic [1:0]                     htrans;
+  logic [2:0]                     hburst;
+  logic                           hwrite;
+  logic [2:0]                     hsize;
+  logic                           hsel;
+  logic [`YUU_AHB_DATA_WIDTH-1:0] hwdata;
+  logic [`YUU_AHB_DATA_WIDTH-1:0] hrdata;
+  logic                           hready_i;
+  logic                           hready_o;
+  logic [1:0]                     hresp;
+
+  logic [3:0]                     hprot;
+  logic [6:3]                     hprot_emt;
+  logic [3:0]                     hmaster;
+  logic                           hmastlock; 
+  logic                           hnonsec;
+  logic                           hexokay;
+
+  logic [31:0]                    transfer_num;
+
+  clocking cb @(posedge hclk);
+    default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
+
+    input   haddr;
+    input   htrans;
+    input   hburst;
+    input   hwrite;
+    input   hsize;
+    input   hsel;
+    input   hwdata;
+    input   hready_i;
+    input   hprot;
+    input   hmaster;
+    input   hmastlock;
+
+    output  hrdata;
+    output  hresp;
+    output  hready_o;
+    output  hexokay;
+  endclocking
+  
+  clocking mon_cb @(posedge hclk);
+    default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
+
+    input   haddr;
+    input   htrans;
+    input   hburst;
+    input   hwrite;
+    input   hsize;
+    input   hsel;
+    input   hwdata;
+    input   hprot;
+    input   hmaster;
+    input   hmastlock;
+    input   hready_o;
+
+    input   hrdata;
+    input   hresp;
+    input   hready_i;
+    input   hexokay;
+  endclocking
+  
+  modport DUT (
+    clocking  cb,
+
+    input   haddr,
+    input   htrans,
+    input   hburst,
+    input   hwrite,
+    input   hsize,
+    input   hsel,
+    input   hwdata,
+    input   hready_i,
+    input   hprot,
+    input   hmaster,
+    input   hmastlock,
+    output  hrdata,
+    output  hready_o,
+    output  hresp,
+    output  hexokay
+  );
+
+  modport MON (
+    input   hreset_n,
+    input   haddr,
+    input   htrans,
+    input   hburst,
+    input   hwrite,
+    input   hsize,
+    input   hsel,
+    input   hwdata,
+    input   hready_i,
+    input   hprot,
+    input   hmaster,
+    input   hmastlock,
+    input   hrdata,
+    input   hready_o,
+    input   hresp,
+    input   hexokay
+  );
+
+endinterface
+
+`endif
