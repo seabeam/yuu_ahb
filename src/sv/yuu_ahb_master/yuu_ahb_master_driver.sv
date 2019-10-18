@@ -47,7 +47,7 @@ task yuu_ahb_master_driver::reset_phase(uvm_phase phase);
   m_cmd_sem.try_get();
   m_cmd_sem.put();
   m_data_sem.try_get();
-  m_data_sem.get();
+  m_data_sem.put();
 
   reset_signal();
 endtask
