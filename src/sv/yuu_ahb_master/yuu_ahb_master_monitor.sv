@@ -70,6 +70,7 @@ endclass
     join
   endtask
   
+
   task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_item monitor_item);
     int len = address_q.size()-1;
     yuu_ahb_item item = yuu_ahb_item::type_id::create("monitor_item"); 
@@ -99,7 +100,7 @@ endclass
     
     item.end_time = $realtime();
 
-  `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, post_collect(this, item));
+    `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, post_collect(this, item));
     out_monitor_ap.write(item);
   endtask
 
@@ -108,27 +109,21 @@ endclass
     uvm_event monitor_cmd_end   = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
 
     m_cmd.get();
-    while (vif.mon_cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY)
+    while (vif.mon_cb.hready_i !== 1'b1)
       @vif.mon_cb;
-
-    if (vif.mon_cb.htrans == IDLE && address_q.size() == 0) begin
-      @vif.mon_cb;
-      m_cmd.put();
-      return;
-    end
-    else if (vif.mon_cb.htrans == IDLE && address_q.size() > 0) begin
+    if (address_q.size()>0 && (vif.mon_cb.htrans == NONSEQ || vif.mon_cb.htrans == IDLE))
       assembling_and_send(monitor_item);
+
+    while(vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== IDLE)) begin
+      if (vif.mon_cb.hready_i === 1'b1 && vif.mon_cb.htrans === SEQ) begin
+        address_q.push_back(vif.mon_cb.haddr);
+        trans_q.push_back(yuu_ahb_trans_e'(vif.mon_cb.htrans));
+      end
       @vif.mon_cb;
-      m_cmd.put();
-      return;
     end
 
     monitor_cmd_begin.trigger();
-
     if (vif.mon_cb.htrans === NONSEQ) begin
-      if (address_q.size() > 0) begin
-        assembling_and_send(monitor_item);
-      end
       monitor_item = yuu_ahb_item::type_id::create("monitor_item");
       `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, pre_collect(this, monitor_item));
 
@@ -155,16 +150,15 @@ endclass
       monitor_item.address_aligned_enable = True;
 
       monitor_item.start_time = $realtime();
+      address_q.push_back(vif.mon_cb.haddr);
+      trans_q.push_back(yuu_ahb_trans_e'(vif.mon_cb.htrans));
     end
 
-    address_q.push_back(vif.mon_cb.haddr);
-    trans_q.push_back(yuu_ahb_trans_e'(vif.mon_cb.htrans));
     @vif.mon_cb;
-
     monitor_cmd_end.trigger();
+
     m_cmd.put();
   endtask
-
 
   task yuu_ahb_master_monitor::data_phase();
     uvm_event monitor_data_begin = events.get($sformatf("%s_monitor_data_begin", cfg.get_name()));
@@ -173,9 +167,9 @@ endclass
     m_data.get();
     while (vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ))
       @vif.mon_cb;
-    @vif.mon_cb;
-    while (vif.mon_cb.hready_i !== 1'b1)
+    do
       @vif.mon_cb;
+    while (vif.mon_cb.hready_i !== 1'b1);
 
     monitor_data_begin.trigger();
 
