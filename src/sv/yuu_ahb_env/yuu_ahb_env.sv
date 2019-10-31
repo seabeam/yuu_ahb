@@ -61,7 +61,11 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   end
 endfunction
 
-function void yuu_ahb_env::connect_phase (uvm_phase phase);
+function void yuu_ahb_env::connect_phase(uvm_phase phase);
+  foreach (cfg.mst_cfg[i])
+    cfg.mst_cfg[i].events = cfg.events;
+  foreach (cfg.slv_cfg[i])
+    cfg.slv_cfg[i].events = cfg.events;
 endfunction
   
 function void yuu_ahb_env::address_check();

@@ -7,7 +7,10 @@
 
   `include "yuu_ahb_slave_config.sv"
   `include "yuu_ahb_slave_item.sv"
+  `include "yuu_ahb_slave_callbacks.sv"
   `include "yuu_ahb_slave_memory.sv"
+  `include "yuu_ahb_slave_sequence_lib.sv"
+  `include "yuu_ahb_slave_sequencer.sv"
   `include "yuu_ahb_slave_driver.sv"
   `include "yuu_ahb_slave_monitor.sv"
   `include "yuu_ahb_slave_agent.sv"

@@ -8,28 +8,35 @@
 class yuu_ahb_slave_item extends yuu_ahb_item;
   yuu_ahb_slave_config  cfg;
 
-  rand int unsigned wait_delay[];
+  rand int unsigned wait_delay;
+
+  constraint c_len {
+    len == 0;
+  }
 
   constraint c_wait {
-    wait_delay.size() == len+1;
-    foreach (wait_delay[i]) {
-      soft wait_delay[i] inside {[0:16]};
-      if (!cfg.wait_enable || len == 0) {
-        wait_delay[i] == 0;
-      }
+    soft wait_delay inside {[0:16]};
+    if (!cfg.wait_enable) {
+      wait_delay == 0;
     }
   }
 
   `uvm_object_utils_begin(yuu_ahb_slave_item)
-    `uvm_field_array_int(busy_delay, UVM_PRINT | UVM_COPY)
+    `uvm_field_int(wait_delay, UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  extern               function        new(string name = "yuu_ahb_slave_item");
-endclass
+  function new(string name="yuu_ahb_slave_item");
+    super.new(name);
+  endfunction
 
-function yuu_ahb_slave_item::new(string name = "yuu_ahb_slave_item");
-  super.new(name);
-endfunction
+  function void pre_randomize();
+    super.pre_randomize();
+
+    if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
+      `uvm_fatal("pre_randomize", "Cannot get yuu_ahb agent config in sequence item")
+  endfunction
+
+endclass
 
 
 `endif

@@ -14,9 +14,6 @@ class yuu_ahb_slave_config extends yuu_ahb_agent_config;
 
   yuu_amba_addr_map maps[];
 
-  // Sequencer handle
-  yuu_ahb_slave_sequencer sequencer_ptr;
-
   `uvm_object_utils_begin(yuu_ahb_slave_config)
     `uvm_field_enum        (boolean, wait_enable,     UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean, use_random_data, UVM_PRINT | UVM_COPY)

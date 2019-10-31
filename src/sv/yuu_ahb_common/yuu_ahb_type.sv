@@ -116,6 +116,14 @@ typedef enum bit[1:0]{
   DECODER
   } yuu_ahb_agent_type_e;
 
+typedef enum bit[2:0] {
+  NO_ERROR,
+  INVALID_ADDR,
+  READ_ONLY,
+  WRITE_ONLY,
+  CURRUPT_DATA
+  } yuu_ahb_error_type_e;
+
 function yuu_amba_burst_type_e burst_ahb_to_amba(yuu_ahb_burst_e burst_type);
   case (burst_type)
     SINGLE, INCR, INCR4, INCR8, INCR16: burst_ahb_to_amba = yuu_amba_pkg::INCR;

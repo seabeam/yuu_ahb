@@ -32,17 +32,19 @@ interface yuu_ahb_slave_interface();
   clocking cb @(posedge hclk);
     default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
 
+    input   hsel;
     input   haddr;
     input   htrans;
     input   hburst;
     input   hwrite;
     input   hsize;
-    input   hsel;
     input   hwdata;
-    input   hready_i;
     input   hprot;
+    input   hprot_emt;
     input   hmaster;
     input   hmastlock;
+    input   hnonsec;
+    input   hready_i;
 
     output  hrdata;
     output  hresp;
@@ -53,60 +55,68 @@ interface yuu_ahb_slave_interface();
   clocking mon_cb @(posedge hclk);
     default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
 
+    input   hsel;
     input   haddr;
     input   htrans;
     input   hburst;
     input   hwrite;
     input   hsize;
-    input   hsel;
     input   hwdata;
     input   hprot;
+    input   hprot_emt;
     input   hmaster;
     input   hmastlock;
-    input   hready_o;
+    input   hnonsec;
+    input   hready_i;
 
     input   hrdata;
     input   hresp;
-    input   hready_i;
+    input   hready_o;
     input   hexokay;
   endclocking
   
   modport DUT (
     clocking  cb,
 
+    input   hsel,
     input   haddr,
     input   htrans,
     input   hburst,
     input   hwrite,
     input   hsize,
-    input   hsel,
     input   hwdata,
-    input   hready_i,
     input   hprot,
+    input   hprot_emt,
     input   hmaster,
     input   hmastlock,
+    input   hnonsec,
+    input   hready_i,
+
     output  hrdata,
-    output  hready_o,
     output  hresp,
+    output  hready_o,
     output  hexokay
   );
 
   modport MON (
     input   hreset_n,
+    input   hsel,
     input   haddr,
     input   htrans,
     input   hburst,
     input   hwrite,
     input   hsize,
-    input   hsel,
     input   hwdata,
-    input   hready_i,
     input   hprot,
+    input   hprot_emt,
     input   hmaster,
     input   hmastlock,
+    input   hnonsec,
+    input   hready_i,
+
     input   hrdata,
-    input   hready_o,
     input   hresp,
+    input   hready_o,
     input   hexokay
   );
 

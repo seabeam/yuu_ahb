@@ -17,8 +17,8 @@ package yuu_ahb_pkg;
 
   `include "yuu_ahb_common_pkg.svh"
   `include "yuu_ahb_master_pkg.svh"
-  //`include "yuu_ahb_slave_pkg.svh"
-  //`include "yuu_ahb_env_pkg.svh"
+  `include "yuu_ahb_slave_pkg.svh"
+  `include "yuu_ahb_env_pkg.svh"
 endpackage
 
 `endif
