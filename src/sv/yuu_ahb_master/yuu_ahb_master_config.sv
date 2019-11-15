@@ -17,6 +17,7 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   boolean use_extended_memory_types = False;
   boolean use_lock    = False;
   boolean use_nonsec  = False;
+  boolean use_response= False;
 
   int unsigned bus_width = `YUU_AHB_DATA_WIDTH; 
 

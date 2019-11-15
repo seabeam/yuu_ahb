@@ -182,7 +182,8 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     end
     `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, post_send(this, cur_item));
     drive_data_end.trigger();
-    send_response(cur_item);
+    if (cfg.use_response)
+      send_response(cur_item);
     `uvm_info("data_phase", "Transaction end", UVM_HIGH)
   end
 
