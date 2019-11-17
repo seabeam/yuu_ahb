@@ -107,20 +107,24 @@ task yuu_ahb_slave_driver::drive_bus();
 
     @(vif.cb);
     wdata = vif.cb.hwdata; 
-    vif.cb.hresp    <= OKAY;
-    m_mem.write(mem_addr, wdata, strobe);
+    vif.cb.hresp <= OKAY;
+    if (req.response[0] != ERROR)
+      m_mem.write(mem_addr, wdata, strobe);
     seq_item_port.item_done();
   end
   else begin
     yuu_ahb_addr_t mem_addr = addr/(`YUU_AHB_ADDR_WIDTH/8);
     m_mem.read(mem_addr, rdata);
-    if (cfg.use_random_data)
-      vif.cb.hrdata <= $urandom();
+    if (req.response[0] != ERROR)
+      if (cfg.use_random_data)
+        vif.cb.hrdata <= $urandom();
+      else
+        vif.cb.hrdata <= rdata;
     else
-      vif.cb.hrdata <= rdata;
+      vif.cb.hrdata <= 'h0;
     seq_item_port.item_done();
     @(vif.cb);
-    vif.cb.hresp    <= OKAY;
+    vif.cb.hresp <= OKAY;
   end
 endtask
 

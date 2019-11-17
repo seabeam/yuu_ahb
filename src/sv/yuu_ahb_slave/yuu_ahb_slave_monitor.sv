@@ -166,7 +166,6 @@ endclass
     m_cmd.put();
   endtask
 
-
   task yuu_ahb_slave_monitor::data_phase();
     uvm_event monitor_data_begin = events.get($sformatf("%s_monitor_data_begin", cfg.get_name()));
     uvm_event monitor_data_end   = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
@@ -196,6 +195,5 @@ endclass
     @(negedge vif.hreset_n);
     phase.jump(uvm_reset_phase::get());
   endtask
-
 
 `endif
