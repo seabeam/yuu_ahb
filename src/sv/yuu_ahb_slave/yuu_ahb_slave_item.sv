@@ -2,8 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_SLAVE_ITEM_SVH
-`define YUU_AHB_SLAVE_ITEM_SVH
+`ifndef YUU_AHB_SLAVE_ITEM_SV
+`define YUU_AHB_SLAVE_ITEM_SV
 
 class yuu_ahb_slave_item extends yuu_ahb_item;
   yuu_ahb_slave_config  cfg;
@@ -33,7 +33,7 @@ class yuu_ahb_slave_item extends yuu_ahb_item;
     super.pre_randomize();
 
     if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-      `uvm_fatal("pre_randomize", "Cannot get yuu_ahb agent config in sequence item")
+      `uvm_fatal("pre_randomize", "Cannot get ahb slave config in sequence item")
   endfunction
 
 endclass

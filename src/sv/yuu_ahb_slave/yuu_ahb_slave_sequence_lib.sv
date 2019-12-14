@@ -7,18 +7,28 @@
 
 typedef class yuu_ahb_slave_sequencer;
 class yuu_ahb_slave_response_sequence extends uvm_sequence #(yuu_ahb_slave_item);
+  virtual yuu_ahb_slave_interface vif;
+
   yuu_ahb_slave_config  cfg;
-  yuu_ahb_error         error_object;
+  uvm_event_pool events;
+
+  yuu_ahb_error error_object;
 
   `uvm_object_utils(yuu_ahb_slave_response_sequence)
   `uvm_declare_p_sequencer(yuu_ahb_slave_sequencer)
-  
+
   function new(string name = "yuu_ahb_slave_response_sequence");
     super.new(name);
   endfunction
 
   task pre_body();
     cfg = p_sequencer.cfg;
+    vif = cfg.vif;
+    events = cfg.events;
+  endtask
+
+  task body();
+    return;
   endtask
 endclass
 

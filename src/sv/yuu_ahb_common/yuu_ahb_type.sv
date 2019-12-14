@@ -5,9 +5,9 @@
 `ifndef YUU_AHB_TYPE_SVH
 `define YUU_AHB_TYPE_SVH
 
-typedef class yuu_ahb_master_item;
+//typedef class yuu_ahb_master_item;
 //typedef class yuu_ahb_slave_item;
-typedef uvm_sequencer #(yuu_ahb_master_item)  yuu_ahb_master_sequencer;
+//typedef uvm_sequencer #(yuu_ahb_master_item)  yuu_ahb_master_sequencer;
 //typedef uvm_sequencer #(yuu_ahb_slave_item)   yuu_ahb_slave_sequencer;
 
 typedef bit [`YUU_AHB_ADDR_WIDTH-1:0] yuu_ahb_addr_t;
@@ -89,8 +89,8 @@ typedef enum bit{
   } yuu_ahb_emt_prot6_e;
 
 typedef enum bit{
-  OKAY, 
-  ERROR 
+  OKAY,
+  ERROR
   } yuu_ahb_response_e;
 
 typedef enum bit{
@@ -100,7 +100,7 @@ typedef enum bit{
 
 typedef enum bit{
   ABOUT_AFTER_ERROR,
-  CONTINUE_AFER_ERROR
+  CONTINUE_AFTER_ERROR
   } yuu_ahb_error_behavior_e;
 
 typedef enum bit[1:0]{

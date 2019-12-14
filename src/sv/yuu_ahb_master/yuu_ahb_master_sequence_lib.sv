@@ -2,25 +2,30 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_MASTER_SEQUENCE_LIB_SVH
-`define YUU_AHB_MASTER_SEQUENCE_LIB_SVH
+`ifndef YUU_AHB_MASTER_SEQUENCE_LIB_SV
+`define YUU_AHB_MASTER_SEQUENCE_LIB_SV
 
+typedef class yuu_ahb_master_sequencer;
 class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
-  int unsigned n_item = 10;
-  
+  virtual yuu_ahb_master_interface vif;
+
   yuu_ahb_master_config cfg;
   uvm_event_pool events;
 
+  int unsigned n_item = 10;
+
   `uvm_object_utils_begin(yuu_ahb_master_sequence_base)
   `uvm_object_utils_end
+  `uvm_declare_p_sequencer(yuu_ahb_master_sequencer)
 
   function new(string name = "yuu_ahb_master_sequence_base");
     super.new(name);
   endfunction
-  
+
   virtual task pre_body();
-    if (!uvm_config_db#(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-      `uvm_fatal("pre_body", "Cannot get yuu_ahb agent config in sequence")
+    cfg = p_sequencer.cfg;
+    vif = cfg.vif;
+    events = cfg.events;
   endtask
 
   virtual task body();
@@ -48,6 +53,7 @@ class yuu_ahb_write_sequence extends yuu_ahb_master_sequence_base;
   endtask
 endclass
 
+
 class yuu_ahb_read_sequence extends yuu_ahb_master_sequence_base;
   `uvm_object_utils(yuu_ahb_read_sequence)
 
@@ -59,7 +65,7 @@ class yuu_ahb_read_sequence extends yuu_ahb_master_sequence_base;
     repeat(n_item) begin
       `uvm_create(req);
       req.cfg = cfg;
-      if (!req.randomize() with {direction  == READ;}) begin
+      if (!req.randomize() with {direction == READ;}) begin
         `uvm_fatal("body", "Transaction randomize error.")
       end
       `uvm_send(req);

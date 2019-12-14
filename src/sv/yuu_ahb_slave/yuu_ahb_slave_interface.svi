@@ -23,7 +23,7 @@ interface yuu_ahb_slave_interface();
   logic [3:0]                     hprot;
   logic [6:3]                     hprot_emt;
   logic [3:0]                     hmaster;
-  logic                           hmastlock; 
+  logic                           hmastlock;
   logic                           hnonsec;
   logic                           hexokay;
 
@@ -51,7 +51,7 @@ interface yuu_ahb_slave_interface();
     output  hready_o;
     output  hexokay;
   endclocking
-  
+
   clocking mon_cb @(posedge hclk);
     default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
 
@@ -74,7 +74,7 @@ interface yuu_ahb_slave_interface();
     input   hready_o;
     input   hexokay;
   endclocking
-  
+
   modport DUT (
     clocking  cb,
 

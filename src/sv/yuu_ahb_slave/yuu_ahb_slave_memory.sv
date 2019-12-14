@@ -7,7 +7,7 @@
 
 class yuu_ahb_slave_memory extends uvm_object;
   protected yuu_ahb_data_t val[yuu_ahb_addr_t];
-  
+
   `uvm_object_utils(yuu_ahb_slave_memory)
 
   function new(string name="yuu_ahb_slave_memory");
@@ -18,7 +18,7 @@ class yuu_ahb_slave_memory extends uvm_object;
     foreach (strob[i]) begin
       if (strob[i])
         val[addr][i*8+:8] = data[i*8+:8];
-    end 
+    end
   endtask
 
   task read(input yuu_ahb_addr_t addr, output yuu_ahb_data_t data);

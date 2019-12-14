@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
@@ -17,18 +17,19 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
 
   `uvm_component_utils_begin(yuu_ahb_master_driver)
   `uvm_component_utils_end
-  
+
   extern                   function      new(string name, uvm_component parent);
-  extern protected virtual function void build_phase(uvm_phase phase);
-  extern protected virtual task          reset_phase(uvm_phase phase);
-  extern protected virtual task          main_phase(uvm_phase phase);
+  extern           virtual function void build_phase(uvm_phase phase);
+  extern           virtual function void connect_phase(uvm_phase phase);
+  extern           virtual task          reset_phase(uvm_phase phase);
+  extern           virtual task          main_phase(uvm_phase phase);
 
   extern protected virtual task          reset_signal();
   extern protected virtual task          get_and_drive();
   extern protected virtual task          cmd_phase(input yuu_ahb_master_item item);
   extern protected virtual task          data_phase(input yuu_ahb_master_item item);
   extern protected virtual task          wait_reset(uvm_phase phase);
-  extern protected virtual task          send_response(input yuu_ahb_master_item item); 
+  extern protected virtual task          send_response(input yuu_ahb_master_item item);
 endclass
 
 function yuu_ahb_master_driver::new(string name, uvm_component parent);
@@ -37,10 +38,15 @@ endfunction
 
 function void yuu_ahb_master_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
-  
+
   out_driver_ap = new("out_driver_ap", this);
   m_cmd_sem = new(1);
   m_data_sem = new(1);
+endfunction
+
+function void yuu_ahb_master_driver::connect_phase(uvm_phase phase);
+  this.vif = cfg.vif;
+  this.events = cfg.events;
 endfunction
 
 task yuu_ahb_master_driver::reset_phase(uvm_phase phase);
@@ -61,6 +67,7 @@ task yuu_ahb_master_driver::main_phase(uvm_phase phase);
   join
 endtask
 
+
 task yuu_ahb_master_driver::reset_signal();
   vif.cb.haddr      <= 'h0;
   vif.cb.htrans     <= 2'h0;
@@ -73,7 +80,7 @@ task yuu_ahb_master_driver::reset_signal();
   vif.cb.hmaster    <= 4'h0;
   vif.cb.hmastlock  <= 1'b0;
   vif.cb.hnonsec    <= 1'b1;
-  
+
   vif.cb.upper_byte_lane <= 'h0;
   vif.cb.lower_byte_lane <= 'h0;
 endtask
@@ -96,14 +103,15 @@ endtask
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
   uvm_event drive_cmd_begin = events.get($sformatf("%s_drive_cmd_begin", cfg.get_name()));
   uvm_event drive_cmd_end   = events.get($sformatf("%s_drive_cmd_end", cfg.get_name()));
-  
+
   m_cmd_sem.get();
   begin
     int len;
+
     yuu_ahb_master_item cur_item = yuu_ahb_master_item::type_id::create("cur_item");
     cur_item.copy(item);
     len = cur_item.len;
-    
+
     repeat(cur_item.idle_delay) @vif.cb;
     `uvm_info("cmd_phase", "Transaction start", UVM_HIGH)
 
@@ -126,7 +134,7 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
         repeat(cur_item.busy_delay[i]) @vif.cb;
       end
       vif.cb.htrans <= cur_item.trans[i];
-      do 
+      do
         @vif.cb;
       while (vif.cb.hready_i !== 1'b1);
 
@@ -170,7 +178,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
         vif.cb.lower_byte_lane <= cur_item.lower_byte_lane[i];
       end
 
-      do 
+      do
         @vif.cb;
       while (vif.cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY);
       if (cur_item.direction == READ) begin
@@ -184,6 +192,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     drive_data_end.trigger();
     if (cfg.use_response)
       send_response(cur_item);
+    //cur_item.print();
     `uvm_info("data_phase", "Transaction end", UVM_HIGH)
   end
 

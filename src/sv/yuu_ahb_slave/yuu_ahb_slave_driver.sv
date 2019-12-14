@@ -11,22 +11,25 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
 
   yuu_ahb_slave_config  cfg;
   uvm_event_pool events;
+  protected yuu_amba_addr_map maps[];
 
   protected yuu_ahb_slave_memory m_mem;
-  
+
   `uvm_component_utils_begin(yuu_ahb_slave_driver)
   `uvm_component_utils_end
 
-  extern                   function      new(string name, uvm_component parent);
-  extern           virtual function void build_phase(uvm_phase phase);
-  extern           virtual task          reset_phase(uvm_phase phase);
-  extern           virtual task          main_phase(uvm_phase phase);
+  extern                   function         new(string name, uvm_component parent);
+  extern           virtual function void    build_phase(uvm_phase phase);
+  extern           virtual function void    connect_phase(uvm_phase phase);
+  extern           virtual task             reset_phase(uvm_phase phase);
+  extern           virtual task             main_phase(uvm_phase phase);
 
-  extern protected virtual function void init_mem();
-  extern protected virtual task          reset_signal();
-  extern protected virtual task          get_and_drive();
-  extern protected virtual task          drive_bus();
-  extern protected virtual task          wait_reset(uvm_phase phase);
+  extern protected virtual function void    init_mem();
+  extern protected virtual function boolean is_out(yuu_ahb_addr_t addr);
+  extern protected virtual task             reset_signal();
+  extern protected virtual task             get_and_drive();
+  extern protected virtual task             drive_bus();
+  extern protected virtual task             wait_reset(uvm_phase phase);
 endclass
 
 function yuu_ahb_slave_driver::new(string name, uvm_component parent);
@@ -35,10 +38,16 @@ endfunction
 
 function void yuu_ahb_slave_driver::build_phase(uvm_phase phase);
   out_driver_ap = new("out_driver_ap", this);
-  init_mem();
+  cfg.get_maps(maps);
+endfunction
+
+function void yuu_ahb_slave_driver::connect_phase(uvm_phase phase);
+  this.vif = cfg.vif;
+  this.events = cfg.events;
 endfunction
 
 task yuu_ahb_slave_driver::reset_phase(uvm_phase phase);
+  init_mem();
   reset_signal();
 endtask
 
@@ -52,16 +61,26 @@ task yuu_ahb_slave_driver::main_phase(uvm_phase phase);
 endtask
 
 
+function void yuu_ahb_slave_driver::init_mem();
+  if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem))
+    m_mem = yuu_ahb_slave_memory::type_id::create("m_mem");
+endfunction
+
+function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
+  foreach (maps[i]) begin
+    if (maps[i].is_contain(addr))
+      return False;
+  end
+
+  `uvm_warning("is_out", $sformatf("Address 0x%0h out of bound", addr))
+  return True;
+endfunction
+
 task yuu_ahb_slave_driver::reset_signal();
   vif.cb.hresp    <= OKAY;
   vif.cb.hready_o <= 1'b1;
   vif.cb.hrdata   <= 'h0;
 endtask
-
-function void yuu_ahb_slave_driver::init_mem();
-  if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem))
-    m_mem = yuu_ahb_slave_memory::type_id::create("m_mem");
-endfunction
 
 task yuu_ahb_slave_driver::get_and_drive();
   forever begin
@@ -76,13 +95,18 @@ task yuu_ahb_slave_driver::drive_bus();
   yuu_ahb_data_t      wdata;
   yuu_ahb_data_t      rdata;
 
+  boolean out_of_bound = False;
+
   while((vif.cb.htrans !== NONSEQ && vif.cb.htrans !== SEQ) || vif.cb.hsel !== 1'b1 || vif.cb.hready_i !== 1'b1) begin
     @(vif.cb);
   end
   addr = vif.cb.haddr;
+  out_of_bound = is_out(addr);
   direction = yuu_ahb_direction_e'(vif.cb.hwrite);
   size = yuu_ahb_size_e'(vif.cb.hsize);
-  seq_item_port.get_next_item(req); 
+  seq_item_port.get_next_item(req);
+  if (out_of_bound)
+    req.response[0] = ERROR;
   fork
     wait((vif.cb.htrans === NONSEQ || vif.cb.htrans === SEQ) && vif.cb.hsel === 1'b1 && vif.cb.hready_i === 1'b1);
     begin
@@ -101,12 +125,12 @@ task yuu_ahb_slave_driver::drive_bus();
     yuu_ahb_addr_t high_boundary = low_boundary+(1<<int'(size));
     yuu_ahb_addr_t mem_addr = addr/(`YUU_AHB_ADDR_WIDTH/8);
     int strobe = 0;
-    
+
     for (yuu_ahb_addr_t i=low_boundary; i<high_boundary; i++)
       strobe[i] = 1'b1;
 
     @(vif.cb);
-    wdata = vif.cb.hwdata; 
+    wdata = vif.cb.hwdata;
     vif.cb.hresp <= OKAY;
     if (req.response[0] != ERROR)
       m_mem.write(mem_addr, wdata, strobe);

@@ -21,7 +21,7 @@ interface yuu_ahb_master_interface();
   logic [3:0]                     hprot;
   logic [6:3]                     hprot_emt;
   logic [3:0]                     hmaster;
-  logic                           hmastlock; 
+  logic                           hmastlock;
   logic                           hnonsec;
   logic                           hexcl;
 
@@ -78,8 +78,8 @@ interface yuu_ahb_master_interface();
     input   upper_byte_lane;
     input   lower_byte_lane;
   endclocking
-  
-  
+
+
   modport DUT (
     output  haddr,
     output  htrans,
@@ -140,7 +140,7 @@ interface yuu_ahb_master_interface();
   logic burst_end;
   logic [1:0] current_trans;
   logic start_flag;
-  
+
   always @(hclk) begin
     if (hready_i === 1'b1 && hreset_n === 1'b1) begin
       if (htrans === `AHBM_IF_TRANS_IDLE || htrans === `AHBM_IF_TRANS_NONSEQ) begin
@@ -154,7 +154,7 @@ interface yuu_ahb_master_interface();
       start_flag = 1'b0;
     end
   end
-  
+
   always @(posedge hclk) begin
     if (!hreset_n) begin
       current_trans = 0;
@@ -171,7 +171,7 @@ interface yuu_ahb_master_interface();
     if (hready_i === 1'b1)
       current_trans <= htrans;
   end
-  
+
 endinterface
 
 `endif

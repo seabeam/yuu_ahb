@@ -30,10 +30,10 @@ class yuu_ahb_master_monitor_callback extends uvm_callback;
     super.new(name);
   endfunction
 
-  virtual task pre_collect(yuu_ahb_master_monitor monitor, yuu_ahb_item item);
+  virtual task pre_collect(yuu_ahb_master_monitor monitor, yuu_ahb_master_item item);
   endtask
 
-  virtual task post_collect(yuu_ahb_master_monitor monitor, yuu_ahb_item item);
+  virtual task post_collect(yuu_ahb_master_monitor monitor, yuu_ahb_master_item item);
   endtask
 endclass
 

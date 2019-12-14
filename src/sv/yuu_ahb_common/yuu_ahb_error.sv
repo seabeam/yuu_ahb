@@ -23,7 +23,7 @@ class yuu_ahb_error extends uvm_object;
       CURRUPT_DATA    := currupt_data_wt
     };
   }
- 
+
 
   `uvm_object_utils_begin(yuu_ahb_error)
     `uvm_field_enum(yuu_ahb_error_type_e, error_type, UVM_DEFAULT | UVM_NOCOMPARE)

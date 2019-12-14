@@ -67,7 +67,7 @@ function void yuu_ahb_env::connect_phase(uvm_phase phase);
   foreach (cfg.slv_cfg[i])
     cfg.slv_cfg[i].events = cfg.events;
 endfunction
-  
+
 function void yuu_ahb_env::address_check();
   yuu_ahb_addr_t addr_ass[int];
   yuu_ahb_addr_t low_addr[$];

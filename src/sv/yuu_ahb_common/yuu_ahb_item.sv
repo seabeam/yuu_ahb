@@ -27,7 +27,7 @@ class yuu_ahb_item extends yuu_amba_item;
        yuu_ahb_location_e   location[];
        real                 start_time;
        real                 end_time;
-  
+
   `uvm_object_utils_begin(yuu_ahb_item)
     `uvm_field_array_int   (                      data,           UVM_ALL_ON)
     `uvm_field_array_enum  (yuu_ahb_trans_e,      trans,          UVM_ALL_ON)
@@ -70,12 +70,12 @@ class yuu_ahb_item extends yuu_amba_item;
 
   constraint c_ahb_burst_size {
     size == SIZE8    <-> burst_size == YUU_AMBA_BYTE_1;
-    size == SIZE16   <-> burst_size == YUU_AMBA_BYTE_2; 
-    size == SIZE32   <-> burst_size == YUU_AMBA_BYTE_4; 
-    size == SIZE64   <-> burst_size == YUU_AMBA_BYTE_8; 
-    size == SIZE128  <-> burst_size == YUU_AMBA_BYTE_16; 
-    size == SIZE256  <-> burst_size == YUU_AMBA_BYTE_32; 
-    size == SIZE512  <-> burst_size == YUU_AMBA_BYTE_64; 
+    size == SIZE16   <-> burst_size == YUU_AMBA_BYTE_2;
+    size == SIZE32   <-> burst_size == YUU_AMBA_BYTE_4;
+    size == SIZE64   <-> burst_size == YUU_AMBA_BYTE_8;
+    size == SIZE128  <-> burst_size == YUU_AMBA_BYTE_16;
+    size == SIZE256  <-> burst_size == YUU_AMBA_BYTE_32;
+    size == SIZE512  <-> burst_size == YUU_AMBA_BYTE_64;
     size == SIZE1024 <-> burst_size == YUU_AMBA_BYTE_128;
   }
 

@@ -24,7 +24,7 @@ class yuu_ahb_agent_config extends uvm_object;
     `uvm_field_enum(boolean,                  coverage_enable,        UVM_PRINT | UVM_COPY)
     `uvm_field_enum(boolean,                  analysis_enable,        UVM_PRINT | UVM_COPY)
     `uvm_field_enum(boolean,                  protocol_check_enable,  UVM_PRINT | UVM_COPY)
-  `uvm_object_utils_end 
+  `uvm_object_utils_end
 
   function new (string name = "yuu_ahb_agent_config");
     super.new(name);

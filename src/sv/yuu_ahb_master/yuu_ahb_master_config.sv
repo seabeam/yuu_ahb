@@ -2,12 +2,12 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_MASTER_CONFIG_SVH
-`define YUU_AHB_MASTER_CONFIG_SVH
+`ifndef YUU_AHB_MASTER_CONFIG_SV
+`define YUU_AHB_MASTER_CONFIG_SV
 
 class yuu_ahb_master_config extends yuu_ahb_agent_config;
   virtual yuu_ahb_master_interface  vif;
-  
+
   boolean idle_enable = True;
   boolean busy_enable = True;
   // Early burst termination burst continue
@@ -19,7 +19,7 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   boolean use_nonsec  = False;
   boolean use_response= False;
 
-  int unsigned bus_width = `YUU_AHB_DATA_WIDTH; 
+  int unsigned bus_width = `YUU_AHB_DATA_WIDTH;
 
   yuu_ahb_error_behavior_e error_behavior;
   yuu_amba_addr_map addressable_maps[];
@@ -37,7 +37,7 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
     `uvm_field_int         (                          bus_width,        UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (yuu_ahb_error_behavior_e, error_behavior,   UVM_PRINT | UVM_COPY)
     `uvm_field_array_object(                          addressable_maps, UVM_PRINT | UVM_COPY)
-  `uvm_object_utils_end 
+  `uvm_object_utils_end
 
   function new(string name = "yuu_ahb_master_config");
     super.new(name);
@@ -51,7 +51,7 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   function void set_map(yuu_amba_addr_t low, yuu_amba_addr_t high);
     addressable_maps = new[1];
     addressable_maps[0] = yuu_amba_addr_map::type_id::create($sformatf("%s_addressable_maps[0]", this.get_name()));
-  
+
     addressable_maps[0].set_map(low, high);
   endfunction
 

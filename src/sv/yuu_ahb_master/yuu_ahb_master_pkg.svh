@@ -9,6 +9,7 @@
   `include "yuu_ahb_master_item.sv"
   `include "yuu_ahb_master_sequence_lib.sv"
   `include "yuu_ahb_master_callbacks.sv"
+  `include "yuu_ahb_master_sequencer.sv"
   `include "yuu_ahb_master_driver.sv"
   `include "yuu_ahb_master_monitor.sv"
   `include "yuu_ahb_master_analyzer.sv"

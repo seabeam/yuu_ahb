@@ -13,14 +13,14 @@ class yuu_ahb_env_config extends uvm_object;
   uvm_event_pool events;
 
   boolean compare_enable = False;
-  boolean protocol_check_enable = False; 
+  boolean protocol_check_enable = False;
 
   `uvm_object_utils_begin(yuu_ahb_env_config)
     `uvm_field_enum         (boolean, compare_enable,         UVM_PRINT | UVM_COPY)
     `uvm_field_enum         (boolean, protocol_check_enable,  UVM_PRINT | UVM_COPY)
     `uvm_field_queue_object (         mst_cfg,                UVM_PRINT | UVM_COPY)
     `uvm_field_queue_object (         slv_cfg,                UVM_PRINT | UVM_COPY)
-  `uvm_object_utils_end 
+  `uvm_object_utils_end
 
   function new(string name="yuu_ahb_env_config");
     super.new(name);

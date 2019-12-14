@@ -2,15 +2,15 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_SLAVE_CONFIG_SVH
-`define YUU_AHB_SLAVE_CONFIG_SVH
+`ifndef YUU_AHB_SLAVE_CONFIG_SV
+`define YUU_AHB_SLAVE_CONFIG_SV
 
 class yuu_ahb_slave_config extends yuu_ahb_agent_config;
   virtual yuu_ahb_slave_interface vif;
-  
+
+            boolean wait_enable = True;
+            boolean use_random_data = False;
   protected boolean multi_range = False;
-  boolean wait_enable = True;
-  boolean use_random_data = False;
 
   yuu_amba_addr_map maps[];
 
@@ -19,7 +19,7 @@ class yuu_ahb_slave_config extends yuu_ahb_agent_config;
     `uvm_field_enum        (boolean, use_random_data, UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean, multi_range,     UVM_PRINT | UVM_COPY)
     `uvm_field_array_object(maps,                     UVM_PRINT | UVM_COPY)
-  `uvm_object_utils_end 
+  `uvm_object_utils_end
 
   function new(string name = "yuu_ahb_slave_config");
     super.new(name);
@@ -33,7 +33,7 @@ class yuu_ahb_slave_config extends yuu_ahb_agent_config;
   function void set_map(yuu_ahb_addr_t low, yuu_ahb_addr_t high);
     maps = new[1];
     maps[0] = yuu_amba_addr_map::type_id::create($sformatf("%s_maps[0]", this.get_name()));
-  
+
     maps[0].set_map(low, high);
   endfunction
 

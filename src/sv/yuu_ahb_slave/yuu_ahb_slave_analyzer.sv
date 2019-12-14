@@ -2,13 +2,13 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_MASTER_ANALYZER_SV
-`define YUU_AHB_MASTER_ANALYZER_SV
+`ifndef YUU_AHB_SLAVE_ANALYZER_SV
+`define YUU_AHB_SLAVE_ANALYZER_SV
 
-class yuu_ahb_master_analyzer extends uvm_subscriber #(yuu_ahb_master_item);
-  virtual yuu_ahb_master_interface vif;
+class yuu_ahb_slave_analyzer extends uvm_subscriber #(yuu_ahb_slave_item);
+  virtual yuu_ahb_slave_interface vif;
 
-  yuu_ahb_master_config cfg;
+  yuu_ahb_slave_config cfg;
   uvm_event_pool events;
 
   protected time m_start_time;
@@ -16,7 +16,7 @@ class yuu_ahb_master_analyzer extends uvm_subscriber #(yuu_ahb_master_item);
   protected bit  m_start = 0;
   protected int  m_count = 0;
 
-  `uvm_component_utils_begin(yuu_ahb_master_analyzer)
+  `uvm_component_utils_begin(yuu_ahb_slave_analyzer)
   `uvm_component_utils_end
 
   extern                   function      new(string name, uvm_component parent);
@@ -24,27 +24,26 @@ class yuu_ahb_master_analyzer extends uvm_subscriber #(yuu_ahb_master_item);
   extern           virtual task          main_phase(uvm_phase phase);
   extern           virtual function void report_phase(uvm_phase phase);
 
-  extern           virtual function void write(yuu_ahb_master_item t);
+  extern           virtual function void write(yuu_ahb_slave_item t);
   extern protected virtual task          measure_start();
   extern protected virtual task          measure_end();
 endclass
 
-function yuu_ahb_master_analyzer::new(string name, uvm_component parent);
+function yuu_ahb_slave_analyzer::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
-function void yuu_ahb_master_analyzer::connect_phase(uvm_phase phase);
+function void yuu_ahb_slave_analyzer::connect_phase(uvm_phase phase);
   this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_master_analyzer::main_phase(uvm_phase phase);
+task yuu_ahb_slave_analyzer::main_phase(uvm_phase phase);
   measure_start();
   measure_end();
 endtask
 
-
-function void yuu_ahb_master_analyzer::report_phase(uvm_phase phase);
+function void yuu_ahb_slave_analyzer::report_phase(uvm_phase phase);
   real tput_rate;
 
   if (m_count == 0) begin
@@ -53,15 +52,16 @@ function void yuu_ahb_master_analyzer::report_phase(uvm_phase phase);
   end
 
   tput_rate = real'(m_count)/(m_end_time - m_start_time) * 1000;
-  `uvm_info("report_phase", $sformatf("AHB master speed is %f", tput_rate), UVM_LOW);
+  `uvm_info("report_phase", $sformatf("AHB slave speed is %f", tput_rate), UVM_LOW);
 endfunction
 
-function void yuu_ahb_master_analyzer::write(yuu_ahb_master_item t);
+
+function void yuu_ahb_slave_analyzer::write(yuu_ahb_slave_item t);
   if (m_start)
     m_count += t.len+1;
 endfunction
 
-task yuu_ahb_master_analyzer::measure_start();
+task yuu_ahb_slave_analyzer::measure_start();
   uvm_event e = events.get($sformatf("%s_measure_begin", cfg.get_name()));
 
   e.wait_on();
@@ -70,7 +70,7 @@ task yuu_ahb_master_analyzer::measure_start();
   `uvm_info("measure_start", $sformatf("%s analyzer start measure @ %t", cfg.get_name(), m_start_time), UVM_LOW)
 endtask
 
-task yuu_ahb_master_analyzer::measure_end();
+task yuu_ahb_slave_analyzer::measure_end();
   uvm_event e = events.get($sformatf("%s_measure_end", cfg.get_name()));
 
   e.wait_on();
