@@ -26,6 +26,17 @@ class uvc_master_test_sequence extends yuu_ahb_master_sequence_base;
                           size == SIZE32;
                           burst_type != WRAP;
                           foreach(data[i]) {
+                            busy_delay[i] inside {[0:2]};
+                          }
+                          direction == READ;};
+    start_item(req);
+    finish_item(req);
+
+    req.randomize() with {start_address == 32'h80000100;
+                          len == 3;
+                          size == SIZE32;
+                          burst_type != WRAP;
+                          foreach(data[i]) {
                             data[i] == (i+'h1)<<i*8;
                             busy_delay[i] inside {[0:2]};
                           }
@@ -131,6 +142,7 @@ class uvc_test extends uvm_test;
       yuu_ahb_slave_config  s_cfg = new("e0_s0");
       s_cfg.index = 0;
       s_cfg.set_map(0, 32'hF000_0000);
+      s_cfg.mem_init_pattern = PATTERN_RANDOM;
       cfg.set_config(s_cfg);
     end
 

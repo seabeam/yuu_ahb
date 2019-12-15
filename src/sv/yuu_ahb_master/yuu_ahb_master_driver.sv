@@ -24,6 +24,7 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   extern           virtual task          reset_phase(uvm_phase phase);
   extern           virtual task          main_phase(uvm_phase phase);
 
+  extern protected virtual task          init_component();
   extern protected virtual task          reset_signal();
   extern protected virtual task          get_and_drive();
   extern protected virtual task          cmd_phase(input yuu_ahb_master_item item);
@@ -50,12 +51,7 @@ function void yuu_ahb_master_driver::connect_phase(uvm_phase phase);
 endfunction
 
 task yuu_ahb_master_driver::reset_phase(uvm_phase phase);
-  m_cmd_sem.try_get();
-  m_cmd_sem.put();
-  m_data_sem.try_get();
-  m_data_sem.put();
-
-  reset_signal();
+  init_component();
 endtask
 
 task yuu_ahb_master_driver::main_phase(uvm_phase phase);
@@ -67,6 +63,15 @@ task yuu_ahb_master_driver::main_phase(uvm_phase phase);
   join
 endtask
 
+
+task yuu_ahb_master_driver::init_component();
+  m_cmd_sem.try_get();
+  m_cmd_sem.put();
+  m_data_sem.try_get();
+  m_data_sem.put();
+
+  reset_signal();
+endtask
 
 task yuu_ahb_master_driver::reset_signal();
   vif.cb.haddr      <= 'h0;

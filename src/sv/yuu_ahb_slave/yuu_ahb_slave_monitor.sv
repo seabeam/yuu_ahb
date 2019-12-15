@@ -30,6 +30,7 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   extern           virtual task          reset_phase(uvm_phase phase);
   extern           virtual task          main_phase(uvm_phase phase);
 
+  extern protected virtual task          init_component();
   extern protected virtual task          cmd_phase();
   extern protected virtual task          data_phase();
   extern protected virtual task          assembling_and_send(yuu_ahb_slave_item monitor_item);
@@ -52,14 +53,7 @@ function void yuu_ahb_slave_monitor::connect_phase(uvm_phase phase);
 endfunction
 
 task yuu_ahb_slave_monitor::reset_phase(uvm_phase phase);
-  m_cmd.try_get();
-  m_cmd.put();
-  m_data.try_get();
-  m_data.put();
-  address_q.delete();
-  data_q.delete();
-  trans_q.delete();
-  response_q.delete();
+  init_component();
 endtask
 
 task yuu_ahb_slave_monitor::main_phase(uvm_phase phase);
@@ -74,6 +68,18 @@ task yuu_ahb_slave_monitor::main_phase(uvm_phase phase);
     end
     wait_reset(phase);
   join
+endtask
+
+
+task yuu_ahb_slave_monitor::init_component();
+  m_cmd.try_get();
+  m_cmd.put();
+  m_data.try_get();
+  m_data.put();
+  address_q.delete();
+  data_q.delete();
+  trans_q.delete();
+  response_q.delete();
 endtask
 
 task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_slave_item monitor_item);

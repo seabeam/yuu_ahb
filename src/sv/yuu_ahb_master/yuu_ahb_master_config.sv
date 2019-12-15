@@ -19,8 +19,6 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   boolean use_nonsec  = False;
   boolean use_response= False;
 
-  int unsigned bus_width = `YUU_AHB_DATA_WIDTH;
-
   yuu_ahb_error_behavior_e error_behavior;
   yuu_amba_addr_map addressable_maps[];
 
@@ -34,7 +32,6 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
     `uvm_field_enum        (boolean,                  use_lock,         UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean,                  use_nonsec,       UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean,                  busy_enable,      UVM_PRINT | UVM_COPY)
-    `uvm_field_int         (                          bus_width,        UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (yuu_ahb_error_behavior_e, error_behavior,   UVM_PRINT | UVM_COPY)
     `uvm_field_array_object(                          addressable_maps, UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end

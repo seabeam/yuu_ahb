@@ -124,6 +124,16 @@ typedef enum bit[2:0] {
   CURRUPT_DATA
   } yuu_ahb_error_type_e;
 
+typedef enum bit[2:0] {
+  PATTERN_ALL_0,
+  PATTERN_ALL_1,
+  PATTERN_55,
+  PATTERN_AA,
+  PATTERN_5A,
+  PATTERN_A5,
+  PATTERN_RANDOM
+  } yuu_ahb_mem_pattern_e;
+
 function yuu_amba_burst_type_e burst_ahb_to_amba(yuu_ahb_burst_e burst_type);
   case (burst_type)
     SINGLE, INCR, INCR4, INCR8, INCR16: burst_ahb_to_amba = yuu_amba_pkg::INCR;

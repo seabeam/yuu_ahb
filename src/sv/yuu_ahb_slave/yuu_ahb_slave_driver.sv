@@ -24,6 +24,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   extern           virtual task             reset_phase(uvm_phase phase);
   extern           virtual task             main_phase(uvm_phase phase);
 
+  extern protected virtual task             init_component();
   extern protected virtual function void    init_mem();
   extern protected virtual function boolean is_out(yuu_ahb_addr_t addr);
   extern protected virtual task             reset_signal();
@@ -47,8 +48,7 @@ function void yuu_ahb_slave_driver::connect_phase(uvm_phase phase);
 endfunction
 
 task yuu_ahb_slave_driver::reset_phase(uvm_phase phase);
-  init_mem();
-  reset_signal();
+  init_component();
 endtask
 
 task yuu_ahb_slave_driver::main_phase(uvm_phase phase);
@@ -61,9 +61,16 @@ task yuu_ahb_slave_driver::main_phase(uvm_phase phase);
 endtask
 
 
+task yuu_ahb_slave_driver::init_component();
+  init_mem();
+  reset_signal();
+endtask
+
 function void yuu_ahb_slave_driver::init_mem();
-  if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem))
+  if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem)) begin
     m_mem = yuu_ahb_slave_memory::type_id::create("m_mem");
+    m_mem.cfg = cfg;
+  end
 endfunction
 
 function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
@@ -140,10 +147,7 @@ task yuu_ahb_slave_driver::drive_bus();
     yuu_ahb_addr_t mem_addr = addr/(`YUU_AHB_ADDR_WIDTH/8);
     m_mem.read(mem_addr, rdata);
     if (req.response[0] != ERROR)
-      if (cfg.use_random_data)
-        vif.cb.hrdata <= $urandom();
-      else
-        vif.cb.hrdata <= rdata;
+      vif.cb.hrdata <= rdata;
     else
       vif.cb.hrdata <= 'h0;
     seq_item_port.item_done();
