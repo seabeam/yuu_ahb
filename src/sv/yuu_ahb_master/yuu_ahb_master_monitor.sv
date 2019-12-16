@@ -11,8 +11,8 @@ class yuu_ahb_master_monitor extends uvm_monitor;
 
   yuu_ahb_master_config cfg;
   uvm_event_pool events;
-
-  semaphore m_cmd, m_data;
+  protected process processes[string];
+  protected semaphore m_cmd, m_data;
 
   protected yuu_ahb_master_item monitor_item;
   protected yuu_ahb_addr_t      address_q[$];
@@ -29,16 +29,15 @@ class yuu_ahb_master_monitor extends uvm_monitor;
   extern                   function      new(string name, uvm_component parent);
   extern           virtual function void build_phase(uvm_phase phase);
   extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          reset_phase(uvm_phase phase);
-  extern           virtual task          main_phase(uvm_phase phase);
+  extern           virtual task          run_phase(uvm_phase phase);
 
   extern protected virtual task          init_component();
   extern protected virtual task          cmd_phase();
   extern protected virtual task          data_phase();
   extern protected virtual task          assembling_and_send(yuu_ahb_master_item monitor_item);
-  extern protected virtual task          wait_reset(uvm_phase phase);
   extern protected virtual task          count_busy();
   extern protected virtual task          count_idle();
+  extern protected virtual task          wait_reset();
 endclass
 
 function yuu_ahb_master_monitor::new(string name, uvm_component parent);
@@ -56,23 +55,27 @@ function void yuu_ahb_master_monitor::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_master_monitor::reset_phase(uvm_phase phase);
+task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
+  process proc_monitor;
   init_component();
-endtask
 
-task yuu_ahb_master_monitor::main_phase(uvm_phase phase);
   wait(vif.hreset_n === 1'b1);
   vif.wait_cycle();
   fork
-    forever begin
+    forever
       fork
-        cmd_phase();
-        data_phase();
-      join_any
-    end
-    wait_reset(phase);
+        begin
+          proc_monitor = process::self();
+          processes["proc_monitor"] = proc_monitor;
+          fork
+            cmd_phase();
+            data_phase();
+          join_any
+        end
+      join
     count_busy();
     count_idle();
+    wait_reset();
   join
 endtask
 
@@ -209,70 +212,92 @@ task yuu_ahb_master_monitor::data_phase();
   m_data.put();
 endtask
 
-task yuu_ahb_master_monitor::wait_reset(uvm_phase phase);
-  @(negedge vif.hreset_n);
-  phase.jump(uvm_reset_phase::get());
-endtask
-
 task yuu_ahb_master_monitor::count_busy();
   bit count_ready = 0;
   int count = 0;
   bit busy_start = 0;
   uvm_event send_already = new("send_already");
+  process proc_busy0, proc_busy1;
 
   fork
-    forever begin
-      if (count_ready) begin
-        busy_q.push_back(count);
-        count = 0;
-        if (busy_start) begin
-          send_already.trigger();
-          busy_start = 0;
+    forever
+      fork
+        begin
+          proc_busy0 = process::self();
+          processes["proc_busy0"] = proc_busy0;
+          if (count_ready) begin
+            busy_q.push_back(count);
+            count = 0;
+            if (busy_start) begin
+              send_already.trigger();
+              busy_start = 0;
+            end
+            count_ready = 0;
+          end
+          if (vif.mon_cb.htrans !== IDLE && vif.mon_cb.htrans !== BUSY && vif.mon_cb.hready_i === 1'b1)
+            count_ready = 1;
+          vif.wait_cycle();
         end
-        count_ready = 0;
-      end
-      if (vif.mon_cb.htrans !== IDLE && vif.mon_cb.htrans !== BUSY && vif.mon_cb.hready_i === 1'b1)
-        count_ready = 1;
-      vif.wait_cycle();
-    end
-    forever begin
-      #0;
-      if (vif.mon_cb.htrans == BUSY) begin
-        count++;
-        busy_start = 1;
-      end
-      else if (busy_start) begin
-        wait(count_ready == 1);
-        send_already.wait_on();
-        send_already.reset();
-        if (vif.mon_cb.htrans === BUSY)
-          count = 1;
-      end
-      vif.wait_cycle();
-    end
+      join
+    forever
+      fork
+        begin
+          proc_busy1 = process::self();
+          processes["proc_busy1"] = proc_busy1;
+          #0;
+          if (vif.mon_cb.htrans == BUSY) begin
+            count++;
+            busy_start = 1;
+          end
+          else if (busy_start) begin
+            wait(count_ready == 1);
+            send_already.wait_on();
+            send_already.reset();
+            if (vif.mon_cb.htrans === BUSY)
+              count = 1;
+          end
+          vif.wait_cycle();
+        end
+      join
   join
 endtask
 
 task yuu_ahb_master_monitor::count_idle();
   bit idle_start = 0;
   int count;
+  process proc_idle;
 
+  forever
+    fork
+      begin
+        proc_idle = process::self();
+        processes["proc_idle"] = proc_idle;
+        if (vif.mon_cb.htrans === NONSEQ) begin
+          if (idle_start) begin
+            idle_q.push_back(count);
+          end
+          else begin
+            idle_q.push_back(0);
+          end
+          count = 0;
+          idle_start = 0;
+        end
+        else if (vif.mon_cb.htrans === IDLE) begin
+          count ++;
+          idle_start = 1;
+        end
+        vif.wait_cycle();
+      end
+    join
+endtask
+
+task yuu_ahb_master_monitor::wait_reset();
   forever begin
-    if (vif.mon_cb.htrans === NONSEQ) begin
-      if (idle_start) begin
-        idle_q.push_back(count);
-      end
-      else begin
-        idle_q.push_back(0);
-      end
-      count = 0;
-      idle_start = 0;
-    end
-    else if (vif.mon_cb.htrans === IDLE) begin
-      count ++;
-      idle_start = 1;
-    end
-    vif.wait_cycle();
+    @(negedge vif.hreset_n);
+    foreach (processes[i])
+      processes[i].kill();
+    init_component();
+    @(posedge vif.hreset_n);
   end
 endtask
 

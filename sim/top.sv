@@ -134,9 +134,9 @@ class uvc_test extends uvm_test;
     begin
       yuu_ahb_master_config m_cfg = new("e0_m0");
       m_cfg.index = 0;
-      cfg.set_config(m_cfg);
       m_cfg.idle_enable = True;
       m_cfg.busy_enable = True;
+      cfg.set_config(m_cfg);
     end
     begin
       yuu_ahb_slave_config  s_cfg = new("e0_s0");
@@ -150,7 +150,7 @@ class uvc_test extends uvm_test;
     env = yuu_ahb_env::type_id::create("env", this);
   endfunction : build_phase
 
-  task main_phase(uvm_phase phase);
+  task run_phase(uvm_phase phase);
     uvc_master_test_sequence  mst_seq = new("mst_seq");
     yuu_slave_rsp_seqence     rsp_seq = new("rsp_seq");
 
@@ -163,7 +163,7 @@ class uvc_test extends uvm_test;
     join
     //@(vif.master_if[0].mon_cb);
     phase.drop_objection(this);
-  endtask : main_phase
+  endtask : run_phase
 endclass : uvc_test
 
 

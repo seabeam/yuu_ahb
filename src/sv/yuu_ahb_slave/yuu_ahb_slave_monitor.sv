@@ -11,8 +11,8 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
 
   yuu_ahb_slave_config cfg;
   uvm_event_pool events;
-
-  semaphore m_cmd, m_data;
+  protected process processes[string];
+  protected semaphore m_cmd, m_data;
 
   protected yuu_ahb_slave_item  monitor_item;
   protected yuu_ahb_addr_t      address_q[$];
@@ -27,14 +27,13 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   extern                   function      new(string name, uvm_component parent);
   extern           virtual function void build_phase(uvm_phase phase);
   extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          reset_phase(uvm_phase phase);
-  extern           virtual task          main_phase(uvm_phase phase);
+  extern           virtual task          run_phase(uvm_phase phase);
 
   extern protected virtual task          init_component();
   extern protected virtual task          cmd_phase();
   extern protected virtual task          data_phase();
   extern protected virtual task          assembling_and_send(yuu_ahb_slave_item monitor_item);
-  extern protected virtual task          wait_reset(uvm_phase phase);
+  extern protected virtual task          wait_reset();
 endclass
 
 function yuu_ahb_slave_monitor::new(string name, uvm_component parent);
@@ -52,21 +51,25 @@ function void yuu_ahb_slave_monitor::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_slave_monitor::reset_phase(uvm_phase phase);
-  init_component();
-endtask
+task yuu_ahb_slave_monitor::run_phase(uvm_phase phase);
+  process proc_monitor;
 
-task yuu_ahb_slave_monitor::main_phase(uvm_phase phase);
+  init_component();
   wait(vif.hreset_n === 1'b1);
   vif.wait_cycle();
   fork
-    forever begin
+    forever
       fork
-        cmd_phase();
-        data_phase();
-      join_any
-    end
-    wait_reset(phase);
+        begin
+          proc_monitor = process::self();
+          processes["proc_monitor"] = proc_monitor;
+          fork
+            cmd_phase();
+            data_phase();
+          join_any
+        end
+      join
+    wait_reset();
   join
 endtask
 
@@ -203,9 +206,14 @@ task yuu_ahb_slave_monitor::data_phase();
   m_data.put();
 endtask
 
-task yuu_ahb_slave_monitor::wait_reset(uvm_phase phase);
-  @(negedge vif.hreset_n);
-  phase.jump(uvm_reset_phase::get());
+task yuu_ahb_slave_monitor::wait_reset();
+  forever begin
+    @(negedge vif.hreset_n);
+    foreach (processes[i])
+      processes[i].kill();
+    init_component();
+    @(posedge vif.hreset_n);
+  end
 endtask
 
 `endif

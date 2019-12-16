@@ -11,7 +11,8 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
 
   yuu_ahb_master_config cfg;
   uvm_event_pool events;
-  semaphore m_cmd_sem, m_data_sem;
+  protected process processes[string];
+  protected semaphore m_cmd_sem, m_data_sem;
 
   `uvm_register_cb(yuu_ahb_master_driver, yuu_ahb_master_driver_callback)
 
@@ -21,15 +22,14 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   extern                   function      new(string name, uvm_component parent);
   extern           virtual function void build_phase(uvm_phase phase);
   extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          reset_phase(uvm_phase phase);
-  extern           virtual task          main_phase(uvm_phase phase);
+  extern           virtual task          run_phase(uvm_phase phase);
 
   extern protected virtual task          init_component();
   extern protected virtual task          reset_signal();
   extern protected virtual task          get_and_drive();
   extern protected virtual task          cmd_phase(input yuu_ahb_master_item item);
   extern protected virtual task          data_phase(input yuu_ahb_master_item item);
-  extern protected virtual task          wait_reset(uvm_phase phase);
+  extern protected virtual task          wait_reset();
   extern protected virtual task          send_response(input yuu_ahb_master_item item);
 endclass
 
@@ -50,16 +50,13 @@ function void yuu_ahb_master_driver::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_master_driver::reset_phase(uvm_phase phase);
+task yuu_ahb_master_driver::run_phase(uvm_phase phase);
   init_component();
-endtask
-
-task yuu_ahb_master_driver::main_phase(uvm_phase phase);
   wait(vif.DUT.hreset_n === 1'b1);
   vif.wait_cycle();
   fork
     get_and_drive();
-    wait_reset(phase);
+    wait_reset();
   join
 endtask
 
@@ -91,18 +88,25 @@ task yuu_ahb_master_driver::reset_signal();
 endtask
 
 task yuu_ahb_master_driver::get_and_drive();
-  forever begin
-    yuu_ahb_master_item item;
+  process proc_drive;
 
-    seq_item_port.get_next_item(item);
-    out_driver_ap.write(item);
-    `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
+  forever
     fork
-      cmd_phase(item);
-      data_phase(item);
-    join_any
-    seq_item_port.item_done();
-  end
+      begin
+        yuu_ahb_master_item item;
+
+        proc_drive = process::self();
+        processes["proc_drive"] = proc_drive;
+        seq_item_port.get_next_item(item);
+        out_driver_ap.write(item);
+        `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
+        fork
+          cmd_phase(item);
+          data_phase(item);
+        join_any
+        seq_item_port.item_done();
+      end
+    join
 endtask
 
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
@@ -212,9 +216,16 @@ task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
   //rsp.print();
 endtask
 
-task yuu_ahb_master_driver::wait_reset(uvm_phase phase);
-  @(negedge vif.hreset_n);
-  phase.jump(uvm_reset_phase::get());
+task yuu_ahb_master_driver::wait_reset();
+  forever begin
+    @(negedge vif.hreset_n);
+    if (seq_item_port.has_do_available())
+      seq_item_port.item_done();
+    foreach (processes[i])
+      processes[i].kill();
+    init_component();
+    @(posedge vif.hreset_n);
+  end
 endtask
 
 `endif

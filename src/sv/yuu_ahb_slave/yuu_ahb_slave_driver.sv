@@ -11,6 +11,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
 
   yuu_ahb_slave_config  cfg;
   uvm_event_pool events;
+  protected process processes[string];
   protected yuu_amba_addr_map maps[];
 
   protected yuu_ahb_slave_memory m_mem;
@@ -21,8 +22,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   extern                   function         new(string name, uvm_component parent);
   extern           virtual function void    build_phase(uvm_phase phase);
   extern           virtual function void    connect_phase(uvm_phase phase);
-  extern           virtual task             reset_phase(uvm_phase phase);
-  extern           virtual task             main_phase(uvm_phase phase);
+  extern           virtual task             run_phase(uvm_phase phase);
 
   extern protected virtual task             init_component();
   extern protected virtual function void    init_mem();
@@ -30,7 +30,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   extern protected virtual task             reset_signal();
   extern protected virtual task             get_and_drive();
   extern protected virtual task             drive_bus();
-  extern protected virtual task             wait_reset(uvm_phase phase);
+  extern protected virtual task             wait_reset();
 endclass
 
 function yuu_ahb_slave_driver::new(string name, uvm_component parent);
@@ -47,16 +47,13 @@ function void yuu_ahb_slave_driver::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_slave_driver::reset_phase(uvm_phase phase);
+task yuu_ahb_slave_driver::run_phase(uvm_phase phase);
   init_component();
-endtask
-
-task yuu_ahb_slave_driver::main_phase(uvm_phase phase);
   wait(vif.hreset_n === 1'b1);
   vif.wait_cycle();
   fork
     get_and_drive();
-    wait_reset(phase);
+    wait_reset();
   join
 endtask
 
@@ -90,9 +87,16 @@ task yuu_ahb_slave_driver::reset_signal();
 endtask
 
 task yuu_ahb_slave_driver::get_and_drive();
-  forever begin
-    drive_bus();
-  end
+  process proc_drive;
+
+  forever
+    fork
+      begin
+        proc_drive = process::self();
+        processes["proc_drive"] = proc_drive;
+        drive_bus();
+      end
+    join
 endtask
 
 task yuu_ahb_slave_driver::drive_bus();
@@ -156,9 +160,16 @@ task yuu_ahb_slave_driver::drive_bus();
   end
 endtask
 
-task yuu_ahb_slave_driver::wait_reset(uvm_phase phase);
-  @(negedge vif.hreset_n);
-  phase.jump(uvm_reset_phase::get());
+task yuu_ahb_slave_driver::wait_reset();
+  forever begin
+    @(negedge vif.hreset_n);
+    if (seq_item_port.has_do_available())
+      seq_item_port.item_done();
+    foreach (processes[i])
+      processes[i].kill();
+    init_component();
+    @(posedge vif.hreset_n);
+  end
 endtask
 
 `endif

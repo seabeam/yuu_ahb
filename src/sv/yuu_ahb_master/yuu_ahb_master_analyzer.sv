@@ -21,7 +21,7 @@ class yuu_ahb_master_analyzer extends uvm_subscriber #(yuu_ahb_master_item);
 
   extern                   function      new(string name, uvm_component parent);
   extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          main_phase(uvm_phase phase);
+  extern           virtual task          run_phase(uvm_phase phase);
   extern           virtual function void report_phase(uvm_phase phase);
 
   extern           virtual function void write(yuu_ahb_master_item t);
@@ -38,7 +38,7 @@ function void yuu_ahb_master_analyzer::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_master_analyzer::main_phase(uvm_phase phase);
+task yuu_ahb_master_analyzer::run_phase(uvm_phase phase);
   measure_start();
   measure_end();
 endtask
