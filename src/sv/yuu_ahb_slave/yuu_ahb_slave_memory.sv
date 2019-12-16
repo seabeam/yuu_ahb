@@ -42,6 +42,7 @@ class yuu_ahb_slave_memory extends uvm_object;
         PATTERN_A5:     for (int i=0; i<$ceil(real'(cfg.bus_width)/real'(32)); i++) begin
                           data |= 32'hA5A5_A5A5<<(i*32);
                         end
+        PATTERN_ADDRESS:data = addr;
         PATTERN_RANDOM: for (int i=0; i<$ceil(real'(cfg.bus_width)/real'(32)); i++) begin
                           data |= $random()<<(i*32);
                         end

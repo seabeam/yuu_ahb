@@ -131,6 +131,7 @@ typedef enum bit[2:0] {
   PATTERN_AA,
   PATTERN_5A,
   PATTERN_A5,
+  PATTERN_ADDRESS,
   PATTERN_RANDOM
   } yuu_ahb_mem_pattern_e;
 
