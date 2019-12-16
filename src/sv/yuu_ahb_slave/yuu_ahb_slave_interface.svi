@@ -120,6 +120,9 @@ interface yuu_ahb_slave_interface();
     input   hexokay
   );
 
+  task wait_cycle();
+    @(posedge hclk);
+  endtask
 endinterface
 
 `endif

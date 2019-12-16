@@ -172,6 +172,9 @@ interface yuu_ahb_master_interface();
       current_trans <= htrans;
   end
 
+  task wait_cycle();
+    @(posedge hclk);
+  endtask
 endinterface
 
 `endif

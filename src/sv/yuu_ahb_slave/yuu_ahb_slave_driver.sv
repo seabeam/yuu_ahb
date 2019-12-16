@@ -53,7 +53,7 @@ endtask
 
 task yuu_ahb_slave_driver::main_phase(uvm_phase phase);
   wait(vif.hreset_n === 1'b1);
-  @(vif.cb);
+  vif.wait_cycle();
   fork
     get_and_drive();
     wait_reset(phase);
@@ -105,7 +105,7 @@ task yuu_ahb_slave_driver::drive_bus();
   boolean out_of_bound = False;
 
   while((vif.cb.htrans !== NONSEQ && vif.cb.htrans !== SEQ) || vif.cb.hsel !== 1'b1 || vif.cb.hready_i !== 1'b1) begin
-    @(vif.cb);
+    vif.wait_cycle();
   end
   addr = vif.cb.haddr;
   out_of_bound = is_out(addr);
@@ -119,10 +119,10 @@ task yuu_ahb_slave_driver::drive_bus();
     begin
       vif.cb.hready_o <= 1'b0;
       vif.cb.hresp <= OKAY;
-      repeat(req.wait_delay) @(vif.cb);
+      repeat(req.wait_delay) vif.wait_cycle();
       if (req.response[0] == ERROR) begin
         vif.cb.hresp <= req.response[0];
-        @(vif.cb);
+        vif.wait_cycle();
       end
       vif.cb.hready_o <= 1'b1;
     end
@@ -136,7 +136,7 @@ task yuu_ahb_slave_driver::drive_bus();
     for (yuu_ahb_addr_t i=low_boundary; i<high_boundary; i++)
       strobe[i] = 1'b1;
 
-    @(vif.cb);
+    vif.wait_cycle();
     wdata = vif.cb.hwdata;
     vif.cb.hresp <= OKAY;
     if (req.response[0] != ERROR)
@@ -151,7 +151,7 @@ task yuu_ahb_slave_driver::drive_bus();
     else
       vif.cb.hrdata <= 'h0;
     seq_item_port.item_done();
-    @(vif.cb);
+    vif.wait_cycle();
     vif.cb.hresp <= OKAY;
   end
 endtask

@@ -56,7 +56,7 @@ endtask
 
 task yuu_ahb_master_driver::main_phase(uvm_phase phase);
   wait(vif.DUT.hreset_n === 1'b1);
-  @(vif.cb);
+  vif.wait_cycle();
   fork
     get_and_drive();
     wait_reset(phase);
@@ -117,7 +117,7 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
     cur_item.copy(item);
     len = cur_item.len;
 
-    repeat(cur_item.idle_delay) @vif.cb;
+    repeat(cur_item.idle_delay) vif.wait_cycle();
     `uvm_info("cmd_phase", "Transaction start", UVM_HIGH)
 
     vif.cb.hwrite   <= cur_item.direction;
@@ -136,11 +136,11 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
       vif.cb.haddr <= cur_item.address[i];
       if (cur_item.busy_delay[i] > 0) begin
         vif.cb.htrans <= BUSY;
-        repeat(cur_item.busy_delay[i]) @vif.cb;
+        repeat(cur_item.busy_delay[i]) vif.wait_cycle();
       end
       vif.cb.htrans <= cur_item.trans[i];
       do
-        @vif.cb;
+        vif.wait_cycle();
       while (vif.cb.hready_i !== 1'b1);
 
       if (cur_item.location[i] == LAST) begin
@@ -171,7 +171,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     len = cur_item.len;
 
     while (vif.cb.hready_i !== 1'b1 || vif.mon_cb.htrans !== NONSEQ)
-      @vif.cb;
+      vif.wait_cycle();
     `uvm_info("data_phase", "Transaction start", UVM_HIGH)
     drive_data_begin.trigger();
 
@@ -184,7 +184,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
       end
 
       do
-        @vif.cb;
+        vif.wait_cycle();
       while (vif.cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY);
       if (cur_item.direction == READ) begin
         cur_item.data[i] = vif.cb.hrdata;

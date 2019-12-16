@@ -58,7 +58,7 @@ endtask
 
 task yuu_ahb_slave_monitor::main_phase(uvm_phase phase);
   wait(vif.hreset_n === 1'b1);
-  @(vif.mon_cb);
+  vif.wait_cycle();
   fork
     forever begin
       fork
@@ -122,16 +122,16 @@ task yuu_ahb_slave_monitor::cmd_phase();
 
   m_cmd.get();
   while (vif.mon_cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY || vif.mon_cb.hsel !== 1'b1)
-    @vif.mon_cb;
+    vif.wait_cycle();
 
   if (vif.mon_cb.htrans == IDLE && address_q.size() == 0) begin
-    @vif.mon_cb;
+    vif.wait_cycle();
     m_cmd.put();
     return;
   end
   else if (vif.mon_cb.htrans == IDLE && address_q.size() > 0) begin
     assembling_and_send(monitor_item);
-    @vif.mon_cb;
+    vif.wait_cycle();
     m_cmd.put();
     return;
   end
@@ -172,7 +172,7 @@ task yuu_ahb_slave_monitor::cmd_phase();
 
   address_q.push_back(vif.mon_cb.haddr);
   trans_q.push_back(yuu_ahb_trans_e'(vif.mon_cb.htrans));
-  @vif.mon_cb;
+  vif.wait_cycle();
 
   monitor_cmd_end.trigger();
   m_cmd.put();
@@ -184,10 +184,10 @@ task yuu_ahb_slave_monitor::data_phase();
 
   m_data.get();
   while (vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ) || vif.mon_cb.hsel !== 1'b1)
-    @vif.mon_cb;
-  @vif.mon_cb;
+    vif.wait_cycle();
+  vif.wait_cycle();
   while (vif.mon_cb.hready_i !== 1'b1)
-    @vif.mon_cb;
+    vif.wait_cycle();
 
   monitor_data_begin.trigger();
 
