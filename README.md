@@ -8,6 +8,6 @@ Following is the task list under development:
 - [ ] Update coverage group in collector
 - [ ] Update analyzer
 - [ ] Add `Abort after error` feature of master
-- [ ] Support register burst access
+- [x] Support register burst access
 - [ ] Add AHB protocal checker
 - [ ] Add more AHB4/5 feature
