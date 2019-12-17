@@ -21,7 +21,7 @@ class yuu_ahb_slave_response_sequence extends uvm_sequence #(yuu_ahb_slave_item)
     super.new(name);
   endfunction
 
-  task pre_body();
+  task pre_start();
     cfg = p_sequencer.cfg;
     vif = cfg.vif;
     events = cfg.events;

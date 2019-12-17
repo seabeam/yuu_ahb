@@ -22,7 +22,7 @@ class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
     super.new(name);
   endfunction
 
-  virtual task pre_body();
+  virtual task pre_start();
     cfg = p_sequencer.cfg;
     vif = cfg.vif;
     events = cfg.events;
