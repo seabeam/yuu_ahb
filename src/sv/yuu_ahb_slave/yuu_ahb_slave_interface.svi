@@ -27,6 +27,7 @@ interface yuu_ahb_slave_interface();
   logic                           hnonsec;
   logic                           hexokay;
 
+  logic                           excl_write_enable;
   logic [31:0]                    transfer_num;
 
   clocking cb @(posedge hclk);
@@ -45,6 +46,7 @@ interface yuu_ahb_slave_interface();
     input   hmastlock;
     input   hnonsec;
     input   hready_i;
+    input   excl_write_enable;
 
     output  hrdata;
     output  hresp;
@@ -68,6 +70,7 @@ interface yuu_ahb_slave_interface();
     input   hmastlock;
     input   hnonsec;
     input   hready_i;
+    input   excl_write_enable;
 
     input   hrdata;
     input   hresp;
@@ -91,6 +94,7 @@ interface yuu_ahb_slave_interface();
     input   hmastlock,
     input   hnonsec,
     input   hready_i,
+    input   excl_write_enable,
 
     output  hrdata,
     output  hresp,
@@ -113,6 +117,7 @@ interface yuu_ahb_slave_interface();
     input   hmastlock,
     input   hnonsec,
     input   hready_i,
+    input   excl_write_enable,
 
     input   hrdata,
     input   hresp,

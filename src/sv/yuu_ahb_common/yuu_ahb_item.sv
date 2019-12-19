@@ -21,8 +21,10 @@ class yuu_ahb_item extends yuu_amba_item;
   rand yuu_ahb_emt_prot5_e  prot5_emt = NO_ALLOCATE;
   rand yuu_ahb_emt_prot6_e  prot6_emt = NON_SHAREABLE;
        bit[3:0]             master;
-  rand bit                  lock = 1'b0;
-  rand yuu_ahb_nonsec_e     nonsec = NON_SECURE;
+  rand bit                  lock  = 1'b0;
+  rand yuu_ahb_nonsec_e     nonsec= NON_SECURE;
+  rand yuu_ahb_excl_e       excl  = NON_EXCLUSIVE;
+  rand yuu_ahb_exokay_e     exokay= EXOKAY;
 
        yuu_ahb_location_e   location[];
        real                 start_time;
@@ -46,6 +48,8 @@ class yuu_ahb_item extends yuu_amba_item;
     `uvm_field_int         (                      master,         UVM_ALL_ON)
     `uvm_field_int         (                      lock,           UVM_ALL_ON)
     `uvm_field_enum        (yuu_ahb_nonsec_e,     nonsec,         UVM_ALL_ON)
+    `uvm_field_enum        (yuu_ahb_excl_e,       excl,           UVM_ALL_ON)
+    `uvm_field_enum        (yuu_ahb_exokay_e,     exokay,         UVM_ALL_ON)
     `uvm_field_array_enum  (yuu_ahb_location_e,   location,       UVM_PRINT | UVM_COPY)
     `uvm_field_real        (                      start_time,     UVM_PRINT | UVM_COPY)
     `uvm_field_real        (                      end_time,       UVM_PRINT | UVM_COPY)
@@ -81,6 +85,10 @@ class yuu_ahb_item extends yuu_amba_item;
 
   constraint c_ahb_align {
     address_aligned_enable == True;
+  }
+
+  constraint c_ahb_exclusive {
+    excl == 1'b1 -> len == 0;
   }
 
   constraint c_ahb_1k_boundary {

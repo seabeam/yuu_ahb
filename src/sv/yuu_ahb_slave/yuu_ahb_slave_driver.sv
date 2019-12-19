@@ -14,7 +14,10 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   protected process processes[string];
   protected yuu_amba_addr_map maps[];
 
-  protected yuu_ahb_slave_memory m_mem;
+  protected yuu_ahb_slave_memory  m_mem;
+  protected boolean               m_excl_start;
+  protected yuu_ahb_addr_t        m_excl_addr;
+  protected int unsigned          m_excl_master;
 
   `uvm_component_utils_begin(yuu_ahb_slave_driver)
   `uvm_component_utils_end
@@ -86,6 +89,7 @@ task yuu_ahb_slave_driver::reset_signal();
   vif.cb.hresp    <= OKAY;
   vif.cb.hready_o <= 1'b1;
   vif.cb.hrdata   <= 'h0;
+  vif.cb.hexokay  <= 1'b1;
 endtask
 
 task yuu_ahb_slave_driver::get_and_drive();
@@ -108,24 +112,46 @@ task yuu_ahb_slave_driver::drive_bus();
   yuu_ahb_data_t      wdata;
   yuu_ahb_data_t      rdata;
 
-  boolean out_of_bound = False;
-
   while((vif.cb.htrans !== NONSEQ && vif.cb.htrans !== SEQ) || vif.cb.hsel !== 1'b1 || vif.cb.hready_i !== 1'b1) begin
     vif.wait_cycle();
   end
   addr = vif.cb.haddr;
-  out_of_bound = is_out(addr);
   direction = yuu_ahb_direction_e'(vif.cb.hwrite);
   size = yuu_ahb_size_e'(vif.cb.hsize);
+
   seq_item_port.get_next_item(req);
-  if (out_of_bound)
+  req.master  = vif.cb.hmaster;
+  req.lock    = vif.cb.hmastlock;
+  if (vif.cb.excl_write_enable === 0)
+    req.exokay = EXERROR;
+  else
+    req.exokay = EXOKAY;
+  //req.excl    = yuu_ahb_excl_e'(vif.cb.hexcl);
+  if (is_out(addr))
     req.response[0] = ERROR;
+  //if (vif.cb.excl === EXCLUSIVE && vif.cb.hwrite == WRITE && !m_excl_start)
+    //req.exokay = EXERROR;
+  //else if (vif.cb.excl === EXCLUSIVE && vif.cb.hwrite == WRITE && m_excl_start) begin
+    //if (vif.cb.hmaster != m_excl_master || vif.cb.haddr != m_excl_addr)
+      //req.exokay = EXERROR; 
+    //else
+      //req.exokay = EXOKAY;
+    //m_excl_start = False;
+  //end
+  //else if (vif.cb.excl === EXCLUSIVE && vif.cb.hwrite == READ) begin
+    //req.exokay = EXOKAY;
+    //m_excl_addr= addr;
+    //m_excl_master = req.master;
+    //m_excl_start  = True;
+  //end
   fork
     wait((vif.cb.htrans === NONSEQ || vif.cb.htrans === SEQ) && vif.cb.hsel === 1'b1 && vif.cb.hready_i === 1'b1);
     begin
       vif.cb.hready_o <= 1'b0;
-      vif.cb.hresp <= OKAY;
+      vif.cb.hresp    <= OKAY;
+      vif.cb.hexokay  <= EXOKAY;
       repeat(req.wait_delay) vif.wait_cycle();
+      vif.cb.hexokay  <= req.exokay;
       if (req.response[0] == ERROR) begin
         vif.cb.hresp <= req.response[0];
         vif.wait_cycle();

@@ -94,6 +94,16 @@ typedef enum bit{
   } yuu_ahb_nonsec_e;
 
 typedef enum bit{
+  NON_EXCLUSIVE,
+  EXCLUSIVE
+  } yuu_ahb_excl_e;
+
+typedef enum bit{
+  EXERROR,
+  EXOKAY
+  } yuu_ahb_exokay_e;
+
+typedef enum bit{
   ABOUT_AFTER_ERROR,
   CONTINUE_AFTER_ERROR
   } yuu_ahb_error_behavior_e;

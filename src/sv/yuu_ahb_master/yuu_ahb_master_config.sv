@@ -13,27 +13,29 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   // Early burst termination burst continue
   boolean ebt_continue  = False;
   boolean use_busy_end  = False;
-  boolean use_protection= False;
+  boolean use_protection_transfers  = False;
   boolean use_extended_memory_types = False;
-  boolean use_lock    = False;
-  boolean use_nonsec  = False;
-  boolean use_response= False;
+  boolean use_locked_transfers      = False;
+  boolean use_secure_transfers      = False;
+  boolean use_exclusive_transfers   = False;
+  boolean use_response  = False;
 
   yuu_ahb_error_behavior_e error_behavior;
   yuu_amba_addr_map addressable_maps[];
 
   `uvm_object_utils_begin(yuu_ahb_master_config)
-    `uvm_field_enum        (boolean,                  idle_enable,      UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  busy_enable,      UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  ebt_continue,     UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  use_busy_end,     UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  use_protection,   UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  use_extended_memory_types, UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  use_lock,         UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  use_nonsec,       UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  busy_enable,      UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (yuu_ahb_error_behavior_e, error_behavior,   UVM_PRINT | UVM_COPY)
-    `uvm_field_array_object(                          addressable_maps, UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  idle_enable,              UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  busy_enable,              UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  ebt_continue,             UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_busy_end,             UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_protection_transfers, UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_extended_memory_types,UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_locked_transfers,     UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_secure_transfers,     UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_exclusive_transfers,  UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  busy_enable,              UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (yuu_ahb_error_behavior_e, error_behavior,           UVM_PRINT | UVM_COPY)
+    `uvm_field_array_object(                          addressable_maps,         UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
   function new(string name = "yuu_ahb_master_config");

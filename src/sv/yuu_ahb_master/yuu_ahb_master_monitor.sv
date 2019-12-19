@@ -19,6 +19,7 @@ class yuu_ahb_master_monitor extends uvm_monitor;
   protected yuu_ahb_data_t      data_q[$];
   protected yuu_ahb_trans_e     trans_q[$];
   protected yuu_ahb_response_e  response_q[$];
+  protected yuu_ahb_exokay_e    exokay_q[$];
   protected int unsigned        busy_q[$];
   protected int unsigned        idle_q[$];
 
@@ -91,6 +92,7 @@ task yuu_ahb_master_monitor::init_component();
   response_q.delete();
   busy_q.delete();
   idle_q.delete();
+  exokay_q.delete();
 endtask
 
 task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_item);
@@ -115,6 +117,7 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_ite
 
     item.busy_delay[i] = busy_q.pop_front();
   end
+  item.exokay = exokay_q.pop_front();
   item.idle_delay = idle_q.pop_front();
 
   foreach (item.location[i])
@@ -168,6 +171,7 @@ task yuu_ahb_master_monitor::cmd_phase();
     monitor_item.master     = vif.mon_cb.hmaster  ;
     monitor_item.lock       = vif.mon_cb.hmastlock;
     monitor_item.nonsec     = yuu_ahb_nonsec_e'(vif.mon_cb.hnonsec);
+    monitor_item.excl       = yuu_ahb_excl_e'(vif.mon_cb.hexcl);
 
     monitor_item.burst_size = yuu_amba_size_e'(monitor_item.size);
     if (monitor_item.burst inside {WRAP4, WRAP8, WRAP16})
@@ -207,6 +211,10 @@ task yuu_ahb_master_monitor::data_phase();
     data_q.push_back(vif.mon_cb.hrdata);
   end
   response_q.push_back(yuu_ahb_response_e'(vif.mon_cb.hresp));
+  if (monitor_item.excl == EXCLUSIVE)
+    exokay_q.push_back(yuu_ahb_exokay_e'(vif.mon_cb.hexokay));
+  else if (exokay_q.size() == 0)
+    exokay_q.push_back(EXOKAY);
 
   monitor_data_end.trigger();
   m_data.put();

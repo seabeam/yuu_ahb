@@ -24,6 +24,7 @@ interface yuu_ahb_master_interface();
   logic                           hmastlock;
   logic                           hnonsec;
   logic                           hexcl;
+  logic                           hexokay;
 
   logic [31:0]                    upper_byte_lane;
   logic [31:0]                    lower_byte_lane;
@@ -50,6 +51,7 @@ interface yuu_ahb_master_interface();
     input   hrdata;
     input   hresp;
     input   hready_i;
+    input   hexokay;
 
     output  upper_byte_lane;
     output  lower_byte_lane;
@@ -70,6 +72,7 @@ interface yuu_ahb_master_interface();
     input   hmastlock;
     input   hnonsec;
     input   hexcl;
+    input   hexokay;
 
     input   hrdata;
     input   hresp;
@@ -96,6 +99,7 @@ interface yuu_ahb_master_interface();
     input   hrdata,
     input   hresp,
     input   hready_i,
+    input   hexokay,
     input   hreset_n
   );
 
@@ -115,9 +119,11 @@ interface yuu_ahb_master_interface();
     input   hrdata,
     input   hresp,
     input   hready_i,
+    input   hexokay,
     input   hreset_n
   );
 
+  // Analyze signal
   `define AHBM_IF_TRANS_IDLE    0
   `define AHBM_IF_TRANS_BUSY    1
   `define AHBM_IF_TRANS_NONSEQ  2

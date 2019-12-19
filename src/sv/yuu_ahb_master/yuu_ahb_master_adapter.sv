@@ -6,17 +6,18 @@
 `define YUU_AHB_MASTER_ADAPTER_SV
 
 class yuu_ahb_reg_extension extends uvm_object;
-  yuu_ahb_addr_t   byte_offset;
-  yuu_ahb_data_t   data[];
-  yuu_ahb_size_e   size;
-  yuu_ahb_burst_e  burst = yuu_ahb_pkg::INCR;
-  yuu_ahb_prot0_e  prot0 = DATA_ACCESS;
-  yuu_ahb_prot1_e  prot1 = PRIVILEGED_ACCESS;
-  yuu_ahb_prot2_e  prot2 = NON_BUFFERABLE;
-  yuu_ahb_prot3_e  prot3 = NON_CACHEABLE;
-  bit[3:0]         master;
-  bit              lock;
-  yuu_ahb_nonsec_e nonsec = NON_SECURE;
+  yuu_ahb_addr_t    byte_offset;
+  yuu_ahb_data_t    data[];
+  yuu_ahb_size_e    size;
+  yuu_ahb_burst_e   burst = yuu_ahb_pkg::INCR;
+  yuu_ahb_prot0_e   prot0 = DATA_ACCESS;
+  yuu_ahb_prot1_e   prot1 = PRIVILEGED_ACCESS;
+  yuu_ahb_prot2_e   prot2 = NON_BUFFERABLE;
+  yuu_ahb_prot3_e   prot3 = NON_CACHEABLE;
+  bit[3:0]          master;
+  bit               lock;
+  yuu_ahb_nonsec_e  nonsec = NON_SECURE;
+  yuu_ahb_excl_e    excl  = NON_EXCLUSIVE;
 
   `uvm_object_utils(yuu_ahb_reg_extension)
 
@@ -78,6 +79,7 @@ class yuu_ahb_master_adapter extends uvm_reg_adapter;
         master  == ext.master;
         lock    == ext.lock;
         nonsec  == ext.nonsec;
+        excl    == ext.excl;
         idle_delay == 0;
       };
     end

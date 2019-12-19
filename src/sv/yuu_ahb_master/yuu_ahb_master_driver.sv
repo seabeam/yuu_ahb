@@ -82,6 +82,7 @@ task yuu_ahb_master_driver::reset_signal();
   vif.cb.hmaster    <= 4'h0;
   vif.cb.hmastlock  <= 1'b0;
   vif.cb.hnonsec    <= 1'b1;
+  vif.cb.hexcl      <= 1'b0;
 
   vif.cb.upper_byte_lane <= 'h0;
   vif.cb.lower_byte_lane <= 'h0;
@@ -132,6 +133,7 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
     vif.cb.hmaster  <= cur_item.master;
     vif.cb.hmastlock<= cur_item.lock;
     vif.cb.hnonsec  <= cur_item.nonsec;
+    vif.cb.hexcl    <= cur_item.excl;
 
     for (int i=0; i<=len; i++) begin
       drive_cmd_begin.trigger();
@@ -194,6 +196,8 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
         cur_item.data[i] = vif.cb.hrdata;
       end
       cur_item.response[i] = vif.cb.hresp;
+      if (i == 0)
+        cur_item.exokay = vif.cb.hexokay;
 
       `uvm_info("data_phase", "Beat end", UVM_HIGH)
     end

@@ -43,7 +43,7 @@ class yuu_ahb_master_item extends yuu_ahb_item;
     if (!uvm_config_db#(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
       `uvm_fatal("pre_randomize", "Cannot get yuu_ahb agent config in sequence item")
 
-    if (!cfg.use_protection) begin
+    if (!cfg.use_protection_transfers) begin
       prot0.rand_mode(0);
       prot1.rand_mode(0);
       prot2.rand_mode(0);
@@ -58,11 +58,14 @@ class yuu_ahb_master_item extends yuu_ahb_item;
       prot5_emt.rand_mode(0);
       prot6_emt.rand_mode(0);
     end
-    if (!cfg.use_lock) begin
+    if (!cfg.use_locked_transfers) begin
       lock.rand_mode(0);
     end
-    if (!cfg.use_nonsec) begin
+    if (!cfg.use_secure_transfers) begin
       nonsec.rand_mode(0);
+    end
+    if (!cfg.use_exclusive_transfers) begin
+      excl.rand_mode(0);
     end
   endfunction
 

@@ -19,6 +19,7 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   protected yuu_ahb_data_t      data_q[$];
   protected yuu_ahb_trans_e     trans_q[$];
   protected yuu_ahb_response_e  response_q[$];
+  protected yuu_ahb_exokay_e    exokay_q[$];
 
   `uvm_register_cb(yuu_ahb_slave_monitor, yuu_ahb_slave_monitor_callback)
 
@@ -104,6 +105,7 @@ task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_slave_item monitor_item)
     item.trans[i]   = trans_q.pop_front();
     item.response[i]= response_q.pop_front();
   end
+  item.exokay = exokay_q.pop_front();
 
   foreach (item.location[i])
     item.location[i] = MIDDLE;
@@ -201,6 +203,8 @@ task yuu_ahb_slave_monitor::data_phase();
     data_q.push_back(vif.mon_cb.hrdata);
   end
   response_q.push_back(yuu_ahb_response_e'(vif.mon_cb.hresp));
+  if (exokay_q.size() == 0)
+    exokay_q.push_back(yuu_ahb_exokay_e'(vif.mon_cb.hexokay));
 
   monitor_data_end.trigger();
   m_data.put();
