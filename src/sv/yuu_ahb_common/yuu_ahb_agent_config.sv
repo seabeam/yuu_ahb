@@ -2,8 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_AGENT_CONFIG_SVH
-`define YUU_AHB_AGENT_CONFIG_SVH
+`ifndef YUU_AHB_AGENT_CONFIG_SV
+`define YUU_AHB_AGENT_CONFIG_SV
 
 class yuu_ahb_agent_config extends uvm_object;
   uvm_event_pool   events;

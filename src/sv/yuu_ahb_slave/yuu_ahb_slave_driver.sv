@@ -65,9 +65,11 @@ endtask
 
 function void yuu_ahb_slave_driver::init_mem();
   if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem)) begin
-    m_mem = yuu_ahb_slave_memory::type_id::create("m_mem");
-    m_mem.cfg = cfg;
+    m_mem = new;
   end
+  m_mem.init_pattern  = cfg.mem_init_pattern;
+  m_mem.data_width    = cfg.bus_width;
+  m_mem.enable_byte_align = False;
 endfunction
 
 function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);

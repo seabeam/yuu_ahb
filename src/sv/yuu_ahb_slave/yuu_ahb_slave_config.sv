@@ -10,15 +10,15 @@ class yuu_ahb_slave_config extends yuu_ahb_agent_config;
 
             boolean wait_enable = True;
   protected boolean multi_range = False;
-  yuu_ahb_mem_pattern_e mem_init_pattern = PATTERN_ALL_0;
+  yuu_common_mem_pattern_e mem_init_pattern = PATTERN_ALL_0;
 
   yuu_amba_addr_map maps[];
 
   `uvm_object_utils_begin(yuu_ahb_slave_config)
-    `uvm_field_enum        (boolean,                wait_enable,      UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                multi_range,      UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (yuu_ahb_mem_pattern_e,  mem_init_pattern, UVM_PRINT | UVM_COPY)
-    `uvm_field_array_object(maps,                                     UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  wait_enable,      UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  multi_range,      UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (yuu_common_mem_pattern_e, mem_init_pattern, UVM_PRINT | UVM_COPY)
+    `uvm_field_array_object(maps,                                       UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
   function new(string name = "yuu_ahb_slave_config");

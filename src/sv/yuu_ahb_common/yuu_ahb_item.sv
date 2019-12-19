@@ -2,8 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_ITEM_SVH
-`define YUU_AHB_ITEM_SVH
+`ifndef YUU_AHB_ITEM_SV
+`define YUU_AHB_ITEM_SV
 
 class yuu_ahb_item extends yuu_amba_item;
   rand yuu_ahb_data_t       data[];

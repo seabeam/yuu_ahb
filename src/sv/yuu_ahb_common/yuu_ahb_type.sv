@@ -2,13 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_TYPE_SVH
-`define YUU_AHB_TYPE_SVH
-
-//typedef class yuu_ahb_master_item;
-//typedef class yuu_ahb_slave_item;
-//typedef uvm_sequencer #(yuu_ahb_master_item)  yuu_ahb_master_sequencer;
-//typedef uvm_sequencer #(yuu_ahb_slave_item)   yuu_ahb_slave_sequencer;
+`ifndef YUU_AHB_TYPE_SV
+`define YUU_AHB_TYPE_SV
 
 typedef bit [`YUU_AHB_ADDR_WIDTH-1:0] yuu_ahb_addr_t;
 typedef bit [`YUU_AHB_DATA_WIDTH-1:0] yuu_ahb_data_t;
@@ -123,17 +118,6 @@ typedef enum bit[2:0] {
   WRITE_ONLY,
   CURRUPT_DATA
   } yuu_ahb_error_type_e;
-
-typedef enum bit[2:0] {
-  PATTERN_ALL_0,
-  PATTERN_ALL_1,
-  PATTERN_55,
-  PATTERN_AA,
-  PATTERN_5A,
-  PATTERN_A5,
-  PATTERN_ADDRESS,
-  PATTERN_RANDOM
-  } yuu_ahb_mem_pattern_e;
 
 function yuu_amba_burst_type_e burst_ahb_to_amba(yuu_ahb_burst_e burst_type);
   case (burst_type)

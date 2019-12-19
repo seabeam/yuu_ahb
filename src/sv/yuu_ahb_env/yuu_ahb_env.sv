@@ -2,8 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_ENV_SVH
-`define YUU_AHB_ENV_SVH
+`ifndef YUU_AHB_ENV_SV
+`define YUU_AHB_ENV_SV
 
 class yuu_ahb_env extends uvm_env;
   yuu_ahb_master_agent  master[];
