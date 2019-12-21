@@ -1,4 +1,4 @@
-CASE=uvc_test
+CASE=
 ADD=
 
 clean:
@@ -11,4 +11,4 @@ comp:
 	vcs -sverilog -full64 ${ADD} -lca -kdb -debug_acc+all -f bench.f -q -ntb_opts uvm -timescale=1ns/1ns -l log/compile.log
 
 run:
-	simv +UVM_TESTNAME=${CASE} -l log/sim.log ${ADD}&
+	simv +UVM_TESTNAME=${CASE} -l log/sim.log ${ADD}

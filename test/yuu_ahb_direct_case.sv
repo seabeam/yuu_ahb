@@ -21,7 +21,12 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
                           direction == READ;};
     start_item(req);
     finish_item(req);
+    get_response(rsp);
 
+    // 0x80000100 ---- 0x00000001
+    // 0x80000104 ---- 0x00000200
+    // 0x80000108 ---- 0x00030000
+    // 0x8000010C ---- 0x04000000
     req.randomize() with {start_address == 32'h80000100;
                           len == 3;
                           size == SIZE32;
@@ -33,6 +38,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
                           direction == WRITE;};
     start_item(req);
     finish_item(req);
+    get_response(rsp);
 
     req.randomize() with {start_address == 32'h80000100;
                           len == 15;
@@ -44,7 +50,25 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
                           direction == READ;};
     start_item(req);
     finish_item(req);
+    get_response(rsp);
+    foreach (rsp.address[i]) begin
+      bit[31:0] expected;
+      bit[31:0] address;
+      int index;
+      
+      address = rsp.address[i][31:2];
+      index = address[1:0]+1;
+      expected = index<<((index-1)*8);
+      if (expected != rsp.data[i])
+        `uvm_error("body", $sformatf("Compare failed, expected is 0x%0h, actual is 0x%0h", expected, rsp.data[i]))
+      else
+        `uvm_info("body", $sformatf("Compare pass, actual is 0x%0h", rsp.data[i]), UVM_LOW)
+    end
 
+    // 0x80000100 ---- 0x00040301
+    // 0x80000104 ---- 0x00000200
+    // 0x80000108 ---- 0x00030000
+    // 0x8000010C ---- 0x04000000
     req.randomize() with {start_address == 32'h80000101;
                           len == 1;
                           size == SIZE8;
@@ -56,6 +80,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
                           direction == WRITE;};
     start_item(req);
     finish_item(req);
+    get_response(rsp);
 
     req.randomize() with {start_address == 32'h80000100;
                           len == 3;
@@ -67,8 +92,23 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
                           direction == READ;};
     start_item(req);
     finish_item(req);
-
-    master_done.trigger();
+    get_response(rsp);
+    if (rsp.data[0] != 32'h00040301)
+      `uvm_error("body", $sformatf("Compare failed, expected is 0x%0h, actual is 0x%0h", 32'h00040301, rsp.data[0]))
+    else
+      `uvm_info("body", $sformatf("Compare pass, actual is 0x%0h", rsp.data[0]), UVM_LOW)
+    if (rsp.data[1] != 32'h00000200)
+      `uvm_error("body", $sformatf("Compare failed, expected is 0x%0h, actual is 0x%0h", 32'h00000200, rsp.data[1]))
+    else
+      `uvm_info("body", $sformatf("Compare pass, actual is 0x%0h", rsp.data[1]), UVM_LOW)
+    if (rsp.data[2] != 32'h00030000)
+      `uvm_error("body", $sformatf("Compare failed, expected is 0x%0h, actual is 0x%0h", 32'h00030000, rsp.data[2]))
+    else
+      `uvm_info("body", $sformatf("Compare pass, actual is 0x%0h", rsp.data[2]), UVM_LOW)
+    if (rsp.data[3] != 32'h04000000)
+      `uvm_error("body", $sformatf("Compare failed, expected is 0x%0h, actual is 0x%0h", 32'h04000000, rsp.data[3]))
+    else
+      `uvm_info("body", $sformatf("Compare pass, actual is 0x%0h", rsp.data[3]), UVM_LOW)
   endtask
 endclass : yuu_master_direct_sequence
 
@@ -94,7 +134,6 @@ class yuu_slave_rsp_seqence extends yuu_ahb_slave_response_sequence;
       };
       start_item(req);
       finish_item(req);
-      if (master_done.is_on()) break;
     end
   endtask
 endclass
@@ -126,6 +165,7 @@ class yuu_ahb_direct_case extends uvm_test;
       m_cfg.index = 0;
       m_cfg.idle_enable = True;
       m_cfg.busy_enable = True;
+      m_cfg.use_response = True;
       cfg.set_config(m_cfg);
     end
     begin
@@ -150,7 +190,7 @@ class yuu_ahb_direct_case extends uvm_test;
     fork
       mst_seq.start(env.sequencer.master_sequencer[0]);
       rsp_seq.start(env.sequencer.slave_sequencer[0]);
-    join
+    join_any
     phase.drop_objection(this);
   endtask : run_phase
 endclass : yuu_ahb_direct_case

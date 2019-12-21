@@ -18,6 +18,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   protected boolean               m_excl_start;
   protected yuu_ahb_addr_t        m_excl_addr;
   protected int unsigned          m_excl_master;
+  local     int unsigned          drive_count;
 
   `uvm_component_utils_begin(yuu_ahb_slave_driver)
   `uvm_component_utils_end
@@ -64,6 +65,7 @@ endtask
 task yuu_ahb_slave_driver::init_component();
   init_mem();
   reset_signal();
+  drive_count = 0;
 endtask
 
 function void yuu_ahb_slave_driver::init_mem();
@@ -120,6 +122,7 @@ task yuu_ahb_slave_driver::drive_bus();
   size = yuu_ahb_size_e'(vif.cb.hsize);
 
   seq_item_port.get_next_item(req);
+  drive_count ++;
   req.master  = vif.cb.hmaster;
   req.lock    = vif.cb.hmastlock;
   if (vif.cb.excl_write_enable === 0)
