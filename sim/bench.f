@@ -64,3 +64,4 @@ top.sv
 +incdir+../src/sv/yuu_ahb_master
 +incdir+../src/sv/yuu_ahb_slave
 +incdir+../src/sv/yuu_ahb_env
++incdir+../test

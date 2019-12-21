@@ -6,10 +6,10 @@
 `define YUU_AHB_ENV_CONFIG_SV
 
 class yuu_ahb_env_config extends uvm_object;
+  virtual yuu_ahb_interface ahb_if;
+
   yuu_ahb_master_config  mst_cfg[$];
   yuu_ahb_slave_config   slv_cfg[$];
-
-  virtual yuu_ahb_interface ahb_if;
   uvm_event_pool events;
 
   boolean compare_enable = False;
