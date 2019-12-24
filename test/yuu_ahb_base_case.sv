@@ -49,7 +49,7 @@ class yuu_ahb_base_case extends uvm_test;
   endfunction : build_phase
 
   function void connect_phase(uvm_phase phase);
-    model.default_map.set_sequencer(env.sequencer.master_sequencer[0], env.master[0].adapter);
+    model.default_map.set_sequencer(env.vsequencer.master_sequencer[0], env.master[0].adapter);
     if (cfg.mst_cfg[0].use_reg_model)
       env.master[0].predictor.map = model.default_map;
   endfunction

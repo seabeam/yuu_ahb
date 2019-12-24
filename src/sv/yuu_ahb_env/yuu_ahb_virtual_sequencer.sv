@@ -34,4 +34,13 @@ function void yuu_ahb_virtual_sequencer::connect_phase(uvm_phase phase);
   events = cfg.events;
 endfunction
 
+class yuu_ahb_virtual_sequence extends uvm_sequence_base;
+  `uvm_object_utils(yuu_ahb_virtual_sequence)
+  `uvm_declare_p_sequencer(yuu_ahb_virtual_sequencer)
+
+  function new(string name = "yuu_ahb_virtual_sequence");
+    super.new(name);
+  endfunction
+endclass
+
 `endif

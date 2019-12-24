@@ -8,7 +8,7 @@
 class yuu_ahb_env extends uvm_env;
   yuu_ahb_master_agent      master[];
   yuu_ahb_slave_agent       slave[];
-  yuu_ahb_virtual_sequencer sequencer;
+  yuu_ahb_virtual_sequencer vsequencer;
 
   yuu_ahb_env_config    cfg;
 
@@ -32,10 +32,10 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
     `uvm_fatal("CONFIG", "Cannot get yuu_ahb_env_config.");
   end
 
-  sequencer = yuu_ahb_virtual_sequencer::type_id::create("sequencer", this);
+  vsequencer = yuu_ahb_virtual_sequencer::type_id::create("vsequencer", this);
 
   master = new[cfg.mst_cfg.size()];
-  sequencer.master_sequencer = new[cfg.mst_cfg.size()];
+  vsequencer.master_sequencer = new[cfg.mst_cfg.size()];
   foreach(master[i]) begin
     if (cfg.mst_cfg[i].index != -1) begin
       uvm_config_db#(yuu_ahb_master_config)::set(this, $sformatf("master_%s", cfg.mst_cfg[i].get_name()), "cfg", cfg.mst_cfg[i]);
@@ -44,7 +44,7 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   end
 
   slave = new[cfg.slv_cfg.size()];
-  sequencer.slave_sequencer = new[cfg.slv_cfg.size()];
+  vsequencer.slave_sequencer = new[cfg.slv_cfg.size()];
   foreach(slave[i]) begin
     if (cfg.slv_cfg[i].index != -1) begin
       uvm_config_db#(yuu_ahb_slave_config)::set(this, $sformatf("slave_%s", cfg.slv_cfg[i].get_name()), "cfg", cfg.slv_cfg[i]);
@@ -65,17 +65,17 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
     end
   end
 
-  sequencer.cfg = cfg;
+  vsequencer.cfg = cfg;
 endfunction
 
 function void yuu_ahb_env::connect_phase(uvm_phase phase);
   foreach (cfg.mst_cfg[i]) begin
     cfg.mst_cfg[i].events = cfg.events;
-    sequencer.master_sequencer[i] = master[i].sequencer;
+    vsequencer.master_sequencer[i] = master[i].sequencer;
   end
   foreach (cfg.slv_cfg[i]) begin
     cfg.slv_cfg[i].events = cfg.events;
-    sequencer.slave_sequencer[i] = slave[i].sequencer;
+    vsequencer.slave_sequencer[i] = slave[i].sequencer;
   end
 endfunction
 

@@ -1,25 +1,31 @@
-class yuu_master_ral_direct_sequence extends yuu_ahb_master_sequence_base;
+class yuu_master_ral_virtual_sequence extends yuu_ahb_virtual_sequence;
   slave_ral_model model;
 
-  `uvm_object_utils(yuu_master_ral_direct_sequence)
+  `uvm_object_utils(yuu_master_ral_virtual_sequence)
 
-  function new(string name="yuu_master_ral_direct_sequence");
+  function new(string name="yuu_master_ral_virtual_sequence");
     super.new(name);
   endfunction : new
 
   task body();
-    uvm_status_e    status;
-    uvm_reg_data_t  value;
+    yuu_slave_rsp_seqence       rsp_seq = new("rsp_seq");
+    fork
+      begin
+        uvm_status_e    status;
+        uvm_reg_data_t  value;
 
-    #100ns;
-    model.common.RB.write(status, 32'h1234);
-    #100ns;
-    model.common.RA.write(status, 32'h1234);
-    //#100ns;
-    model.common.RA.read(status, value);
-    #100ns;
+        #100ns;
+        model.common.RA.write(status, 32'h1234);
+        #100ns;
+        model.common.RB.write(status, 32'h1234);
+        model.common.RA.read(status, value);
+        #100ns;
+        `uvm_info("body", $sformatf("Register A value is %8h", value), UVM_LOW);
+      end
+      rsp_seq.start(p_sequencer.slave_sequencer[0]);
+    join_any
   endtask
-endclass : yuu_master_ral_direct_sequence
+endclass : yuu_master_ral_virtual_sequence
 
 
 class yuu_ahb_ral_case extends yuu_ahb_base_case;
@@ -36,15 +42,12 @@ class yuu_ahb_ral_case extends yuu_ahb_base_case;
   endfunction : build_phase
 
   task run_phase(uvm_phase phase);
-    yuu_master_ral_direct_sequence  mst_seq = new("mst_seq");
-    yuu_slave_rsp_seqence     rsp_seq = new("rsp_seq");
+    yuu_master_ral_virtual_sequence seq;
 
-    mst_seq.model = model;
+    seq = new("seq");
+    seq.model = model;
     phase.raise_objection(this);
-    fork
-      mst_seq.start(env.sequencer.master_sequencer[0]);
-      rsp_seq.start(env.sequencer.slave_sequencer[0]);
-    join_any
+    seq.start(env.vsequencer);
     phase.drop_objection(this);
   endtask : run_phase
 endclass : yuu_ahb_ral_case

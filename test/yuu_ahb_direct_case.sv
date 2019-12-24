@@ -112,7 +112,6 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
   endtask
 endclass : yuu_master_direct_sequence
 
-
 class yuu_slave_rsp_seqence extends yuu_ahb_slave_response_sequence;
   `uvm_object_utils(yuu_slave_rsp_seqence)
 
@@ -138,6 +137,23 @@ class yuu_slave_rsp_seqence extends yuu_ahb_slave_response_sequence;
   endtask
 endclass
 
+class yuu_master_direct_virtual_sequence extends yuu_ahb_virtual_sequence;
+  `uvm_object_utils(yuu_master_direct_virtual_sequence)
+
+  function new(string name ="yuu_master_direct_virtual_sequence");
+    super.new(name);
+  endfunction
+
+  task body();
+    yuu_master_direct_sequence  mst_seq = new("mst_seq");
+    yuu_slave_rsp_seqence       rsp_seq = new("rsp_seq");
+    fork
+      mst_seq.start(p_sequencer.master_sequencer[0]);
+      rsp_seq.start(p_sequencer.slave_sequencer[0]);
+    join_any
+  endtask
+endclass : yuu_master_direct_virtual_sequence
+
 
 class yuu_ahb_direct_case extends yuu_ahb_base_case;
   `uvm_component_utils(yuu_ahb_direct_case)
@@ -153,16 +169,11 @@ class yuu_ahb_direct_case extends yuu_ahb_base_case;
   endfunction : build_phase
 
   task run_phase(uvm_phase phase);
-    yuu_master_direct_sequence  mst_seq = new("mst_seq");
-    yuu_slave_rsp_seqence     rsp_seq = new("rsp_seq");
-
-    uvm_event master_done = events.get("master_done");
+    yuu_master_direct_virtual_sequence seq;
+    seq = new("seq");
 
     phase.raise_objection(this);
-    fork
-      mst_seq.start(env.sequencer.master_sequencer[0]);
-      rsp_seq.start(env.sequencer.slave_sequencer[0]);
-    join_any
+    seq.start(env.vsequencer);
     phase.drop_objection(this);
   endtask : run_phase
 endclass : yuu_ahb_direct_case
