@@ -8,11 +8,13 @@
 class yuu_ahb_master_agent extends uvm_agent;
   yuu_ahb_master_config  cfg;
 
-  yuu_ahb_master_sequencer sequencer;
-  yuu_ahb_master_driver    driver;
-  yuu_ahb_master_monitor   monitor;
-  yuu_ahb_master_collector collector;
-  yuu_ahb_master_analyzer  analyzer;
+  yuu_ahb_master_sequencer  sequencer;
+  yuu_ahb_master_driver     driver;
+  yuu_ahb_master_monitor    monitor;
+  yuu_ahb_master_collector  collector;
+  yuu_ahb_master_analyzer   analyzer;
+  yuu_ahb_master_adapter    adapter;
+  yuu_ahb_master_predictor  predictor;
 
   uvm_analysis_port #(yuu_ahb_master_item) out_driver_ap;
   uvm_analysis_port #(yuu_ahb_master_item) out_monitor_ap;
@@ -23,6 +25,7 @@ class yuu_ahb_master_agent extends uvm_agent;
   extern         function      new(string name, uvm_component parent);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void connect_phase(uvm_phase phase);
+  extern virtual function void end_of_elaboration_phase(uvm_phase phase);
 endclass
 
 function yuu_ahb_master_agent::new(string name, uvm_component parent);
@@ -50,6 +53,17 @@ function void yuu_ahb_master_agent::build_phase(uvm_phase phase);
     analyzer = yuu_ahb_master_analyzer::type_id::create("analyzer", this);
     analyzer.cfg = cfg;
   end
+
+  if (cfg.use_reg_model) begin
+    adapter = yuu_ahb_master_adapter::type_id::create("adapter");
+    adapter.cfg = cfg;
+    adapter.provides_responses = 1;
+
+    predictor = yuu_ahb_master_predictor::type_id::create("predictor", this);
+    predictor.adapter = adapter;
+
+    cfg.use_response = True;
+  end
 endfunction
 
 function void yuu_ahb_master_agent::connect_phase(uvm_phase phase);
@@ -64,6 +78,16 @@ function void yuu_ahb_master_agent::connect_phase(uvm_phase phase);
   end
   if (cfg.analysis_enable) begin
     monitor.out_monitor_ap.connect(analyzer.analysis_export);
+  end
+  if (cfg.use_reg_model) begin
+    monitor.out_monitor_ap.connect(predictor.bus_in);
+  end
+endfunction
+
+function void yuu_ahb_master_agent::end_of_elaboration_phase(uvm_phase phase);
+  if (cfg.use_reg_model) begin
+    if (predictor.map == null)
+      `uvm_fatal("end_of_elaboration_phase", "When register model used, the predictor map should be set")
   end
 endfunction
 

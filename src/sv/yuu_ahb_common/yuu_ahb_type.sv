@@ -8,6 +8,8 @@
 typedef bit [`YUU_AHB_ADDR_WIDTH-1:0] yuu_ahb_addr_t;
 typedef bit [`YUU_AHB_DATA_WIDTH-1:0] yuu_ahb_data_t;
 typedef bit [`YUU_AHB_LANE_WIDTH-1:0] yuu_ahb_lane_t;
+typedef class yuu_ahb_master_item;
+typedef uvm_reg_predictor #(yuu_ahb_master_item) yuu_ahb_master_predictor;
 
 typedef enum bit{
   READ,

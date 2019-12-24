@@ -146,6 +146,12 @@ class yuu_ahb_direct_case extends yuu_ahb_base_case;
     super.new(name, parent);
   endfunction : new
 
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+
+    cfg.mst_cfg[0].use_response = True;
+  endfunction : build_phase
+
   task run_phase(uvm_phase phase);
     yuu_master_direct_sequence  mst_seq = new("mst_seq");
     yuu_slave_rsp_seqence     rsp_seq = new("rsp_seq");

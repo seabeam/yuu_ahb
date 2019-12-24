@@ -15,7 +15,7 @@ class yuu_master_ral_direct_sequence extends yuu_ahb_master_sequence_base;
     model.common.RB.write(status, 32'h1234);
     #100ns;
     model.common.RA.write(status, 32'h1234);
-    #100ns;
+    //#100ns;
     model.common.RA.read(status, value);
     #100ns;
   endtask
@@ -28,6 +28,12 @@ class yuu_ahb_ral_case extends yuu_ahb_base_case;
   function new(string name, uvm_component parent);
     super.new(name, parent);
   endfunction : new
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+
+    cfg.mst_cfg[0].use_reg_model = True;
+  endfunction : build_phase
 
   task run_phase(uvm_phase phase);
     yuu_master_ral_direct_sequence  mst_seq = new("mst_seq");

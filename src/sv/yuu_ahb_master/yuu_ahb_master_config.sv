@@ -19,6 +19,7 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
   boolean use_secure_transfers      = False;
   boolean use_exclusive_transfers   = False;
   boolean use_response  = False;
+  boolean use_reg_model = False;
 
   yuu_ahb_error_behavior_e error_behavior;
   yuu_amba_addr_map addressable_maps[];

@@ -99,6 +99,7 @@ task yuu_ahb_master_driver::get_and_drive();
         proc_drive = process::self();
         processes["proc_drive"] = proc_drive;
         seq_item_port.get_next_item(item);
+        @(vif.cb);
         out_driver_ap.write(item);
         `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
         fork
