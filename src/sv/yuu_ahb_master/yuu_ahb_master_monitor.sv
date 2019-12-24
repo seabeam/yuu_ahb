@@ -99,6 +99,7 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_ite
   int len = address_q.size()-1;
   yuu_ahb_master_item item = yuu_ahb_master_item::type_id::create("monitor_item");
 
+  #0;
   item.copy(monitor_item);
   item.len = len;
   item.address  = new[len+1];

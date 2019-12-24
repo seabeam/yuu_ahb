@@ -8,7 +8,9 @@ import yuu_common_pkg::*;
 import yuu_amba_pkg::*;
 import yuu_ahb_pkg::*;
 
+`include "yuu_ahb_base_case.sv"
 `include "yuu_ahb_direct_case.sv"
+`include "yuu_ahb_ral_case.sv"
 
 module top;
   reg  hclk;
@@ -50,7 +52,7 @@ module top;
     #11 hreset_n  = 1'b1;
   end
 
-  always #5  hclk = ~hclk;
+  always #7  hclk = ~hclk;
 endmodule
 
 `endif

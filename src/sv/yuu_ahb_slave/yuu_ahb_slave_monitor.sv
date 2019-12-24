@@ -84,12 +84,14 @@ task yuu_ahb_slave_monitor::init_component();
   data_q.delete();
   trans_q.delete();
   response_q.delete();
+  exokay_q.delete();
 endtask
 
 task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_slave_item monitor_item);
   int len = address_q.size()-1;
   yuu_ahb_slave_item item = yuu_ahb_slave_item::type_id::create("monitor_item");
 
+  #0;
   item.copy(monitor_item);
   item.len = len;
   item.address  = new[len+1];
@@ -126,7 +128,7 @@ task yuu_ahb_slave_monitor::cmd_phase();
   uvm_event monitor_cmd_end   = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
 
   m_cmd.get();
-  while (vif.mon_cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY || vif.mon_cb.hsel !== 1'b1)
+  while ((vif.mon_cb.hready_i & vif.mon_cb.hready_o) !== 1'b1 || vif.mon_cb.htrans === BUSY || vif.mon_cb.hsel !== 1'b1)
     vif.wait_cycle();
 
   if (vif.mon_cb.htrans == IDLE && address_q.size() == 0) begin
@@ -188,10 +190,10 @@ task yuu_ahb_slave_monitor::data_phase();
   uvm_event monitor_data_end   = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
 
   m_data.get();
-  while (vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ) || vif.mon_cb.hsel !== 1'b1)
+  while ((vif.mon_cb.hready_i & vif.mon_cb.hready_o) !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ) || vif.mon_cb.hsel !== 1'b1)
     vif.wait_cycle();
   vif.wait_cycle();
-  while (vif.mon_cb.hready_i !== 1'b1)
+  while ((vif.mon_cb.hready_i & vif.mon_cb.hready_o) !== 1'b1)
     vif.wait_cycle();
 
   monitor_data_begin.trigger();
