@@ -29,7 +29,7 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
   if (!uvm_config_db #(yuu_ahb_env_config)::get(null, get_full_name(), "cfg", cfg)) begin
-    `uvm_fatal("CONFIG", "Cannot get yuu_ahb_env_config.");
+    `uvm_fatal("build_phase", "Cannot get yuu_ahb_env_config.");
   end
 
   vsequencer = yuu_ahb_virtual_sequencer::type_id::create("vsequencer", this);
@@ -53,17 +53,6 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   end
 
   address_check();
-
-  foreach (master[i]) begin
-    if (cfg.mst_cfg[i].index != -1) begin
-      uvm_config_db #(yuu_ahb_master_config)::set(this, $sformatf("master_%s", cfg.mst_cfg[i].get_name()), "cfg", cfg.mst_cfg[i]);
-    end
-  end
-  foreach (slave[i]) begin
-    if (cfg.slv_cfg[i].index != -1) begin
-      uvm_config_db #(yuu_ahb_slave_config)::set(this, $sformatf("slave_%s", cfg.slv_cfg[i].get_name()), "cfg", cfg.slv_cfg[i]);
-    end
-  end
 
   vsequencer.cfg = cfg;
 endfunction
