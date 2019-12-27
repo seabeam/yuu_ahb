@@ -94,7 +94,7 @@ function void yuu_ahb_env::address_check();
     addr_ass[2*i+1] = high_addr[i];
 
     if (low_addr[i] == high_addr[i])
-      `uvm_warning("Address check", $sformatf("Low address equals to high address(%0h)", low_addr[i]))
+      `uvm_warning("address_check", $sformatf("Low address equals to high address(%0h)", low_addr[i]))
   end
 
   begin
@@ -105,7 +105,7 @@ function void yuu_ahb_env::address_check();
     q1 = q0;
     q0.sort();
     if (q0 != q1 || (addr_ass.size() > q0.size())) begin
-      `uvm_warning("Address check", "Address range has overlaping")
+      `uvm_warning("address_check", "Address range has overlaping")
     end
   end
 endfunction

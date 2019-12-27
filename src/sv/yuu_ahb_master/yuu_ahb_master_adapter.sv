@@ -16,12 +16,12 @@ class yuu_ahb_reg_extension extends uvm_object;
   yuu_ahb_prot3_e   prot3 = NON_CACHEABLE;
   bit[3:0]          master;
   bit               lock;
-  yuu_ahb_nonsec_e  nonsec = NON_SECURE;
+  yuu_ahb_nonsec_e  nonsec= NON_SECURE;
   yuu_ahb_excl_e    excl  = NON_EXCLUSIVE;
 
   `uvm_object_utils(yuu_ahb_reg_extension)
 
-  function new(string name="yuu_ahb_reg_extension");
+  function new(string name = "yuu_ahb_reg_extension");
     super.new(name);
   endfunction
 endclass

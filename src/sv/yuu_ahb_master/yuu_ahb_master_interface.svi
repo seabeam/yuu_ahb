@@ -33,6 +33,9 @@ interface yuu_ahb_master_interface();
   logic [31:0]                    transfer_idx;
 
   clocking cb @(posedge hclk);
+  endclocking
+
+  clocking drv_cb @(posedge hclk);
     default input #`YUU_AHB_MASTER_SETUP_TIME output #`YUU_AHB_MASTER_HOLD_TIME;
 
     output  haddr;

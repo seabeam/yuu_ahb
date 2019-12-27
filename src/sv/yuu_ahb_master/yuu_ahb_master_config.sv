@@ -34,7 +34,8 @@ class yuu_ahb_master_config extends yuu_ahb_agent_config;
     `uvm_field_enum        (boolean,                  use_locked_transfers,     UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean,                  use_secure_transfers,     UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (boolean,                  use_exclusive_transfers,  UVM_PRINT | UVM_COPY)
-    `uvm_field_enum        (boolean,                  busy_enable,              UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_response,             UVM_PRINT | UVM_COPY)
+    `uvm_field_enum        (boolean,                  use_reg_model,            UVM_PRINT | UVM_COPY)
     `uvm_field_enum        (yuu_ahb_error_behavior_e, error_behavior,           UVM_PRINT | UVM_COPY)
     `uvm_field_array_object(                          addressable_maps,         UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end

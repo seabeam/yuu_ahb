@@ -22,7 +22,7 @@ class yuu_ahb_env_config extends uvm_object;
     `uvm_field_queue_object (         slv_cfg,                UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  function new(string name="yuu_ahb_env_config");
+  function new(string name = "yuu_ahb_env_config");
     super.new(name);
   endfunction
 
@@ -31,7 +31,7 @@ class yuu_ahb_env_config extends uvm_object;
     yuu_ahb_slave_config  s_cfg;
 
     if (cfg == null)
-      `uvm_fatal("NULL", "Which yuu_ahb agent config set is null")
+      `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
 
     cfg.events = events;
     if ($cast(m_cfg, cfg)) begin
@@ -45,7 +45,7 @@ class yuu_ahb_env_config extends uvm_object;
       slv_cfg.push_back(s_cfg);
     end
     else
-      `uvm_fatal("Error Type", "Invalid yuu_ahb agent configure object type")
+      `uvm_fatal("set_config", "Invalid yuu_ahb agent configure object type")
   endfunction
 
   function void set_configs(yuu_ahb_agent_config cfg[]);

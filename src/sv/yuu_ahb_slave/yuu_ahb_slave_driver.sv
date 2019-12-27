@@ -88,10 +88,10 @@ function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
 endfunction
 
 task yuu_ahb_slave_driver::reset_signal();
-  vif.cb.hresp    <= OKAY;
-  vif.cb.hready_o <= 1'b1;
-  vif.cb.hrdata   <= 'h0;
-  vif.cb.hexokay  <= 1'b1;
+  vif.drv_cb.hresp    <= OKAY;
+  vif.drv_cb.hready_o <= 1'b1;
+  vif.drv_cb.hrdata   <= 'h0;
+  vif.drv_cb.hexokay  <= 1'b1;
 endtask
 
 task yuu_ahb_slave_driver::get_and_drive();
@@ -114,53 +114,53 @@ task yuu_ahb_slave_driver::drive_bus();
   yuu_ahb_data_t      wdata;
   yuu_ahb_data_t      rdata;
 
-  while((vif.cb.htrans !== NONSEQ && vif.cb.htrans !== SEQ) || vif.cb.hsel !== 1'b1 || vif.cb.hready_i !== 1'b1) begin
+  while((vif.drv_cb.htrans !== NONSEQ && vif.drv_cb.htrans !== SEQ) || vif.drv_cb.hsel !== 1'b1 || vif.drv_cb.hready_i !== 1'b1) begin
     vif.wait_cycle();
   end
 
   seq_item_port.get_next_item(req);
   drive_count ++;
-  req.start_address = vif.cb.haddr;
+  req.start_address = vif.drv_cb.haddr;
   req.address   = new[1];
-  req.address[0]= vif.cb.haddr;
-  req.direction = yuu_ahb_direction_e'(vif.cb.hwrite);
-  req.size      = yuu_ahb_size_e'(vif.cb.hsize);
+  req.address[0]= vif.drv_cb.haddr;
+  req.direction = yuu_ahb_direction_e'(vif.drv_cb.hwrite);
+  req.size      = yuu_ahb_size_e'(vif.drv_cb.hsize);
   // Force burst to SINGLE
   req.burst     = SINGLE;
-  req.prot3     = yuu_ahb_prot3_e'(vif.cb.hprot[3]);
-  req.prot2     = yuu_ahb_prot2_e'(vif.cb.hprot[2]);
-  req.prot1     = yuu_ahb_prot1_e'(vif.cb.hprot[1]);
-  req.prot0     = yuu_ahb_prot0_e'(vif.cb.hprot[0]);
-  req.prot6_emt = yuu_ahb_emt_prot6_e'(vif.cb.hprot_emt[6]);
-  req.prot5_emt = yuu_ahb_emt_prot5_e'(vif.cb.hprot_emt[5]);
-  req.prot4_emt = yuu_ahb_emt_prot4_e'(vif.cb.hprot_emt[4]);
-  req.prot3_emt = yuu_ahb_emt_prot3_e'(vif.cb.hprot_emt[3]);
-  req.master    = vif.cb.hmaster;
-  req.lock      = vif.cb.hmastlock;
-  req.nonsec    = yuu_ahb_nonsec_e'(vif.cb.hnonsec);
+  req.prot3     = yuu_ahb_prot3_e'(vif.drv_cb.hprot[3]);
+  req.prot2     = yuu_ahb_prot2_e'(vif.drv_cb.hprot[2]);
+  req.prot1     = yuu_ahb_prot1_e'(vif.drv_cb.hprot[1]);
+  req.prot0     = yuu_ahb_prot0_e'(vif.drv_cb.hprot[0]);
+  req.prot6_emt = yuu_ahb_emt_prot6_e'(vif.drv_cb.hprot_emt[6]);
+  req.prot5_emt = yuu_ahb_emt_prot5_e'(vif.drv_cb.hprot_emt[5]);
+  req.prot4_emt = yuu_ahb_emt_prot4_e'(vif.drv_cb.hprot_emt[4]);
+  req.prot3_emt = yuu_ahb_emt_prot3_e'(vif.drv_cb.hprot_emt[3]);
+  req.master    = vif.drv_cb.hmaster;
+  req.lock      = vif.drv_cb.hmastlock;
+  req.nonsec    = yuu_ahb_nonsec_e'(vif.drv_cb.hnonsec);
 
   req.burst_size = yuu_amba_size_e'(req.size);
   req.burst_type = yuu_amba_pkg::INCR;
   req.address_aligned_enable = True;
-  if (vif.cb.excl_write_enable === 0)
+  if (vif.drv_cb.excl_write_enable === 0)
     req.exokay = EXERROR;
   else
     req.exokay = EXOKAY;
   if (is_out(req.address[0]))
     req.response[0] = ERROR;
   fork
-    wait((vif.cb.htrans === NONSEQ || vif.cb.htrans === SEQ) && vif.cb.hsel === 1'b1 && vif.cb.hready_i === 1'b1);
+    wait((vif.drv_cb.htrans === NONSEQ || vif.drv_cb.htrans === SEQ) && vif.drv_cb.hsel === 1'b1 && vif.drv_cb.hready_i === 1'b1);
     begin
-      vif.cb.hready_o <= 1'b0;
-      vif.cb.hresp    <= OKAY;
-      vif.cb.hexokay  <= EXOKAY;
+      vif.drv_cb.hready_o <= 1'b0;
+      vif.drv_cb.hresp    <= OKAY;
+      vif.drv_cb.hexokay  <= EXOKAY;
       repeat(req.wait_delay) vif.wait_cycle();
-      vif.cb.hexokay  <= req.exokay;
+      vif.drv_cb.hexokay  <= req.exokay;
       if (req.response[0] == ERROR) begin
-        vif.cb.hresp <= req.response[0];
+        vif.drv_cb.hresp <= req.response[0];
         vif.wait_cycle();
       end
-      vif.cb.hready_o <= 1'b1;
+      vif.drv_cb.hready_o <= 1'b1;
     end
   join
   
@@ -175,8 +175,8 @@ task yuu_ahb_slave_driver::drive_bus();
       strobe[i] = 1'b1;
 
     vif.wait_cycle();
-    req.data[0] = vif.cb.hwdata;
-    vif.cb.hresp <= OKAY;
+    req.data[0] = vif.drv_cb.hwdata;
+    vif.drv_cb.hresp <= OKAY;
     if (req.response[0] != ERROR)
       m_mem.write(mem_addr, req.data[0], strobe);
     seq_item_port.item_done();
@@ -185,16 +185,16 @@ task yuu_ahb_slave_driver::drive_bus();
     yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_ADDR_WIDTH/8);
     m_mem.read(mem_addr, rdata);
     if (req.response[0] != ERROR) begin
-      vif.cb.hrdata <= rdata;
+      vif.drv_cb.hrdata <= rdata;
       req.data[0] = rdata;
     end
     else begin
-      vif.cb.hrdata <= 'h0;
+      vif.drv_cb.hrdata <= 'h0;
       req.data[0] = 0;
     end
     seq_item_port.item_done();
     vif.wait_cycle();
-    vif.cb.hresp <= OKAY;
+    vif.drv_cb.hresp <= OKAY;
   end
 endtask
 

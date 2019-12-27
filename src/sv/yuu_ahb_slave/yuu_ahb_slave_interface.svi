@@ -31,6 +31,9 @@ interface yuu_ahb_slave_interface();
   logic [31:0]                    transfer_num;
 
   clocking cb @(posedge hclk);
+  endclocking
+
+  clocking drv_cb @(posedge hclk);
     default input #`YUU_AHB_SLAVE_SETUP_TIME output #`YUU_AHB_SLAVE_HOLD_TIME;
 
     input   hsel;

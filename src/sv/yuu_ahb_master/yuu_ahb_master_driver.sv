@@ -71,21 +71,21 @@ task yuu_ahb_master_driver::init_component();
 endtask
 
 task yuu_ahb_master_driver::reset_signal();
-  vif.cb.haddr      <= 'h0;
-  vif.cb.htrans     <= 2'h0;
-  vif.cb.hburst     <= 'h0;
-  vif.cb.hwrite     <= 1'b1;
-  vif.cb.hsize      <= 'h2;
-  vif.cb.hwdata     <= 'h0;
-  vif.cb.hprot      <= 'h0;
-  vif.cb.hprot_emt  <= 'h0;
-  vif.cb.hmaster    <= 4'h0;
-  vif.cb.hmastlock  <= 1'b0;
-  vif.cb.hnonsec    <= 1'b1;
-  vif.cb.hexcl      <= 1'b0;
+  vif.drv_cb.haddr      <= 'h0;
+  vif.drv_cb.htrans     <= 2'h0;
+  vif.drv_cb.hburst     <= 'h0;
+  vif.drv_cb.hwrite     <= 1'b1;
+  vif.drv_cb.hsize      <= 'h2;
+  vif.drv_cb.hwdata     <= 'h0;
+  vif.drv_cb.hprot      <= 'h0;
+  vif.drv_cb.hprot_emt  <= 'h0;
+  vif.drv_cb.hmaster    <= 4'h0;
+  vif.drv_cb.hmastlock  <= 1'b0;
+  vif.drv_cb.hnonsec    <= 1'b1;
+  vif.drv_cb.hexcl      <= 1'b0;
 
-  vif.cb.upper_byte_lane <= 'h0;
-  vif.cb.lower_byte_lane <= 'h0;
+  vif.drv_cb.upper_byte_lane <= 'h0;
+  vif.drv_cb.lower_byte_lane <= 'h0;
 endtask
 
 task yuu_ahb_master_driver::get_and_drive();
@@ -99,7 +99,7 @@ task yuu_ahb_master_driver::get_and_drive();
         proc_drive = process::self();
         processes["proc_drive"] = proc_drive;
         seq_item_port.get_next_item(item);
-        @(vif.cb);
+        @(vif.drv_cb);
         out_driver_ap.write(item);
         `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
         fork
@@ -126,34 +126,34 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
     repeat(cur_item.idle_delay) vif.wait_cycle();
     `uvm_info("cmd_phase", "Transaction start", UVM_HIGH)
 
-    vif.cb.hwrite   <= cur_item.direction;
-    vif.cb.hsize    <= cur_item.size;
-    vif.cb.hburst   <= cur_item.burst;
-    vif.cb.hprot    <= {cur_item.prot3, cur_item.prot2, cur_item.prot1, cur_item.prot0};
-    vif.cb.hprot_emt<= {cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt};
-    vif.cb.hmaster  <= cur_item.master;
-    vif.cb.hmastlock<= cur_item.lock;
-    vif.cb.hnonsec  <= cur_item.nonsec;
-    vif.cb.hexcl    <= cur_item.excl;
+    vif.drv_cb.hwrite   <= cur_item.direction;
+    vif.drv_cb.hsize    <= cur_item.size;
+    vif.drv_cb.hburst   <= cur_item.burst;
+    vif.drv_cb.hprot    <= {cur_item.prot3, cur_item.prot2, cur_item.prot1, cur_item.prot0};
+    vif.drv_cb.hprot_emt<= {cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt};
+    vif.drv_cb.hmaster  <= cur_item.master;
+    vif.drv_cb.hmastlock<= cur_item.lock;
+    vif.drv_cb.hnonsec  <= cur_item.nonsec;
+    vif.drv_cb.hexcl    <= cur_item.excl;
 
     for (int i=0; i<=len; i++) begin
       drive_cmd_begin.trigger();
       `uvm_info("cmd_phase", "Beat start", UVM_HIGH)
 
-      vif.cb.haddr <= cur_item.address[i];
+      vif.drv_cb.haddr <= cur_item.address[i];
       if (cur_item.busy_delay[i] > 0) begin
-        vif.cb.htrans <= BUSY;
+        vif.drv_cb.htrans <= BUSY;
         repeat(cur_item.busy_delay[i]) vif.wait_cycle();
       end
-      vif.cb.htrans <= cur_item.trans[i];
+      vif.drv_cb.htrans <= cur_item.trans[i];
       do
         vif.wait_cycle();
-      while (vif.cb.hready_i !== 1'b1);
+      while (vif.drv_cb.hready_i !== 1'b1);
 
       if (cur_item.location[i] == LAST) begin
-        vif.cb.htrans   <= IDLE;
-        vif.cb.hmastlock<= 1'b0;
-        vif.cb.hnonsec  <= 1'b1;
+        vif.drv_cb.htrans   <= IDLE;
+        vif.drv_cb.hmastlock<= 1'b0;
+        vif.drv_cb.hnonsec  <= 1'b1;
       end
 
       drive_cmd_end.trigger();
@@ -177,7 +177,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     cur_item.copy(item);
     len = cur_item.len;
 
-    while (vif.cb.hready_i !== 1'b1 || vif.mon_cb.htrans !== NONSEQ)
+    while (vif.drv_cb.hready_i !== 1'b1 || vif.mon_cb.htrans !== NONSEQ)
       vif.wait_cycle();
     `uvm_info("data_phase", "Transaction start", UVM_HIGH)
     drive_data_begin.trigger();
@@ -185,20 +185,20 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     for (int i=0; i<=len; i++) begin
       `uvm_info("data_phase", "Beat start", UVM_HIGH)
       if (cur_item.direction == WRITE) begin
-        vif.cb.hwdata <= cur_item.data[i];
-        vif.cb.upper_byte_lane <= cur_item.upper_byte_lane[i];
-        vif.cb.lower_byte_lane <= cur_item.lower_byte_lane[i];
+        vif.drv_cb.hwdata <= cur_item.data[i];
+        vif.drv_cb.upper_byte_lane <= cur_item.upper_byte_lane[i];
+        vif.drv_cb.lower_byte_lane <= cur_item.lower_byte_lane[i];
       end
 
       do
         vif.wait_cycle();
-      while (vif.cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY);
+      while (vif.drv_cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY);
       if (cur_item.direction == READ) begin
-        cur_item.data[i] = vif.cb.hrdata;
+        cur_item.data[i] = vif.drv_cb.hrdata;
       end
-      cur_item.response[i] = vif.cb.hresp;
+      cur_item.response[i] = vif.drv_cb.hresp;
       if (i == 0)
-        cur_item.exokay = vif.cb.hexokay;
+        cur_item.exokay = vif.drv_cb.hexokay;
 
       `uvm_info("data_phase", "Beat end", UVM_HIGH)
     end
