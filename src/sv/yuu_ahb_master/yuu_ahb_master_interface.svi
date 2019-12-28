@@ -86,7 +86,7 @@ interface yuu_ahb_master_interface();
   endclocking
 
 
-  modport DUT (
+  modport drv_mp (
     output  haddr,
     output  htrans,
     output  hburst,
@@ -106,7 +106,7 @@ interface yuu_ahb_master_interface();
     input   hreset_n
   );
 
-  modport MON (
+  modport mon_mp (
     input   haddr,
     input   htrans,
     input   hburst,

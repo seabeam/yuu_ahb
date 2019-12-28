@@ -6,13 +6,13 @@
 `define YUU_AHB_SLAVE_AGENT_SV
 
 class yuu_ahb_slave_agent extends uvm_agent;
+  yuu_ahb_slave_config  cfg;
+
   yuu_ahb_slave_sequencer sequencer;
   yuu_ahb_slave_driver    driver;
   yuu_ahb_slave_monitor   monitor;
   yuu_ahb_slave_collector collector;
   yuu_ahb_slave_analyzer  analyzer;
-
-  yuu_ahb_slave_config  cfg;
 
   uvm_analysis_port  #(yuu_ahb_slave_item)  out_driver_ap;
   uvm_analysis_port  #(yuu_ahb_slave_item)  out_monitor_ap;

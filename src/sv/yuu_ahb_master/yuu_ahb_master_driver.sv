@@ -52,7 +52,7 @@ endfunction
 
 task yuu_ahb_master_driver::run_phase(uvm_phase phase);
   init_component();
-  wait(vif.DUT.hreset_n === 1'b1);
+  wait(vif.drv_mp.hreset_n === 1'b1);
   vif.wait_cycle();
   fork
     get_and_drive();

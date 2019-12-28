@@ -20,6 +20,8 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   protected int unsigned          m_excl_master;
   local     int unsigned          drive_count;
 
+  `uvm_register_cb(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback)
+
   `uvm_component_utils_begin(yuu_ahb_slave_driver)
   `uvm_component_utils_end
 
@@ -119,6 +121,7 @@ task yuu_ahb_slave_driver::drive_bus();
   end
 
   seq_item_port.get_next_item(req);
+  `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, pre_send(this, req));
   drive_count ++;
   req.start_address = vif.drv_cb.haddr;
   req.address   = new[1];
@@ -179,6 +182,8 @@ task yuu_ahb_slave_driver::drive_bus();
     vif.drv_cb.hresp <= OKAY;
     if (req.response[0] != ERROR)
       m_mem.write(mem_addr, req.data[0], strobe);
+    `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, post_send(this, req));
+    out_driver_ap.write(req);
     seq_item_port.item_done();
   end
   else begin
@@ -192,6 +197,8 @@ task yuu_ahb_slave_driver::drive_bus();
       vif.drv_cb.hrdata <= 'h0;
       req.data[0] = 0;
     end
+    `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, post_send(this, req));
+    out_driver_ap.write(req);
     seq_item_port.item_done();
     vif.wait_cycle();
     vif.drv_cb.hresp <= OKAY;

@@ -81,9 +81,7 @@ interface yuu_ahb_slave_interface();
     input   hexokay;
   endclocking
 
-  modport DUT (
-    clocking  cb,
-
+  modport drv_mp (
     input   hsel,
     input   haddr,
     input   htrans,
@@ -105,7 +103,7 @@ interface yuu_ahb_slave_interface();
     output  hexokay
   );
 
-  modport MON (
+  modport mon_mp (
     input   hreset_n,
     input   hsel,
     input   haddr,
