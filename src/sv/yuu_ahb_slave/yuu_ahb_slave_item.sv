@@ -33,7 +33,7 @@ class yuu_ahb_slave_item extends yuu_ahb_item;
     super.pre_randomize();
 
     if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-      `uvm_fatal("pre_randomize", "Cannot get ahb slave config in sequence item")
+      `uvm_fatal("pre_randomize", "Cannot get AHB slave configuration in transaction")
   endfunction
 
 endclass

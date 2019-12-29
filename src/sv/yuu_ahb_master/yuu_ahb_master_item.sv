@@ -41,7 +41,7 @@ class yuu_ahb_master_item extends yuu_ahb_item;
     super.pre_randomize();
 
     if (!uvm_config_db#(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-      `uvm_fatal("pre_randomize", "Cannot get yuu_ahb master configuration in transaction")
+      `uvm_fatal("pre_randomize", "Cannot get AHB master configuration in transaction")
 
     if (!cfg.use_protection_transfers) begin
       prot0.rand_mode(0);

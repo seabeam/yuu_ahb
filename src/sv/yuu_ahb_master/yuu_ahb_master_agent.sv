@@ -34,8 +34,10 @@ endfunction
 
 function void yuu_ahb_master_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db #(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg)) begin
-    `uvm_fatal("build_phase", "Cannot get yuu_ahb_master agent configuration");
+    `uvm_fatal("build_phase", "Cannot get master configuration");
   end
+  if (cfg == null)
+    `uvm_fatal("build_phase", "Get a null master configuration")
 
   monitor = yuu_ahb_master_monitor::type_id::create("monitor", this);
   monitor.cfg = cfg;

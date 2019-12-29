@@ -9,8 +9,9 @@ class yuu_ahb_agent_config extends uvm_object;
   uvm_event_pool   events;
 
   int index = -1;
+  int unsigned addr_width = `YUU_AHB_ADDR_WIDTH;
+  int unsigned data_width = `YUU_AHB_DATA_WIDTH;
   int timeout = 0;
-  int unsigned bus_width = `YUU_AHB_DATA_WIDTH;
   uvm_active_passive_enum is_active = UVM_ACTIVE;
 
   // Struct control
@@ -20,8 +21,9 @@ class yuu_ahb_agent_config extends uvm_object;
 
   `uvm_object_utils_begin(yuu_ahb_agent_config)
     `uvm_field_int (                          index,                  UVM_PRINT | UVM_COPY)
+    `uvm_field_int  (                         addr_width,           UVM_PRINT | UVM_COPY)
+    `uvm_field_int (                          data_width,             UVM_PRINT | UVM_COPY)
     `uvm_field_int (                          timeout,                UVM_PRINT | UVM_COPY)
-    `uvm_field_int (                          bus_width,              UVM_PRINT | UVM_COPY)
     `uvm_field_enum(uvm_active_passive_enum,  is_active,              UVM_PRINT | UVM_COPY)
     `uvm_field_enum(boolean,                  coverage_enable,        UVM_PRINT | UVM_COPY)
     `uvm_field_enum(boolean,                  analysis_enable,        UVM_PRINT | UVM_COPY)

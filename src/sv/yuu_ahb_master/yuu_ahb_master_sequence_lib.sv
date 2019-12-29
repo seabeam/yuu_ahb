@@ -14,8 +14,7 @@ class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
 
   int unsigned n_item = 10;
 
-  `uvm_object_utils_begin(yuu_ahb_master_sequence_base)
-  `uvm_object_utils_end
+  `uvm_object_utils(yuu_ahb_master_sequence_base)
   `uvm_declare_p_sequencer(yuu_ahb_master_sequencer)
 
   function new(string name = "yuu_ahb_master_sequence_base");
@@ -29,7 +28,7 @@ class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
   endtask
 
   virtual task body();
-    return;
+    `uvm_warning("body", "The body task should be OVERRIDED by derived class")
   endtask
 endclass
 

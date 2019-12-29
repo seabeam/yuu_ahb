@@ -1,10 +1,25 @@
-`include "slave_ral_model.sv"
+/////////////////////////////////////////////////////////////////////////////////////
+// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// For more information, see LICENCE in the main folder
+/////////////////////////////////////////////////////////////////////////////////////
 
+`ifndef YUU_AHB_BASE_CASE_SV
+`define YUU_AHB_BASE_CASE_SV
+
+import uvm_pkg::*;
+`include "uvm_macros.svh"
+
+import yuu_common_pkg::*;
+import yuu_amba_pkg::*;
+import yuu_ahb_pkg::*;
+
+`include "slave_ral_model.sv"
 class yuu_ahb_base_case extends uvm_test;
   virtual yuu_ahb_interface vif;
 
   yuu_ahb_env env;
   yuu_ahb_env_config cfg;
+  yuu_ahb_virtual_sequencer vsequencer;
   slave_ral_model model;
 
   uvm_event_pool events;
@@ -52,5 +67,8 @@ class yuu_ahb_base_case extends uvm_test;
     model.default_map.set_sequencer(env.vsequencer.master_sequencer[0], env.master[0].adapter);
     if (cfg.mst_cfg[0].use_reg_model)
       env.master[0].predictor.map = model.default_map;
+    vsequencer = env.vsequencer;
   endfunction
 endclass
+
+`endif

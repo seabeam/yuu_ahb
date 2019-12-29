@@ -49,7 +49,7 @@ class yuu_ahb_master_adapter extends uvm_reg_adapter;
         len     == 0;
         start_address == rw.addr;
         data[0] == rw.data;
-        size    == $clog2(cfg.bus_width/8);
+        size    == $clog2(cfg.data_width/8);
         burst   == SINGLE;
         idle_delay == 0;
       };
@@ -59,7 +59,7 @@ class yuu_ahb_master_adapter extends uvm_reg_adapter;
       
       if (!$cast(ext, item.extension))
         `uvm_error("reg2bus", "Invalid AHB register extension type")
-      if (ext.byte_offset > cfg.bus_width/8-1)
+      if (ext.byte_offset > cfg.data_width/8-1)
         `uvm_warning("reg2bus", "It may accessed the address out of current register")
 
       reg_item.randomize() with {

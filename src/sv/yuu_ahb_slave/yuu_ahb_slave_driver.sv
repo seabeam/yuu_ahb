@@ -75,7 +75,7 @@ function void yuu_ahb_slave_driver::init_mem();
     m_mem = new;
   end
   m_mem.init_pattern  = cfg.mem_init_pattern;
-  m_mem.data_width    = cfg.bus_width;
+  m_mem.data_width    = cfg.data_width;
   m_mem.enable_byte_align = False;
 endfunction
 

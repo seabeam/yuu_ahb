@@ -6,11 +6,11 @@
 `define YUU_AHB_ENV_SV
 
 class yuu_ahb_env extends uvm_env;
+  yuu_ahb_env_config    cfg;
+
   yuu_ahb_master_agent      master[];
   yuu_ahb_slave_agent       slave[];
   yuu_ahb_virtual_sequencer vsequencer;
-
-  yuu_ahb_env_config    cfg;
 
   `uvm_component_utils(yuu_ahb_env)
 
@@ -31,6 +31,8 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   if (!uvm_config_db #(yuu_ahb_env_config)::get(null, get_full_name(), "cfg", cfg)) begin
     `uvm_fatal("build_phase", "Cannot get yuu_ahb_env_config.");
   end
+  if (cfg == null)
+    `uvm_fatal("build_phase", "Get a null env configuration")
 
   vsequencer = yuu_ahb_virtual_sequencer::type_id::create("vsequencer", this);
 

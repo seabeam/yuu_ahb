@@ -1,3 +1,10 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// For more information, see LICENCE in the main folder
+/////////////////////////////////////////////////////////////////////////////////////
+`ifndef YUU_AHB_RAL_CASE_SV
+`define YUU_AHB_RAL_CASE_SV
+
 class yuu_master_ral_virtual_sequence extends yuu_ahb_virtual_sequence;
   slave_ral_model model;
 
@@ -47,7 +54,9 @@ class yuu_ahb_ral_case extends yuu_ahb_base_case;
     seq = new("seq");
     seq.model = model;
     phase.raise_objection(this);
-    seq.start(env.vsequencer);
+    seq.start(vsequencer);
     phase.drop_objection(this);
   endtask : run_phase
 endclass : yuu_ahb_ral_case
+
+`endif

@@ -6,7 +6,7 @@
 `define YUU_AHB_SLAVE_SEQUENCE_LIB_SV
 
 typedef class yuu_ahb_slave_sequencer;
-class yuu_ahb_slave_response_sequence extends uvm_sequence #(yuu_ahb_slave_item);
+class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface vif;
 
   yuu_ahb_slave_config  cfg;
@@ -14,10 +14,10 @@ class yuu_ahb_slave_response_sequence extends uvm_sequence #(yuu_ahb_slave_item)
 
   yuu_ahb_error error_object;
 
-  `uvm_object_utils(yuu_ahb_slave_response_sequence)
+  `uvm_object_utils(yuu_ahb_slave_sequence_base)
   `uvm_declare_p_sequencer(yuu_ahb_slave_sequencer)
 
-  function new(string name = "yuu_ahb_slave_response_sequence");
+  function new(string name = "yuu_ahb_slave_sequence_base");
     super.new(name);
   endfunction
 
@@ -28,7 +28,7 @@ class yuu_ahb_slave_response_sequence extends uvm_sequence #(yuu_ahb_slave_item)
   endtask
 
   task body();
-    return;
+    `uvm_warning("body", "The body task should be OVERRIDED by derived class")
   endtask
 endclass
 

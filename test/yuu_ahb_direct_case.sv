@@ -1,3 +1,10 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// For more information, see LICENCE in the main folder
+/////////////////////////////////////////////////////////////////////////////////////
+`ifndef YUU_AHB_DIRECT_CASE_SV
+`define YUU_AHB_DIRECT_CASE_SV
+
 class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
   `uvm_object_utils(yuu_master_direct_sequence)
 
@@ -112,7 +119,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
   endtask
 endclass : yuu_master_direct_sequence
 
-class yuu_slave_rsp_seqence extends yuu_ahb_slave_response_sequence;
+class yuu_slave_rsp_seqence extends yuu_ahb_slave_sequence_base;
   `uvm_object_utils(yuu_slave_rsp_seqence)
 
   function new(string name ="yuu_slave_rsp_seqence");
@@ -173,7 +180,9 @@ class yuu_ahb_direct_case extends yuu_ahb_base_case;
     seq = new("seq");
 
     phase.raise_objection(this);
-    seq.start(env.vsequencer);
+    seq.start(vsequencer);
     phase.drop_objection(this);
   endtask : run_phase
 endclass : yuu_ahb_direct_case
+
+`endif

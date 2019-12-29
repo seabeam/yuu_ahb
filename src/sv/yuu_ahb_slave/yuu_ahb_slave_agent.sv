@@ -31,7 +31,9 @@ endfunction
 
 function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db #(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-   `uvm_fatal("build_phase", "Cannot get yuu_ahb_slave agent configuration");
+   `uvm_fatal("build_phase", "Cannot get slave configuration");
+  if (cfg == null)
+    `uvm_fatal("build_phase", "Get a null slave configuration")
 
   monitor = yuu_ahb_slave_monitor::type_id::create("monitor", this);
   monitor.cfg = cfg;
