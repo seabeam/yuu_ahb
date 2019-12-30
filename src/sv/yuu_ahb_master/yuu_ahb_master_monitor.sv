@@ -58,12 +58,11 @@ endfunction
 
 task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
   process proc_monitor;
-  init_component();
 
-  wait(vif.hreset_n === 1'b1);
-  vif.wait_cycle();
+  init_component();
   fork
-    forever
+    forever begin
+      wait(vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_monitor = process::self();
@@ -74,6 +73,7 @@ task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
           join_any
         end
       join
+    end
     count_busy();
     count_idle();
     wait_reset();
@@ -229,7 +229,8 @@ task yuu_ahb_master_monitor::count_busy();
   process proc_busy0, proc_busy1;
 
   fork
-    forever
+    forever begin
+      wait(vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_busy0 = process::self();
@@ -248,7 +249,9 @@ task yuu_ahb_master_monitor::count_busy();
           vif.wait_cycle();
         end
       join
-    forever
+    end
+    forever begin
+      wait(vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_busy1 = process::self();
@@ -268,6 +271,7 @@ task yuu_ahb_master_monitor::count_busy();
           vif.wait_cycle();
         end
       join
+    end
   join
 endtask
 
@@ -276,7 +280,8 @@ task yuu_ahb_master_monitor::count_idle();
   int count;
   process proc_idle;
 
-  forever
+  forever begin
+    wait(vif.mon_mp.hreset_n === 1'b1);
     fork
       begin
         proc_idle = process::self();
@@ -298,15 +303,17 @@ task yuu_ahb_master_monitor::count_idle();
         vif.wait_cycle();
       end
     join
+  end
 endtask
 
 task yuu_ahb_master_monitor::wait_reset();
   forever begin
-    @(negedge vif.hreset_n);
+    @(negedge vif.mon_mp.hreset_n);
+    `uvm_warning("wait_reset", "Reset signal is asserted, transaction may be dropped")
     foreach (processes[i])
       processes[i].kill();
     init_component();
-    @(posedge vif.hreset_n);
+    @(posedge vif.mon_mp.hreset_n);
   end
 endtask
 

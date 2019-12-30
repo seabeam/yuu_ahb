@@ -9,9 +9,36 @@
 `include "yuu_ahb_slave_interface.svi"
 
 interface yuu_ahb_interface();
+  logic hreset_n;
+  logic hclk;
+
   yuu_ahb_master_interface  master_if[16]();
   yuu_ahb_slave_interface   slave_if[16]();
 
+
+  // Sub-interface connection
+  genvar i;
+
+  generate
+    for (i=0; i<`YUU_AHB_MASTER_NUM; i++) begin : master_reset_connection
+      assign master_if[i].hreset_n = hreset_n;
+    end
+    for (i=0; i<`YUU_AHB_SLAVE_NUM; i++) begin : slave_reset_connection
+      assign slave_if[i].hreset_n = hreset_n;
+    end
+  endgenerate
+
+  generate
+    for (i=0; i<`YUU_AHB_MASTER_NUM; i++) begin : master_clock_connection
+      assign master_if[i].hclk = hclk;
+    end
+    for (i=0; i<`YUU_AHB_SLAVE_NUM; i++) begin : slave_clock_connection
+      assign slave_if[i].hclk = hclk;
+    end
+  endgenerate
+
+
+  // Methods 
   function void check_master_define(int idx);
     if (idx>=`YUU_AHB_MASTER_NUM) begin
       $display("[FATAL] yuu_ahb_interface: the master index %0d has not been defined, check the YUU_AHB_MASTER_NUM define", idx);

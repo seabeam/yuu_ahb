@@ -56,10 +56,9 @@ task yuu_ahb_slave_monitor::run_phase(uvm_phase phase);
   process proc_monitor;
 
   init_component();
-  wait(vif.hreset_n === 1'b1);
-  vif.wait_cycle();
   fork
-    forever
+    forever begin
+      wait(vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_monitor = process::self();
@@ -70,6 +69,7 @@ task yuu_ahb_slave_monitor::run_phase(uvm_phase phase);
           join_any
         end
       join
+    end
     wait_reset();
   join
 endtask
@@ -214,11 +214,11 @@ endtask
 
 task yuu_ahb_slave_monitor::wait_reset();
   forever begin
-    @(negedge vif.hreset_n);
+    @(negedge vif.mon_mp.hreset_n);
     foreach (processes[i])
       processes[i].kill();
     init_component();
-    @(posedge vif.hreset_n);
+    @(posedge vif.mon_mp.hreset_n);
   end
 endtask
 

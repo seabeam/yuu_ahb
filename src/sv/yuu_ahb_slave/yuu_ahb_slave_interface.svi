@@ -82,6 +82,7 @@ interface yuu_ahb_slave_interface();
   endclocking
 
   modport drv_mp (
+    input   hreset_n,
     input   hsel,
     input   haddr,
     input   htrans,

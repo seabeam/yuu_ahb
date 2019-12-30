@@ -52,8 +52,6 @@ endfunction
 
 task yuu_ahb_master_driver::run_phase(uvm_phase phase);
   init_component();
-  wait(vif.drv_mp.hreset_n === 1'b1);
-  vif.wait_cycle();
   fork
     get_and_drive();
     wait_reset();
@@ -89,9 +87,11 @@ task yuu_ahb_master_driver::reset_signal();
 endtask
 
 task yuu_ahb_master_driver::get_and_drive();
+  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
   process proc_drive;
 
-  forever
+  forever begin
+    wait(vif.drv_mp.hreset_n === 1'b1);
     fork
       begin
         yuu_ahb_master_item item;
@@ -99,6 +99,7 @@ task yuu_ahb_master_driver::get_and_drive();
         proc_drive = process::self();
         processes["proc_drive"] = proc_drive;
         seq_item_port.get_next_item(item);
+        handshake.trigger();
         @(vif.drv_cb);
         out_driver_ap.write(item);
         `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
@@ -107,8 +108,10 @@ task yuu_ahb_master_driver::get_and_drive();
           data_phase(item);
         join_any
         seq_item_port.item_done();
+        handshake.reset();
       end
     join
+  end
 endtask
 
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
@@ -222,14 +225,17 @@ task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
 endtask
 
 task yuu_ahb_master_driver::wait_reset();
+  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
+
   forever begin
-    @(negedge vif.hreset_n);
-    if (seq_item_port.has_do_available())
+    @(negedge vif.drv_mp.hreset_n);
+    `uvm_warning("wait_reset", "Reset signal is asserted, transaction may be dropped")
+    if (handshake.is_on())
       seq_item_port.item_done();
     foreach (processes[i])
       processes[i].kill();
     init_component();
-    @(posedge vif.hreset_n);
+    @(posedge vif.drv_mp.hreset_n);
   end
 endtask
 

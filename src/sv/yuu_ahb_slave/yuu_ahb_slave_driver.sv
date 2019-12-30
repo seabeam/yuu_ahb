@@ -55,8 +55,6 @@ endfunction
 
 task yuu_ahb_slave_driver::run_phase(uvm_phase phase);
   init_component();
-  wait(vif.hreset_n === 1'b1);
-  vif.wait_cycle();
   fork
     get_and_drive();
     wait_reset();
@@ -99,7 +97,8 @@ endtask
 task yuu_ahb_slave_driver::get_and_drive();
   process proc_drive;
 
-  forever
+  forever begin
+    wait(vif.drv_mp.hreset_n === 1'b1);
     fork
       begin
         proc_drive = process::self();
@@ -107,9 +106,11 @@ task yuu_ahb_slave_driver::get_and_drive();
         drive_bus();
       end
     join
+  end
 endtask
 
 task yuu_ahb_slave_driver::drive_bus();
+  uvm_event handshake   = events.get($sformatf("%s_handshake", cfg.get_name()));
   yuu_ahb_addr_t      addr;
   yuu_ahb_direction_e direction;
   yuu_ahb_size_e      size;
@@ -121,6 +122,7 @@ task yuu_ahb_slave_driver::drive_bus();
   end
 
   seq_item_port.get_next_item(req);
+  handshake.trigger();
   `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, pre_send(this, req));
   drive_count ++;
   req.start_address = vif.drv_cb.haddr;
@@ -185,6 +187,7 @@ task yuu_ahb_slave_driver::drive_bus();
     `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, post_send(this, req));
     out_driver_ap.write(req);
     seq_item_port.item_done();
+    handshake.reset();
   end
   else begin
     yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_ADDR_WIDTH/8);
@@ -206,14 +209,17 @@ task yuu_ahb_slave_driver::drive_bus();
 endtask
 
 task yuu_ahb_slave_driver::wait_reset();
+  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
+
   forever begin
-    @(negedge vif.hreset_n);
-    if (seq_item_port.has_do_available())
+    @(negedge vif.drv_mp.hreset_n);
+    `uvm_warning("wait_reset", "Reset signal is asserted, transaction may be dropped")
+    if (handshake.is_on())
       seq_item_port.item_done();
     foreach (processes[i])
       processes[i].kill();
     init_component();
-    @(posedge vif.hreset_n);
+    @(posedge vif.drv_mp.hreset_n);
   end
 endtask
 

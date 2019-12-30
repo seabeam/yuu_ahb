@@ -11,10 +11,8 @@ module top;
 
   yuu_ahb_interface ahb_if();
 
-  assign ahb_if.master_if[0].hclk     = hclk;
-  assign ahb_if.master_if[0].hreset_n = hreset_n;
-  assign ahb_if.slave_if[0].hclk      = hclk;
-  assign ahb_if.slave_if[0].hreset_n  = hreset_n;
+  assign ahb_if.hclk     = hclk;
+  assign ahb_if.hreset_n = hreset_n;
 
   logic hready0, hready1;
   assign ahb_if.slave_if[0].haddr     = ahb_if.master_if[0].haddr;
