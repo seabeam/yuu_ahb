@@ -155,6 +155,8 @@ task yuu_ahb_master_monitor::cmd_phase();
 
   monitor_cmd_begin.trigger();
   if (vif.mon_cb.htrans === NONSEQ) begin
+    if (address_q.size()>0)
+      assembling_and_send(monitor_item);
     monitor_item = yuu_ahb_master_item::type_id::create("monitor_item");
     `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, pre_collect(this, monitor_item));
 
