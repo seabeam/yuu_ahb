@@ -22,36 +22,40 @@ class yuu_ahb_env_config extends uvm_object;
     `uvm_field_queue_object (         slv_cfg,                UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  function new(string name = "yuu_ahb_env_config");
-    super.new(name);
-  endfunction
-
-  function void set_config(yuu_ahb_agent_config cfg);
-    yuu_ahb_master_config m_cfg;
-    yuu_ahb_slave_config  s_cfg;
-
-    if (cfg == null)
-      `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
-
-    cfg.events = events;
-    if ($cast(m_cfg, cfg)) begin
-      if(m_cfg.index >= 0)
-        m_cfg.vif = ahb_if.get_master_if(m_cfg.index);
-      mst_cfg.push_back(m_cfg);
-    end
-    else if ($cast(s_cfg, cfg))begin
-      if (s_cfg.index >= 0)
-        s_cfg.vif = ahb_if.get_slave_if(s_cfg.index);
-      slv_cfg.push_back(s_cfg);
-    end
-    else
-      `uvm_fatal("set_config", "Invalid yuu_ahb agent configure object type")
-  endfunction
-
-  function void set_configs(yuu_ahb_agent_config cfg[]);
-    foreach (cfg[i])
-      set_config(cfg[i]);
-  endfunction
+  extern         function new(string name="yuu_ahb_env_config");
+  extern virtual function void set_config(yuu_ahb_agent_config cfg);
+  extern virtual function void set_configs(yuu_ahb_agent_config cfg[]);
 endclass
+
+function yuu_ahb_env_config::new(string name="yuu_ahb_env_config");
+  super.new(name);
+endfunction
+
+function void yuu_ahb_env_config::set_config(yuu_ahb_agent_config cfg);
+  yuu_ahb_master_config m_cfg;
+  yuu_ahb_slave_config  s_cfg;
+
+  if (cfg == null)
+    `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
+
+  cfg.events = events;
+  if ($cast(m_cfg, cfg)) begin
+    if(m_cfg.index >= 0)
+      m_cfg.vif = ahb_if.get_master_if(m_cfg.index);
+    mst_cfg.push_back(m_cfg);
+  end
+  else if ($cast(s_cfg, cfg))begin
+    if (s_cfg.index >= 0)
+      s_cfg.vif = ahb_if.get_slave_if(s_cfg.index);
+    slv_cfg.push_back(s_cfg);
+  end
+  else
+    `uvm_fatal("set_config", "Invalid yuu_ahb agent configure object type")
+endfunction
+
+function void yuu_ahb_env_config::set_configs(yuu_ahb_agent_config cfg[]);
+  foreach (cfg[i])
+    set_config(cfg[i]);
+endfunction
 
 `endif

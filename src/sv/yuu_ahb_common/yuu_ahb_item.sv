@@ -21,10 +21,10 @@ class yuu_ahb_item extends yuu_amba_item;
   rand yuu_ahb_emt_prot5_e  prot5_emt = NO_ALLOCATE;
   rand yuu_ahb_emt_prot6_e  prot6_emt = NON_SHAREABLE;
        bit[3:0]             master;
-  rand bit                  lock  = 1'b0;
-  rand yuu_ahb_nonsec_e     nonsec= NON_SECURE;
-  rand yuu_ahb_excl_e       excl  = NON_EXCLUSIVE;
-  rand yuu_ahb_exokay_e     exokay= EXOKAY;
+  rand bit                  lock = 1'b0;
+  rand yuu_ahb_nonsec_e     nonsec = NON_SECURE;
+  rand yuu_ahb_excl_e       excl = NON_EXCLUSIVE;
+  rand yuu_ahb_exokay_e     exokay = EXOKAY;
 
        yuu_ahb_location_e   location[];
        real                 start_time;
@@ -98,13 +98,13 @@ class yuu_ahb_item extends yuu_amba_item;
     // WRAP never cross 1K
   }
 
-  extern function      new(string name = "yuu_ahb_item");
+  extern function      new(string name="yuu_ahb_item");
   extern function void post_randomize();
   extern function void command_process();
   extern function void data_process();
 endclass
 
-function yuu_ahb_item::new(string name = "yuu_ahb_item");
+function yuu_ahb_item::new(string name="yuu_ahb_item");
   super.new(name);
 endfunction
 

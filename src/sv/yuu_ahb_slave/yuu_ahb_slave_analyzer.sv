@@ -8,8 +8,8 @@
 class yuu_ahb_slave_analyzer extends uvm_subscriber #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface vif;
 
-  yuu_ahb_slave_config cfg;
-  uvm_event_pool events;
+  yuu_ahb_slave_config  cfg;
+  uvm_event_pool        events;
 
   protected time m_start_time;
   protected time m_end_time;
@@ -62,7 +62,7 @@ function void yuu_ahb_slave_analyzer::write(yuu_ahb_slave_item t);
 endfunction
 
 task yuu_ahb_slave_analyzer::measure_start();
-  uvm_event e = events.get($sformatf("%s_measure_begin", cfg.get_name()));
+  uvm_event e = events.get($sformatf("%s_analyzer_measure_begin", cfg.get_name()));
 
   e.wait_on();
   m_start_time = $realtime();
@@ -71,7 +71,7 @@ task yuu_ahb_slave_analyzer::measure_start();
 endtask
 
 task yuu_ahb_slave_analyzer::measure_end();
-  uvm_event e = events.get($sformatf("%s_measure_end", cfg.get_name()));
+  uvm_event e = events.get($sformatf("%s_analyzer_measure_end", cfg.get_name()));
 
   e.wait_on();
   m_end_time = $realtime();

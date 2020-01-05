@@ -43,7 +43,7 @@ function void yuu_ahb_master_agent::build_phase(uvm_phase phase);
   monitor.cfg = cfg;
   if (cfg.is_active == UVM_ACTIVE) begin
     sequencer = yuu_ahb_master_sequencer::type_id::create("sequencer", this);
-    driver    = yuu_ahb_master_driver::type_id::create("driver", this);
+    driver = yuu_ahb_master_driver::type_id::create("driver", this);
     sequencer.cfg = cfg;
     driver.cfg = cfg;
   end

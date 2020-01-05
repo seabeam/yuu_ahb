@@ -9,8 +9,8 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   virtual yuu_ahb_slave_interface  vif;
   uvm_analysis_port #(yuu_ahb_slave_item) out_monitor_ap;
 
-  yuu_ahb_slave_config cfg;
-  uvm_event_pool events;
+  yuu_ahb_slave_config  cfg;
+  uvm_event_pool        events;
   protected process processes[string];
   protected semaphore m_cmd, m_data;
 
@@ -94,25 +94,25 @@ task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_slave_item monitor_item)
   #0;
   item.copy(monitor_item);
   item.len = len;
-  item.address  = new[len+1];
-  item.data     = new[len+1];
-  item.trans    = new[len+1];
+  item.address = new[len+1];
+  item.data = new[len+1];
+  item.trans = new[len+1];
   item.response = new[len+1];
 
   item.location = new[len+1];
 
   for (int i=0; i<=len; i++) begin
     item.address[i] = address_q.pop_front();
-    item.data[i]    = data_q.pop_front();
-    item.trans[i]   = trans_q.pop_front();
-    item.response[i]= response_q.pop_front();
+    item.data[i] = data_q.pop_front();
+    item.trans[i] = trans_q.pop_front();
+    item.response[i] = response_q.pop_front();
   end
   item.exokay = exokay_q.pop_front();
 
   foreach (item.location[i])
     item.location[i] = MIDDLE;
-  item.location[0]  = FIRST;
-  item.location[len]= LAST;
+  item.location[0] = FIRST;
+  item.location[len] = LAST;
 
   item.start_address = item.address[0];
 
@@ -125,7 +125,7 @@ endtask
 
 task yuu_ahb_slave_monitor::cmd_phase();
   uvm_event monitor_cmd_begin = events.get($sformatf("%s_monitor_cmd_begin", cfg.get_name()));
-  uvm_event monitor_cmd_end   = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
+  uvm_event monitor_cmd_end = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
 
   m_cmd.get();
   while ((vif.mon_cb.hready_i & vif.mon_cb.hready_o) !== 1'b1 || vif.mon_cb.htrans === BUSY || vif.mon_cb.hsel !== 1'b1)
@@ -153,19 +153,19 @@ task yuu_ahb_slave_monitor::cmd_phase();
     `uvm_do_callbacks(yuu_ahb_slave_monitor, yuu_ahb_slave_monitor_callback, pre_collect(this, monitor_item));
 
     monitor_item.direction  = yuu_ahb_direction_e'(vif.mon_cb.hwrite);
-    monitor_item.size       = yuu_ahb_size_e'(vif.mon_cb.hsize);
-    monitor_item.burst      = yuu_ahb_burst_e'(vif.mon_cb.hburst);
-    monitor_item.prot3      = yuu_ahb_prot3_e'(vif.mon_cb.hprot[3]);
-    monitor_item.prot2      = yuu_ahb_prot2_e'(vif.mon_cb.hprot[2]);
-    monitor_item.prot1      = yuu_ahb_prot1_e'(vif.mon_cb.hprot[1]);
-    monitor_item.prot0      = yuu_ahb_prot0_e'(vif.mon_cb.hprot[0]);
-    monitor_item.prot6_emt  = yuu_ahb_emt_prot6_e'(vif.mon_cb.hprot_emt[6]);
-    monitor_item.prot5_emt  = yuu_ahb_emt_prot5_e'(vif.mon_cb.hprot_emt[5]);
-    monitor_item.prot4_emt  = yuu_ahb_emt_prot4_e'(vif.mon_cb.hprot_emt[4]);
-    monitor_item.prot3_emt  = yuu_ahb_emt_prot3_e'(vif.mon_cb.hprot_emt[3]);
-    monitor_item.master     = vif.mon_cb.hmaster  ;
-    monitor_item.lock       = vif.mon_cb.hmastlock;
-    monitor_item.nonsec     = yuu_ahb_nonsec_e'(vif.mon_cb.hnonsec);
+    monitor_item.size = yuu_ahb_size_e'(vif.mon_cb.hsize);
+    monitor_item.burst = yuu_ahb_burst_e'(vif.mon_cb.hburst);
+    monitor_item.prot3 = yuu_ahb_prot3_e'(vif.mon_cb.hprot[3]);
+    monitor_item.prot2 = yuu_ahb_prot2_e'(vif.mon_cb.hprot[2]);
+    monitor_item.prot1 = yuu_ahb_prot1_e'(vif.mon_cb.hprot[1]);
+    monitor_item.prot0 = yuu_ahb_prot0_e'(vif.mon_cb.hprot[0]);
+    monitor_item.prot6_emt = yuu_ahb_emt_prot6_e'(vif.mon_cb.hprot_emt[6]);
+    monitor_item.prot5_emt = yuu_ahb_emt_prot5_e'(vif.mon_cb.hprot_emt[5]);
+    monitor_item.prot4_emt = yuu_ahb_emt_prot4_e'(vif.mon_cb.hprot_emt[4]);
+    monitor_item.prot3_emt = yuu_ahb_emt_prot3_e'(vif.mon_cb.hprot_emt[3]);
+    monitor_item.master = vif.mon_cb.hmaster  ;
+    monitor_item.lock = vif.mon_cb.hmastlock;
+    monitor_item.nonsec = yuu_ahb_nonsec_e'(vif.mon_cb.hnonsec);
 
     monitor_item.burst_size = yuu_amba_size_e'(monitor_item.size);
     if (monitor_item.burst inside {WRAP4, WRAP8, WRAP16})
@@ -187,7 +187,7 @@ endtask
 
 task yuu_ahb_slave_monitor::data_phase();
   uvm_event monitor_data_begin = events.get($sformatf("%s_monitor_data_begin", cfg.get_name()));
-  uvm_event monitor_data_end   = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
+  uvm_event monitor_data_end = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
 
   m_data.get();
   while ((vif.mon_cb.hready_i & vif.mon_cb.hready_o) !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ) || vif.mon_cb.hsel !== 1'b1)

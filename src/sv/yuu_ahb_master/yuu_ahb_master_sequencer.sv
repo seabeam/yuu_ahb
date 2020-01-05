@@ -9,7 +9,7 @@ class yuu_ahb_master_sequencer extends uvm_sequencer #(yuu_ahb_master_item);
   virtual yuu_ahb_master_interface vif;
 
   yuu_ahb_master_config cfg;
-  uvm_event_pool events;
+  uvm_event_pool        events;
 
   `uvm_component_utils(yuu_ahb_master_sequencer)
 

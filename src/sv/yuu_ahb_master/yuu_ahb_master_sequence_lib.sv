@@ -10,14 +10,14 @@ class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
   virtual yuu_ahb_master_interface vif;
 
   yuu_ahb_master_config cfg;
-  uvm_event_pool events;
+  uvm_event_pool        events;
 
   int unsigned n_item = 10;
 
   `uvm_object_utils(yuu_ahb_master_sequence_base)
   `uvm_declare_p_sequencer(yuu_ahb_master_sequencer)
 
-  function new(string name = "yuu_ahb_master_sequence_base");
+  function new(string name="yuu_ahb_master_sequence_base");
     super.new(name);
   endfunction
 
@@ -36,7 +36,7 @@ endclass
 class yuu_ahb_write_sequence extends yuu_ahb_master_sequence_base;
   `uvm_object_utils(yuu_ahb_write_sequence)
 
-  function new(string name = "yuu_ahb_write_sequence");
+  function new(string name="yuu_ahb_write_sequence");
     super.new(name);
   endfunction
 
@@ -56,7 +56,7 @@ endclass
 class yuu_ahb_read_sequence extends yuu_ahb_master_sequence_base;
   `uvm_object_utils(yuu_ahb_read_sequence)
 
-  function new(string name = "yuu_ahb_read_sequence");
+  function new(string name="yuu_ahb_read_sequence");
     super.new(name);
   endfunction
 
