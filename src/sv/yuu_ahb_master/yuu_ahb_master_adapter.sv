@@ -57,6 +57,17 @@ function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus
       data[0] == rw.data;
       size == $clog2(cfg.data_width/8);
       burst == SINGLE;
+      prot0 == DATA_ACCESS;
+      prot1 == PRIVILEGED_ACCESS;
+      prot2 == NON_BUFFERABLE;
+      prot3 == NON_CACHEABLE;
+      prot3_emt == NON_MODIFIABLE;
+      prot4_emt == NO_LOOKUP;
+      prot5_emt == NO_ALLOCATE;
+      prot6_emt == NON_SHAREABLE;
+      lock == 1'b0;
+      nonsec == NON_SECURE;
+      excl == NON_EXCLUSIVE;
       idle_delay == 0;
     };
   end
@@ -70,12 +81,18 @@ function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus
 
     reg_item.randomize() with {
       direction == (rw.kind == UVM_READ) ? READ : WRITE;
-      len == ext.data.size()-1;
       start_address == rw.addr+ext.byte_offset;
-      foreach (data[i]) {
-        data[i] == ext.data[i];
-        busy_delay[i] == 0;
+      if (data.size() == 0) {
+        len == 0;
+        data[0] == rw.data;
       }
+      else {
+        foreach (data[i]) {
+          data[i] == ext.data[i];
+          busy_delay[i] == 0;
+        }
+      }
+
       size == ext.size;
       burst == ext.burst;
       prot0 == ext.prot0;
