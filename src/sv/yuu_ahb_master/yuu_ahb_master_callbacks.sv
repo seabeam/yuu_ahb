@@ -11,7 +11,7 @@ typedef class yuu_ahb_master_monitor;
 class yuu_ahb_master_driver_callback extends uvm_callback;
   `uvm_object_utils(yuu_ahb_master_driver_callback)
 
-  function new(string name = "yuu_ahb_master_driver_callback");
+  function new(string name="yuu_ahb_master_driver_callback");
     super.new(name);
   endfunction
 
@@ -26,7 +26,7 @@ endclass
 class yuu_ahb_master_monitor_callback extends uvm_callback;
   `uvm_object_utils(yuu_ahb_master_monitor_callback)
 
-  function new(string name = "yuu_ahb_master_monitor_callback");
+  function new(string name="yuu_ahb_master_monitor_callback");
     super.new(name);
   endfunction
 

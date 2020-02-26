@@ -25,18 +25,19 @@ class yuu_ahb_slave_item extends yuu_ahb_item;
     `uvm_field_int(wait_delay, UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  function new(string name="yuu_ahb_slave_item");
-    super.new(name);
-  endfunction
-
-  function void pre_randomize();
-    super.pre_randomize();
-
-    if (!uvm_config_db #(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-      `uvm_fatal("pre_randomize", "Cannot get AHB slave configuration in transaction")
-  endfunction
-
+  extern function      new(string name="yuu_ahb_slave_item");
+  extern function void pre_randomize();
 endclass
 
+function yuu_ahb_slave_item::new(string name="yuu_ahb_slave_item");
+  super.new(name);
+endfunction
+
+function void yuu_ahb_slave_item::pre_randomize();
+  super.pre_randomize();
+
+  if (!uvm_config_db #(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
+    `uvm_fatal("pre_randomize", "Cannot get AHB slave configuration in transaction")
+endfunction
 
 `endif

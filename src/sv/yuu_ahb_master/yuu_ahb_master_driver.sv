@@ -10,7 +10,7 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   uvm_analysis_port #(yuu_ahb_master_item) out_driver_ap;
 
   yuu_ahb_master_config cfg;
-  uvm_event_pool events;
+  uvm_event_pool        events;
   protected process processes[string];
   protected semaphore m_cmd_sem, m_data_sem;
 
@@ -69,25 +69,25 @@ task yuu_ahb_master_driver::init_component();
 endtask
 
 task yuu_ahb_master_driver::reset_signal();
-  vif.drv_cb.haddr      <= 'h0;
-  vif.drv_cb.htrans     <= 2'h0;
-  vif.drv_cb.hburst     <= 'h0;
-  vif.drv_cb.hwrite     <= 1'b1;
-  vif.drv_cb.hsize      <= 'h2;
-  vif.drv_cb.hwdata     <= 'h0;
-  vif.drv_cb.hprot      <= 'h0;
-  vif.drv_cb.hprot_emt  <= 'h0;
-  vif.drv_cb.hmaster    <= 4'h0;
-  vif.drv_cb.hmastlock  <= 1'b0;
-  vif.drv_cb.hnonsec    <= 1'b1;
-  vif.drv_cb.hexcl      <= 1'b0;
+  vif.drv_cb.haddr <= 'h0;
+  vif.drv_cb.htrans <= 2'h0;
+  vif.drv_cb.hburst <= 'h0;
+  vif.drv_cb.hwrite <= 1'b1;
+  vif.drv_cb.hsize <= 'h2;
+  vif.drv_cb.hwdata <= 'h0;
+  vif.drv_cb.hprot <= 'h0;
+  vif.drv_cb.hprot_emt <= 'h0;
+  vif.drv_cb.hmaster <= 4'h0;
+  vif.drv_cb.hmastlock <= 1'b0;
+  vif.drv_cb.hnonsec <= 1'b1;
+  vif.drv_cb.hexcl <= 1'b0;
 
   vif.drv_cb.upper_byte_lane <= 'h0;
   vif.drv_cb.lower_byte_lane <= 'h0;
 endtask
 
 task yuu_ahb_master_driver::get_and_drive();
-  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
+  uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
   process proc_drive;
 
   forever begin
@@ -115,8 +115,8 @@ task yuu_ahb_master_driver::get_and_drive();
 endtask
 
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
-  uvm_event drive_cmd_begin = events.get($sformatf("%s_drive_cmd_begin", cfg.get_name()));
-  uvm_event drive_cmd_end   = events.get($sformatf("%s_drive_cmd_end", cfg.get_name()));
+  uvm_event drive_cmd_begin = events.get($sformatf("%s_driver_drive_cmd_begin", cfg.get_name()));
+  uvm_event drive_cmd_end = events.get($sformatf("%s_driver_drive_cmd_end", cfg.get_name()));
 
   m_cmd_sem.get();
   begin
@@ -129,17 +129,17 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
     repeat(cur_item.idle_delay) vif.wait_cycle();
     `uvm_info("cmd_phase", "Transaction start", UVM_HIGH)
 
-    vif.drv_cb.hwrite   <= cur_item.direction;
-    vif.drv_cb.hsize    <= cur_item.size;
-    vif.drv_cb.hburst   <= cur_item.burst;
-    vif.drv_cb.hprot    <= {cur_item.prot3, cur_item.prot2, cur_item.prot1, cur_item.prot0};
-    vif.drv_cb.hprot_emt<= {cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt};
-    vif.drv_cb.hmaster  <= cur_item.master;
-    vif.drv_cb.hmastlock<= cur_item.lock;
-    vif.drv_cb.hnonsec  <= cur_item.nonsec;
-    vif.drv_cb.hexcl    <= cur_item.excl;
+    vif.drv_cb.hwrite <= cur_item.direction;
+    vif.drv_cb.hsize <= cur_item.size;
+    vif.drv_cb.hburst <= cur_item.burst;
+    vif.drv_cb.hprot <= {cur_item.prot3, cur_item.prot2, cur_item.prot1, cur_item.prot0};
+    vif.drv_cb.hprot_emt <= {cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt};
+    vif.drv_cb.hmaster <= cur_item.master;
+    vif.drv_cb.hmastlock <= cur_item.lock;
+    vif.drv_cb.hnonsec <= cur_item.nonsec;
+    vif.drv_cb.hexcl <= cur_item.excl;
 
-    for (int i=0; i<=len; i++) begin
+    for (int i=0; i <= len; i++) begin
       drive_cmd_begin.trigger();
       `uvm_info("cmd_phase", "Beat start", UVM_HIGH)
 
@@ -154,9 +154,9 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
       while (vif.drv_cb.hready_i !== 1'b1);
 
       if (cur_item.location[i] == LAST) begin
-        vif.drv_cb.htrans   <= IDLE;
-        vif.drv_cb.hmastlock<= 1'b0;
-        vif.drv_cb.hnonsec  <= 1'b1;
+        vif.drv_cb.htrans <= IDLE;
+        vif.drv_cb.hmastlock <= 1'b0;
+        vif.drv_cb.hnonsec <= 1'b1;
       end
 
       drive_cmd_end.trigger();
@@ -169,8 +169,8 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
 endtask
 
 task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
-  uvm_event drive_data_begin = events.get($sformatf("%s_drive_data_begin", cfg.get_name()));
-  uvm_event drive_data_end   = events.get($sformatf("%s_drive_data_end", cfg.get_name()));
+  uvm_event drive_data_begin = events.get($sformatf("%s_driver_drive_data_begin", cfg.get_name()));
+  uvm_event drive_data_end = events.get($sformatf("%s_driver_drive_data_end", cfg.get_name()));
 
   m_data_sem.get();
   begin
@@ -185,7 +185,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     `uvm_info("data_phase", "Transaction start", UVM_HIGH)
     drive_data_begin.trigger();
 
-    for (int i=0; i<=len; i++) begin
+    for (int i=0; i <= len; i++) begin
       `uvm_info("data_phase", "Beat start", UVM_HIGH)
       if (cur_item.direction == WRITE) begin
         vif.drv_cb.hwdata <= cur_item.data[i];
@@ -225,7 +225,7 @@ task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
 endtask
 
 task yuu_ahb_master_driver::wait_reset();
-  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
+  uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
 
   forever begin
     @(negedge vif.drv_mp.hreset_n);

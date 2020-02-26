@@ -31,7 +31,7 @@ endfunction
 
 function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db #(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
-   `uvm_fatal("build_phase", "Cannot get slave configuration");
+    `uvm_fatal("build_phase", "Cannot get slave configuration");
   if (cfg == null)
     `uvm_fatal("build_phase", "Get a null slave configuration")
 
@@ -40,7 +40,7 @@ function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   if (cfg.is_active == UVM_ACTIVE) begin
     uvm_config_db #(yuu_ahb_slave_config)::set(this, "sequencer", "cfg", cfg);
     sequencer = yuu_ahb_slave_sequencer::type_id::create("sequencer", this);
-    driver    = yuu_ahb_slave_driver::type_id::create("driver", this);
+    driver = yuu_ahb_slave_driver::type_id::create("driver", this);
     sequencer.cfg = cfg;
     driver.cfg = cfg;
   end

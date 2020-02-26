@@ -8,15 +8,15 @@
 class yuu_ahb_slave_collector extends uvm_subscriber #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface vif;
 
-  yuu_ahb_slave_config cfg;
-  uvm_event_pool events;
+  yuu_ahb_slave_config  cfg;
+  uvm_event_pool        events;
 
   yuu_ahb_slave_item item;
 
   covergroup ahb_transaction_cg();
     direction: coverpoint item.direction {
       bins ahb_write = {WRITE};
-      bins ahb_read  = {READ};
+      bins ahb_read = {READ};
     }
   endgroup
 

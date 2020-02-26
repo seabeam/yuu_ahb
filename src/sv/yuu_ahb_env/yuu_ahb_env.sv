@@ -29,7 +29,7 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
   if (!uvm_config_db #(yuu_ahb_env_config)::get(null, get_full_name(), "cfg", cfg)) begin
-    `uvm_fatal("build_phase", "Cannot get yuu_ahb_env_config.");
+    `uvm_fatal("build_phase", "Cannot get env configuration.");
   end
   if (cfg == null)
     `uvm_fatal("build_phase", "Get a null env configuration")
@@ -38,7 +38,7 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
 
   master = new[cfg.mst_cfg.size()];
   vsequencer.master_sequencer = new[cfg.mst_cfg.size()];
-  foreach(master[i]) begin
+  foreach (master[i]) begin
     if (cfg.mst_cfg[i].index != -1) begin
       uvm_config_db#(yuu_ahb_master_config)::set(this, $sformatf("master_%s", cfg.mst_cfg[i].get_name()), "cfg", cfg.mst_cfg[i]);
       master[i] = yuu_ahb_master_agent::type_id::create($sformatf("master_%s", cfg.mst_cfg[i].get_name()), this);
@@ -47,7 +47,7 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
 
   slave = new[cfg.slv_cfg.size()];
   vsequencer.slave_sequencer = new[cfg.slv_cfg.size()];
-  foreach(slave[i]) begin
+  foreach (slave[i]) begin
     if (cfg.slv_cfg[i].index != -1) begin
       uvm_config_db#(yuu_ahb_slave_config)::set(this, $sformatf("slave_%s", cfg.slv_cfg[i].get_name()), "cfg", cfg.slv_cfg[i]);
       slave[i] = yuu_ahb_slave_agent::type_id::create($sformatf("slave_%s", cfg.slv_cfg[i].get_name()), this);
@@ -111,4 +111,5 @@ function void yuu_ahb_env::address_check();
     end
   end
 endfunction
+
 `endif

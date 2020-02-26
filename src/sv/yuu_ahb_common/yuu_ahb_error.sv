@@ -29,7 +29,7 @@ class yuu_ahb_error extends uvm_object;
     `uvm_field_enum(yuu_ahb_error_type_e, error_type, UVM_DEFAULT | UVM_NOCOMPARE)
   `uvm_object_utils_end
 
-  function new(string name = "yuu_ahb_error");
+  function new(string name="yuu_ahb_error");
     super.new(name);
   endfunction
 endclass

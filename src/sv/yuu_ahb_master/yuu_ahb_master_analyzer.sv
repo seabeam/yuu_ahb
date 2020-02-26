@@ -9,7 +9,7 @@ class yuu_ahb_master_analyzer extends uvm_subscriber #(yuu_ahb_master_item);
   virtual yuu_ahb_master_interface vif;
 
   yuu_ahb_master_config cfg;
-  uvm_event_pool events;
+  uvm_event_pool        events;
 
   protected time m_start_time;
   protected time m_end_time;
@@ -58,11 +58,11 @@ endfunction
 
 function void yuu_ahb_master_analyzer::write(yuu_ahb_master_item t);
   if (m_start)
-    m_count += t.len+1;
+    m_count += t.len + 1;
 endfunction
 
 task yuu_ahb_master_analyzer::measure_start();
-  uvm_event e = events.get($sformatf("%s_measure_begin", cfg.get_name()));
+  uvm_event e = events.get($sformatf("%s_analyzer_measure_begin", cfg.get_name()));
 
   e.wait_on();
   m_start_time = $realtime();
@@ -71,7 +71,7 @@ task yuu_ahb_master_analyzer::measure_start();
 endtask
 
 task yuu_ahb_master_analyzer::measure_end();
-  uvm_event e = events.get($sformatf("%s_measure_end", cfg.get_name()));
+  uvm_event e = events.get($sformatf("%s_analyzer_measure_end", cfg.get_name()));
 
   e.wait_on();
   m_end_time = $realtime();

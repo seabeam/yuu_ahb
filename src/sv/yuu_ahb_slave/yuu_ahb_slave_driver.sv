@@ -10,7 +10,7 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   uvm_analysis_port #(yuu_ahb_slave_item) out_driver_ap;
 
   yuu_ahb_slave_config  cfg;
-  uvm_event_pool events;
+  uvm_event_pool        events;
   protected process processes[string];
   protected yuu_amba_addr_map maps[];
 
@@ -88,10 +88,10 @@ function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
 endfunction
 
 task yuu_ahb_slave_driver::reset_signal();
-  vif.drv_cb.hresp    <= OKAY;
+  vif.drv_cb.hresp <= OKAY;
   vif.drv_cb.hready_o <= 1'b1;
-  vif.drv_cb.hrdata   <= 'h0;
-  vif.drv_cb.hexokay  <= 1'b1;
+  vif.drv_cb.hrdata <= 'h0;
+  vif.drv_cb.hexokay <= 1'b1;
 endtask
 
 task yuu_ahb_slave_driver::get_and_drive();
@@ -110,7 +110,7 @@ task yuu_ahb_slave_driver::get_and_drive();
 endtask
 
 task yuu_ahb_slave_driver::drive_bus();
-  uvm_event handshake   = events.get($sformatf("%s_handshake", cfg.get_name()));
+  uvm_event handshake   = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
   yuu_ahb_addr_t      addr;
   yuu_ahb_direction_e direction;
   yuu_ahb_size_e      size;
@@ -126,23 +126,23 @@ task yuu_ahb_slave_driver::drive_bus();
   `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, pre_send(this, req));
   drive_count ++;
   req.start_address = vif.drv_cb.haddr;
-  req.address   = new[1];
-  req.address[0]= vif.drv_cb.haddr;
+  req.address = new[1];
+  req.address[0] = vif.drv_cb.haddr;
   req.direction = yuu_ahb_direction_e'(vif.drv_cb.hwrite);
-  req.size      = yuu_ahb_size_e'(vif.drv_cb.hsize);
+  req.size = yuu_ahb_size_e'(vif.drv_cb.hsize);
   // Force burst to SINGLE
-  req.burst     = SINGLE;
-  req.prot3     = yuu_ahb_prot3_e'(vif.drv_cb.hprot[3]);
-  req.prot2     = yuu_ahb_prot2_e'(vif.drv_cb.hprot[2]);
-  req.prot1     = yuu_ahb_prot1_e'(vif.drv_cb.hprot[1]);
-  req.prot0     = yuu_ahb_prot0_e'(vif.drv_cb.hprot[0]);
+  req.burst = SINGLE;
+  req.prot3 = yuu_ahb_prot3_e'(vif.drv_cb.hprot[3]);
+  req.prot2 = yuu_ahb_prot2_e'(vif.drv_cb.hprot[2]);
+  req.prot1 = yuu_ahb_prot1_e'(vif.drv_cb.hprot[1]);
+  req.prot0 = yuu_ahb_prot0_e'(vif.drv_cb.hprot[0]);
   req.prot6_emt = yuu_ahb_emt_prot6_e'(vif.drv_cb.hprot_emt[6]);
   req.prot5_emt = yuu_ahb_emt_prot5_e'(vif.drv_cb.hprot_emt[5]);
   req.prot4_emt = yuu_ahb_emt_prot4_e'(vif.drv_cb.hprot_emt[4]);
   req.prot3_emt = yuu_ahb_emt_prot3_e'(vif.drv_cb.hprot_emt[3]);
-  req.master    = vif.drv_cb.hmaster;
-  req.lock      = vif.drv_cb.hmastlock;
-  req.nonsec    = yuu_ahb_nonsec_e'(vif.drv_cb.hnonsec);
+  req.master = vif.drv_cb.hmaster;
+  req.lock = vif.drv_cb.hmastlock;
+  req.nonsec = yuu_ahb_nonsec_e'(vif.drv_cb.hnonsec);
 
   req.burst_size = yuu_amba_size_e'(req.size);
   req.burst_type = yuu_amba_pkg::INCR;
@@ -157,10 +157,10 @@ task yuu_ahb_slave_driver::drive_bus();
     wait((vif.drv_cb.htrans === NONSEQ || vif.drv_cb.htrans === SEQ) && vif.drv_cb.hsel === 1'b1 && vif.drv_cb.hready_i === 1'b1);
     begin
       vif.drv_cb.hready_o <= 1'b0;
-      vif.drv_cb.hresp    <= OKAY;
-      vif.drv_cb.hexokay  <= EXOKAY;
+      vif.drv_cb.hresp <= OKAY;
+      vif.drv_cb.hexokay <= EXOKAY;
       repeat(req.wait_delay) vif.wait_cycle();
-      vif.drv_cb.hexokay  <= req.exokay;
+      vif.drv_cb.hexokay <= req.exokay;
       if (req.response[0] == ERROR) begin
         vif.drv_cb.hresp <= req.response[0];
         vif.wait_cycle();
@@ -209,7 +209,7 @@ task yuu_ahb_slave_driver::drive_bus();
 endtask
 
 task yuu_ahb_slave_driver::wait_reset();
-  uvm_event handshake = events.get($sformatf("%s_handshake", cfg.get_name()));
+  uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
 
   forever begin
     @(negedge vif.drv_mp.hreset_n);
