@@ -10,7 +10,6 @@ import uvm_pkg::*;
 `include "uvm_macros.svh"
 
 import yuu_common_pkg::*;
-import yuu_amba_pkg::*;
 import yuu_ahb_pkg::*;
 
 `include "slave_ral_model.sv"
@@ -32,25 +31,27 @@ class yuu_ahb_base_case extends uvm_test;
 
   function void build_phase(uvm_phase phase);
     events = new("events");
-    cfg = new("cfg");
+    cfg = yuu_ahb_env_config::type_id::create("cfg");
     cfg.events = events;
     uvm_config_db#(virtual yuu_ahb_interface)::get(null, get_full_name(), "yuu_ahb_interface", vif);
 
     cfg.ahb_if = vif;
     begin
-      yuu_ahb_master_config m_cfg = new("e0_m0");
+      yuu_ahb_agent_config m_cfg = yuu_ahb_agent_config::type_id::create("e0_m0");
       m_cfg.index = 0;
       m_cfg.idle_enable = True;
       m_cfg.busy_enable = True;
       m_cfg.use_response = False;
+      m_cfg.agent_type = MASTER;
       cfg.set_config(m_cfg);
     end
     begin
-      yuu_ahb_slave_config  s_cfg = new("e0_s0");
+      yuu_ahb_agent_config s_cfg = yuu_ahb_agent_config::type_id::create("e0_s0");
       s_cfg.index = 0;
       s_cfg.set_map(0, 32'hF000_0000);
       s_cfg.mem_init_pattern = PATTERN_RANDOM;
       s_cfg.wait_enable = False;
+      s_cfg.agent_type = SLAVE;
       cfg.set_config(s_cfg);
     end
 

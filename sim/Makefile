@@ -8,6 +8,7 @@ comp:
 	vcs -sverilog -full64 ${ADD} -debug_acc+all \
 			-q -ntb_opts uvm -lca -kdb \
 			-f bench.f \
+			+define+YUU_UVM \
 			-l log/compile.log
 
 case:

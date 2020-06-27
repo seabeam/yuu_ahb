@@ -18,7 +18,6 @@
 //-------------------------------------
 // C Include 
 //-------------------------------------
-//-I../src/c
 
 //-------------------------------------
 // C Filelist
@@ -37,20 +36,14 @@
 //-------------------------------------
 +incdir+../../yuu_common/include
 +incdir+../../yuu_common/src/sv
-+incdir+../../yuu_amba/include/
-+incdir+../../yuu_amba/src/sv
 +incdir+../include
-+incdir+../src/sv/yuu_ahb_common
-+incdir+../src/sv/yuu_ahb_master
-+incdir+../src/sv/yuu_ahb_slave
-+incdir+../src/sv/yuu_ahb_env
++incdir+../src/sv
 +incdir+../test
 
 //-------------------------------------
 // SV Filelist
 //-------------------------------------
 ../../yuu_common/include/yuu_common_pkg.sv
-../../yuu_amba/include/yuu_amba_pkg.sv
 ../include/yuu_ahb_pkg.sv
 
 //-------------------------------------

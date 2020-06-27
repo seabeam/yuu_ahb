@@ -15,13 +15,13 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
   task body();
     uvm_event master_done = events.get("master_done");
 
-    req = yuu_ahb_master_item::type_id::create("req");
+    req = yuu_ahb_item::type_id::create("req");
     req.cfg = cfg;
 
     req.randomize() with {start_address == 32'h80000100;
                           len == 3;
                           size == SIZE32;
-                          burst_type != WRAP;
+                          burst_type != AHB_WRAP;
                           foreach(data[i]) {
                             busy_delay[i] inside {[0:2]};
                           }
@@ -37,7 +37,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
     req.randomize() with {start_address == 32'h80000100;
                           len == 3;
                           size == SIZE32;
-                          burst_type != WRAP;
+                          burst_type != AHB_WRAP;
                           foreach(data[i]) {
                             data[i] == (i+'h1)<<i*8;
                             busy_delay[i] inside {[0:2]};
@@ -50,7 +50,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
     req.randomize() with {start_address == 32'h80000100;
                           len == 15;
                           size == SIZE8;
-                          burst_type != WRAP;
+                          burst_type != AHB_WRAP;
                           foreach(data[i]) {
                             busy_delay[i] inside {[0:2]};
                           }
@@ -79,7 +79,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
     req.randomize() with {start_address == 32'h80000101;
                           len == 1;
                           size == SIZE8;
-                          burst_type != WRAP;
+                          burst_type != AHB_WRAP;
                           foreach(data[i]) {
                             data[i] == (i+'h3)<<(i+1)*8;
                             busy_delay[i] inside {[0:2]};
@@ -92,7 +92,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
     req.randomize() with {start_address == 32'h80000100;
                           len == 3;
                           size == SIZE32;
-                          burst_type != WRAP;
+                          burst_type != AHB_WRAP;
                           foreach(data[i]) {
                             busy_delay[i] inside {[0:2]};
                           }

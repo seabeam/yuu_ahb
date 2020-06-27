@@ -1,0 +1,189 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// For more information, see LICENCE in the main folder
+/////////////////////////////////////////////////////////////////////////////////////
+`ifndef YUU_AHB_MASTER_INTERFACE_SVI
+`define YUU_AHB_MASTER_INTERFACE_SVI
+
+interface yuu_ahb_master_interface();
+  logic                           hclk;
+  logic                           hreset_n;
+  logic [`YUU_AHB_ADDR_WIDTH-1:0] haddr;
+  logic [1:0]                     htrans;
+  logic [2:0]                     hburst;
+  logic                           hwrite;
+  logic [2:0]                     hsize;
+  logic [`YUU_AHB_DATA_WIDTH-1:0] hwdata;
+  logic [`YUU_AHB_DATA_WIDTH-1:0] hrdata;
+  logic                           hready_i;
+  logic [1:0]                     hresp;
+
+  logic [3:0]                     hprot;
+  logic [6:3]                     hprot_emt;
+  logic [3:0]                     hmaster;
+  logic                           hmastlock;
+  logic                           hnonsec;
+  logic                           hexcl;
+  logic                           hexokay;
+
+  logic [31:0]                    upper_byte_lane;
+  logic [31:0]                    lower_byte_lane;
+  logic [31:0]                    burst_num;
+  logic [31:0]                    burst_idx;
+  logic [31:0]                    transfer_idx;
+
+  clocking cb @(posedge hclk);
+  endclocking
+
+  clocking drv_cb @(posedge hclk);
+    default input #`YUU_AHB_MASTER_SETUP_TIME output #`YUU_AHB_MASTER_HOLD_TIME;
+
+    output  haddr;
+    output  htrans;
+    output  hburst;
+    output  hwrite;
+    output  hsize;
+    output  hwdata;
+    output  hprot;
+    output  hprot_emt;
+    output  hmaster;
+    output  hmastlock;
+    output  hnonsec;
+    output  hexcl;
+
+    input   hrdata;
+    input   hresp;
+    input   hready_i;
+    input   hexokay;
+
+    output  upper_byte_lane;
+    output  lower_byte_lane;
+  endclocking
+
+  clocking mon_cb @(posedge hclk);
+    default input #`YUU_AHB_MASTER_SETUP_TIME output #`YUU_AHB_MASTER_HOLD_TIME;
+
+    input   haddr;
+    input   htrans;
+    input   hburst;
+    input   hwrite;
+    input   hsize;
+    input   hwdata;
+    input   hprot;
+    input   hprot_emt;
+    input   hmaster;
+    input   hmastlock;
+    input   hnonsec;
+    input   hexcl;
+    input   hexokay;
+
+    input   hrdata;
+    input   hresp;
+    input   hready_i;
+
+    input   upper_byte_lane;
+    input   lower_byte_lane;
+  endclocking
+
+
+  modport drv_mp (
+    output  haddr,
+    output  htrans,
+    output  hburst,
+    output  hwrite,
+    output  hsize,
+    output  hwdata,
+    output  hprot,
+    output  hmaster,
+    output  hmastlock,
+    output  hnonsec,
+    output  hexcl,
+
+    input   hrdata,
+    input   hresp,
+    input   hready_i,
+    input   hexokay,
+    input   hreset_n
+  );
+
+  modport mon_mp (
+    input   haddr,
+    input   htrans,
+    input   hburst,
+    input   hwrite,
+    input   hsize,
+    input   hwdata,
+    input   hprot,
+    input   hmaster,
+    input   hmastlock,
+    input   hnonsec,
+    input   hexcl,
+
+    input   hrdata,
+    input   hresp,
+    input   hready_i,
+    input   hexokay,
+    input   hreset_n
+  );
+
+  // Analyze signal
+  `define AHBM_IF_TRANS_IDLE    0
+  `define AHBM_IF_TRANS_BUSY    1
+  `define AHBM_IF_TRANS_NONSEQ  2
+  `define AHBM_IF_TRANS_SEQ     3
+
+  always @(posedge hclk) begin
+    if (!hreset_n) begin
+      burst_idx <= 0;
+      transfer_idx <= 'h0;
+    end
+    else if (htrans === `AHBM_IF_TRANS_NONSEQ && hready_i === 1'b1) begin
+      burst_idx ++;
+      transfer_idx <= 'h1;
+    end
+    else if (htrans === `AHBM_IF_TRANS_SEQ && hready_i === 1'b1) begin
+      transfer_idx ++;
+    end
+  end
+
+  logic burst_end;
+  logic [1:0] current_trans;
+  logic start_flag;
+
+  always @(hclk) begin
+    if (hready_i === 1'b1 && hreset_n === 1'b1) begin
+      if (htrans === `AHBM_IF_TRANS_IDLE || htrans === `AHBM_IF_TRANS_NONSEQ) begin
+        start_flag = 1'b1;
+      end
+      else begin
+        start_flag = 1'b0;
+      end
+    end
+    else begin
+      start_flag = 1'b0;
+    end
+  end
+
+  always @(posedge hclk) begin
+    if (!hreset_n) begin
+      current_trans = 0;
+      burst_end     = 0;
+      burst_num = 0;
+    end
+    else if ((current_trans !== `AHBM_IF_TRANS_IDLE) && start_flag === 1'b1) begin
+        burst_end = 1;
+        burst_num ++;
+    end
+    else begin
+        burst_end = 0;
+    end
+    if (hready_i === 1'b1)
+      current_trans <= htrans;
+  end
+
+  task wait_cycle();
+    @(posedge hclk);
+  endtask
+endinterface
+
+`endif
