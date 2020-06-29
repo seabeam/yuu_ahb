@@ -34,7 +34,7 @@ module top;
 
   initial begin
     uvm_config_db #(virtual yuu_ahb_interface)::set(uvm_root::get(), "uvm_test_top", "yuu_ahb_interface", ahb_if);
-    run_test("uvc_test");
+    run_test();
   end
 
   initial begin

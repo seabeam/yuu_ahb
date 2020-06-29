@@ -11,6 +11,14 @@ comp:
 			+define+YUU_UVM \
 			-l log/compile.log
 
+comp_single:
+	@mkdir -p log
+	vcs -sverilog -full64 ${ADD} -debug_acc+all \
+			-q -ntb_opts uvm -lca -kdb \
+			-f single_bench.f \
+			+define+YUU_UVM \
+			-l log/compile.log
+
 case:
 	@ls ../test | grep case | cut -d "." -f 1
 
