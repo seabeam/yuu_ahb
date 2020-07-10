@@ -7,12 +7,13 @@
 
 class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_item);
   virtual yuu_ahb_master_interface vif;
-  uvm_analysis_port #(yuu_ahb_item) out_driver_ap;
+  uvm_analysis_port #(yuu_ahb_item) out_driver_port;
 
   yuu_ahb_agent_config cfg;
   uvm_event_pool       events;
   protected process processes[string];
   protected semaphore m_cmd_sem, m_data_sem;
+  boolean error_key = False;
 
   `uvm_register_cb(yuu_ahb_master_driver, yuu_ahb_master_driver_callback)
 
@@ -30,6 +31,7 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_item);
   extern protected virtual task          cmd_phase(input yuu_ahb_item item);
   extern protected virtual task          data_phase(input yuu_ahb_item item);
   extern protected virtual task          wait_reset();
+  extern protected virtual task          error_proc();
   extern protected virtual task          send_response(input yuu_ahb_item item);
 endclass
 
@@ -40,7 +42,7 @@ endfunction
 function void yuu_ahb_master_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
-  out_driver_ap = new("out_driver_ap", this);
+  out_driver_port = new("out_driver_port", this);
   m_cmd_sem = new(1);
   m_data_sem = new(1);
 endfunction
@@ -54,6 +56,7 @@ task yuu_ahb_master_driver::run_phase(uvm_phase phase);
   init_component();
   fork
     get_and_drive();
+    error_proc();
     wait_reset();
   join
 endtask
@@ -101,7 +104,7 @@ task yuu_ahb_master_driver::get_and_drive();
         seq_item_port.get_next_item(item);
         handshake.trigger();
         @(vif.drv_cb);
-        out_driver_ap.write(item);
+        out_driver_port.write(item);
         `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
         fork
           cmd_phase(item);
@@ -117,6 +120,7 @@ endtask
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_item item);
   uvm_event drive_cmd_begin = events.get($sformatf("%s_driver_drive_cmd_begin", cfg.get_name()));
   uvm_event drive_cmd_end = events.get($sformatf("%s_driver_drive_cmd_end", cfg.get_name()));
+  uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
 
   m_cmd_sem.get();
   begin
@@ -140,6 +144,16 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_item item);
     vif.drv_cb.hexcl <= cur_item.excl;
 
     for (int i=0; i <= len; i++) begin
+      if (error_stopped.is_on()) begin
+        if (error_key) begin
+          error_stopped.reset();
+          error_key = False;
+        end
+        else
+          error_key = True;
+        break;
+      end
+
       drive_cmd_begin.trigger();
       `uvm_info("cmd_phase", "Beat start", UVM_HIGH)
 
@@ -171,6 +185,7 @@ endtask
 task yuu_ahb_master_driver::data_phase(input yuu_ahb_item item);
   uvm_event drive_data_begin = events.get($sformatf("%s_driver_drive_data_begin", cfg.get_name()));
   uvm_event drive_data_end = events.get($sformatf("%s_driver_drive_data_end", cfg.get_name()));
+  uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
 
   m_data_sem.get();
   begin
@@ -215,6 +230,15 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_item item);
       end
 
       `uvm_info("data_phase", "Beat end", UVM_HIGH)
+      if (error_stopped.is_on()) begin
+        if (error_key) begin
+          error_stopped.reset();
+          error_key = False;
+        end
+        else
+          error_key = True;
+        break;
+      end
     end
     `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, post_send(this, cur_item));
     drive_data_end.trigger();
@@ -232,7 +256,7 @@ task yuu_ahb_master_driver::send_response(input yuu_ahb_item item);
   rsp.set_id_info(item);
   rsp.copy(item);
   seq_item_port.put_response(rsp);
-  //rsp.print();
+  // rsp.print();
 endtask
 
 task yuu_ahb_master_driver::wait_reset();
@@ -247,6 +271,27 @@ task yuu_ahb_master_driver::wait_reset();
       processes[i].kill();
     init_component();
     @(posedge vif.drv_mp.hreset_n);
+  end
+endtask
+
+task yuu_ahb_master_driver::error_proc();
+  uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
+  process proc_error;
+
+  wait(vif.drv_mp.hreset_n === 1'b1);
+  forever begin
+    fork
+      begin
+        proc_error = process::self();
+        processes["proc_error"] = proc_error;
+        @(posedge vif.drv_cb.hresp[0]);
+        if (cfg.error_behavior == ABORT_AFTER_ERROR) begin
+          error_stopped.trigger();
+          vif.drv_cb.htrans <= IDLE;
+          vif.wait_cycle();
+        end
+      end
+    join
   end
 endtask
 

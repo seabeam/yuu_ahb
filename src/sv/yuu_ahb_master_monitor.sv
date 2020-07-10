@@ -7,7 +7,7 @@
 
 class yuu_ahb_master_monitor extends uvm_monitor;
   virtual yuu_ahb_master_interface  vif;
-  uvm_analysis_port #(yuu_ahb_item) out_monitor_ap;
+  uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
   yuu_ahb_agent_config cfg;
   uvm_event_pool        events;
@@ -50,7 +50,7 @@ function void yuu_ahb_master_monitor::build_phase(uvm_phase phase);
 
   m_cmd = new(1);
   m_data = new(1);
-  out_monitor_ap = new("out_monitor_ap", this);
+  out_monitor_port = new("out_monitor_port", this);
 endfunction
 
 function void yuu_ahb_master_monitor::connect_phase(uvm_phase phase);
@@ -133,8 +133,8 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_item monitor_item);
   item.end_time = $realtime();
 
   `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, post_collect(this, item));
-  out_monitor_ap.write(item);
-  //item.print();
+  out_monitor_port.write(item);
+//  item.print();
 endtask
 
 task yuu_ahb_master_monitor::cmd_phase();

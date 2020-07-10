@@ -7,7 +7,7 @@
 
 class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_item);
   virtual yuu_ahb_slave_interface  vif;
-  uvm_analysis_port #(yuu_ahb_item) out_driver_ap;
+  uvm_analysis_port #(yuu_ahb_item) out_driver_port;
 
   yuu_ahb_agent_config  cfg;
   uvm_event_pool        events;
@@ -44,7 +44,7 @@ function yuu_ahb_slave_driver::new(string name, uvm_component parent);
 endfunction
 
 function void yuu_ahb_slave_driver::build_phase(uvm_phase phase);
-  out_driver_ap = new("out_driver_ap", this);
+  out_driver_port = new("out_driver_port", this);
   cfg.get_maps(maps);
 endfunction
 
@@ -185,7 +185,7 @@ task yuu_ahb_slave_driver::drive_bus();
     if (req.response[0] != ERROR)
       m_mem.write(mem_addr, req.data[0], strobe);
     `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, post_send(this, req));
-    out_driver_ap.write(req);
+    out_driver_port.write(req);
     seq_item_port.item_done();
     handshake.reset();
   end
@@ -201,7 +201,7 @@ task yuu_ahb_slave_driver::drive_bus();
       req.data[0] = 0;
     end
     `uvm_do_callbacks(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback, post_send(this, req));
-    out_driver_ap.write(req);
+    out_driver_port.write(req);
     seq_item_port.item_done();
     vif.wait_cycle();
     vif.drv_cb.hresp <= OKAY;

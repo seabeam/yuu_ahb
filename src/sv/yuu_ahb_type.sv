@@ -124,8 +124,8 @@
     } yuu_ahb_exokay_e;
   
   typedef enum bit{
-    ABOUT_AFTER_ERROR,
-    CONTINUE_AFTER_ERROR
+    CONTINUE_AFTER_ERROR,
+    ABORT_AFTER_ERROR
     } yuu_ahb_error_behavior_e;
   
   typedef enum bit[1:0]{

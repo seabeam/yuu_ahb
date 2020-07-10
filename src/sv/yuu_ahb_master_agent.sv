@@ -16,8 +16,8 @@ class yuu_ahb_master_agent extends uvm_agent;
   yuu_ahb_master_adapter    adapter;
   yuu_ahb_master_predictor  predictor;
 
-  uvm_analysis_port #(yuu_ahb_item) out_driver_ap;
-  uvm_analysis_port #(yuu_ahb_item) out_monitor_ap;
+  uvm_analysis_port #(yuu_ahb_item) out_driver_port;
+  uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
   `uvm_component_utils_begin(yuu_ahb_master_agent)
   `uvm_component_utils_end
@@ -67,20 +67,20 @@ function void yuu_ahb_master_agent::build_phase(uvm_phase phase);
 endfunction
 
 function void yuu_ahb_master_agent::connect_phase(uvm_phase phase);
-  out_monitor_ap = monitor.out_monitor_ap;
+  out_monitor_port = monitor.out_monitor_port;
 
   if (cfg.is_active == UVM_ACTIVE) begin
     driver.seq_item_port.connect(sequencer.seq_item_export);
-    out_driver_ap = driver.out_driver_ap;
+    out_driver_port = driver.out_driver_port;
   end
   if (cfg.coverage_enable) begin
-    monitor.out_monitor_ap.connect(collector.analysis_export);
+    monitor.out_monitor_port.connect(collector.analysis_export);
   end
   if (cfg.analysis_enable) begin
-    monitor.out_monitor_ap.connect(analyzer.analysis_export);
+    monitor.out_monitor_port.connect(analyzer.analysis_export);
   end
   if (cfg.use_reg_model) begin
-    monitor.out_monitor_ap.connect(predictor.bus_in);
+    monitor.out_monitor_port.connect(predictor.bus_in);
   end
 endfunction
 

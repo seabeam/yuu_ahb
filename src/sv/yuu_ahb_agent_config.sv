@@ -35,7 +35,7 @@ class yuu_ahb_agent_config extends uvm_object;
   boolean use_response              = False;
   boolean use_reg_model             = False;
 
-  yuu_ahb_error_behavior_e error_behavior;
+  yuu_ahb_error_behavior_e error_behavior = CONTINUE_AFTER_ERROR;
 
   // group: slave
   virtual yuu_ahb_slave_interface slv_vif;
