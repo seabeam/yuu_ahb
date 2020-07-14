@@ -2,8 +2,8 @@
 // Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_DEFINES_SVH
-`define YUU_AHB_DEFINES_SVH
+`ifndef YUU_AHB_MACROS_SVH
+`define YUU_AHB_MACROS_SVH
 
   `ifndef YUU_AHB_MASTER_NUM
   `define YUU_AHB_MASTER_NUM  1

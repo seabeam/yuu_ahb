@@ -5,7 +5,7 @@
 `ifndef YUU_AHB_PKG_SV
 `define YUU_AHB_PKG_SV
 
-`include "yuu_ahb_defines.svh"
+`include "yuu_ahb_macros.svh"
 `include "yuu_ahb_interface.svi"
 
 package yuu_ahb_pkg;
