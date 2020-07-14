@@ -11,7 +11,7 @@ class yuu_ahb_slave_agent extends uvm_agent;
   yuu_ahb_slave_sequencer sequencer;
   yuu_ahb_slave_driver    driver;
   yuu_ahb_slave_monitor   monitor;
-  yuu_ahb_collector       collector;
+  yuu_ahb_coverage       coverage;
   yuu_ahb_analyzer        analyzer;
 
   uvm_analysis_port  #(yuu_ahb_item)  out_driver_port;
@@ -45,8 +45,8 @@ function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
     driver.cfg = cfg;
   end
   if (cfg.coverage_enable) begin
-    collector = yuu_ahb_collector::type_id::create("collector", this);
-    collector.cfg = cfg;
+    coverage = yuu_ahb_coverage::type_id::create("coverage", this);
+    coverage.cfg = cfg;
   end
   if (cfg.analysis_enable) begin
     analyzer = yuu_ahb_analyzer::type_id::create("analyzer", this);
@@ -62,7 +62,7 @@ function void yuu_ahb_slave_agent::connect_phase(uvm_phase phase);
     out_driver_port = driver.out_driver_port;
   end
   if (cfg.coverage_enable) begin
-    monitor.out_monitor_port.connect(collector.analysis_export);
+    monitor.out_monitor_port.connect(coverage.analysis_export);
   end
   if (cfg.analysis_enable) begin
     monitor.out_monitor_port.connect(analyzer.analysis_export);

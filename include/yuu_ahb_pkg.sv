@@ -21,7 +21,7 @@ package yuu_ahb_pkg;
   `include "yuu_ahb_item.sv"
   `include "yuu_ahb_callbacks.sv"
   `include "yuu_ahb_analyzer.sv"
-  `include "yuu_ahb_collector.sv"
+  `include "yuu_ahb_coverage.sv"
 
   `include "yuu_ahb_master_sequence_lib.sv"
   `include "yuu_ahb_master_adapter.sv"
