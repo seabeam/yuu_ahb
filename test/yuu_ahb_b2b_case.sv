@@ -107,31 +107,6 @@ class yuu_master_b2b_sequence extends yuu_ahb_master_sequence_base;
   endtask
 endclass : yuu_master_b2b_sequence
 
-class yuu_slave_rsp_seqence extends yuu_ahb_slave_sequence_base;
-  `uvm_object_utils(yuu_slave_rsp_seqence)
-
-  function new(string name ="yuu_slave_rsp_seqence");
-    super.new(name);
-  endfunction
-
-  task body();
-    uvm_event master_done = events.get("master_done");
-
-    forever begin
-      `uvm_create(req)
-      req.cfg = cfg;
-      req.randomize() with {
-        len == 0;
-        //response[0] dist {ERROR:=1, OKAY:=1};
-        response[0] == OKAY;
-        wait_delay inside {[0:2]};
-      };
-      start_item(req);
-      finish_item(req);
-    end
-  endtask
-endclass
-
 class yuu_master_b2b_virtual_sequence extends yuu_ahb_virtual_sequence;
   `uvm_object_utils(yuu_master_b2b_virtual_sequence)
 
