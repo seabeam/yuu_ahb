@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2019 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,25 +37,19 @@ class yuu_ahb_base_case extends uvm_test;
 
     cfg.ahb_if = vif;
     begin
-      yuu_ahb_master_config m_cfg = yuu_ahb_master_config::type_id::create("e0_m0");
-      m_cfg.index = 0;
-      m_cfg.idle_enable = True;
-      m_cfg.busy_enable = True;
-      m_cfg.use_response = True;
+      yuu_ahb_master_config m_cfg;
+      config_master(m_cfg);
       cfg.set_config(m_cfg);
     end
     begin
-      yuu_ahb_slave_config s_cfg = yuu_ahb_slave_config::type_id::create("e0_s0");
-      s_cfg.index = 0;
-      s_cfg.set_map(0, 32'hF000_0000);
-      s_cfg.mem_init_pattern = PATTERN_RANDOM;
-      s_cfg.wait_enable = False;
+      yuu_ahb_slave_config s_cfg;
+      config_slave(s_cfg);
       cfg.set_config(s_cfg);
     end
 
     uvm_config_db#(yuu_ahb_env_config)::set(this, "env", "cfg", cfg);
     env = yuu_ahb_env::type_id::create("env", this);
-  endfunction : build_phase
+  endfunction
 
   function void connect_phase(uvm_phase phase);
     if (cfg.mst_cfg[0].use_reg_model) begin
@@ -67,6 +61,22 @@ class yuu_ahb_base_case extends uvm_test;
       env.master[0].predictor.map = model.default_map;
     end
     vsequencer = env.vsequencer;
+  endfunction
+
+  virtual function void config_master(ref yuu_ahb_master_config cfg);
+    cfg = yuu_ahb_master_config::type_id::create("e0_m0");
+    cfg.index = 0;
+    cfg.idle_enable = True;
+    cfg.busy_enable = True;
+    cfg.use_response = True;
+  endfunction
+  
+  virtual function void config_slave(ref yuu_ahb_slave_config cfg);
+    cfg = yuu_ahb_slave_config::type_id::create("e0_s0");
+    cfg.index = 0;
+    cfg.set_map(0, 32'hF000_0000);
+    cfg.mem_init_pattern = PATTERN_RANDOM;
+    cfg.wait_enable = False;
   endfunction
 endclass
 
