@@ -5,10 +5,10 @@
 `ifndef YUU_AHB_SLAVE_SEQUENCER_SV
 `define YUU_AHB_SLAVE_SEQUENCER_SV
 
-class yuu_ahb_slave_sequencer extends uvm_sequencer #(yuu_ahb_item);
+class yuu_ahb_slave_sequencer extends uvm_sequencer #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface vif;
 
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_slave_config  cfg;
   uvm_event_pool        events;
 
   `uvm_component_utils(yuu_ahb_slave_sequencer)
@@ -24,7 +24,7 @@ endfunction
 function void yuu_ahb_slave_sequencer::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 
-  this.vif = cfg.slv_vif;
+  this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 

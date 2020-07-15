@@ -5,12 +5,12 @@
 `ifndef YUU_AHB_MASTER_DRIVER_SV
 `define YUU_AHB_MASTER_DRIVER_SV
 
-class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_item);
+class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   virtual yuu_ahb_master_interface vif;
-  uvm_analysis_port #(yuu_ahb_item) out_driver_port;
+  uvm_analysis_port #(yuu_ahb_master_item) out_driver_port;
 
-  yuu_ahb_agent_config cfg;
-  uvm_event_pool       events;
+  yuu_ahb_master_config cfg;
+  uvm_event_pool        events;
   protected process processes[string];
   protected semaphore m_cmd_sem, m_data_sem;
   boolean error_key = False;
@@ -28,11 +28,11 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_item);
   extern protected virtual task          init_component();
   extern protected virtual task          reset_signal();
   extern protected virtual task          get_and_drive();
-  extern protected virtual task          cmd_phase(input yuu_ahb_item item);
-  extern protected virtual task          data_phase(input yuu_ahb_item item);
+  extern protected virtual task          cmd_phase(input yuu_ahb_master_item item);
+  extern protected virtual task          data_phase(input yuu_ahb_master_item item);
   extern protected virtual task          wait_reset();
   extern protected virtual task          error_proc();
-  extern protected virtual task          send_response(input yuu_ahb_item item);
+  extern protected virtual task          send_response(input yuu_ahb_master_item item);
 endclass
 
 function yuu_ahb_master_driver::new(string name, uvm_component parent);
@@ -48,7 +48,7 @@ function void yuu_ahb_master_driver::build_phase(uvm_phase phase);
 endfunction
 
 function void yuu_ahb_master_driver::connect_phase(uvm_phase phase);
-  this.vif = cfg.mst_vif;
+  this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
@@ -97,7 +97,7 @@ task yuu_ahb_master_driver::get_and_drive();
     wait(vif.drv_mp.hreset_n === 1'b1);
     fork
       begin
-        yuu_ahb_item item;
+        yuu_ahb_master_item item;
 
         proc_drive = process::self();
         processes["proc_drive"] = proc_drive;
@@ -117,7 +117,7 @@ task yuu_ahb_master_driver::get_and_drive();
   end
 endtask
 
-task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_item item);
+task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
   uvm_event drive_cmd_begin = events.get($sformatf("%s_driver_drive_cmd_begin", cfg.get_name()));
   uvm_event drive_cmd_end = events.get($sformatf("%s_driver_drive_cmd_end", cfg.get_name()));
   uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
@@ -126,7 +126,7 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_item item);
   begin
     int len;
 
-    yuu_ahb_item cur_item = yuu_ahb_item::type_id::create("cur_item");
+    yuu_ahb_master_item cur_item = yuu_ahb_master_item::type_id::create("cur_item");
     cur_item.copy(item);
     len = cur_item.len;
 
@@ -182,7 +182,7 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_item item);
   `uvm_info("cmd_phase", "Transaction end", UVM_HIGH)
 endtask
 
-task yuu_ahb_master_driver::data_phase(input yuu_ahb_item item);
+task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
   uvm_event drive_data_begin = events.get($sformatf("%s_driver_drive_data_begin", cfg.get_name()));
   uvm_event drive_data_end = events.get($sformatf("%s_driver_drive_data_end", cfg.get_name()));
   uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
@@ -190,7 +190,7 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_item item);
   m_data_sem.get();
   begin
     int len;
-    yuu_ahb_item cur_item = yuu_ahb_item::type_id::create("cur_item");
+    yuu_ahb_master_item cur_item = yuu_ahb_master_item::type_id::create("cur_item");
     cur_item.set_id_info(item);
     cur_item.copy(item);
     len = cur_item.len;
@@ -251,8 +251,8 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_item item);
   m_data_sem.put();
 endtask
 
-task yuu_ahb_master_driver::send_response(input yuu_ahb_item item);
-  rsp = yuu_ahb_item::type_id::create("rsp");
+task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
+  rsp = yuu_ahb_master_item::type_id::create("rsp");
   rsp.set_id_info(item);
   rsp.copy(item);
   seq_item_port.put_response(rsp);

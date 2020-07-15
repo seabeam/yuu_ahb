@@ -9,12 +9,12 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   virtual yuu_ahb_slave_interface  vif;
   uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_slave_config  cfg;
   uvm_event_pool        events;
   protected process processes[string];
   protected semaphore m_cmd, m_data;
 
-  protected yuu_ahb_item  monitor_item;
+  protected yuu_ahb_slave_item  monitor_item;
   protected yuu_ahb_addr_t      address_q[$];
   protected yuu_ahb_data_t      data_q[$];
   protected yuu_ahb_trans_e     trans_q[$];
@@ -33,7 +33,7 @@ class yuu_ahb_slave_monitor extends uvm_monitor;
   extern protected virtual task          init_component();
   extern protected virtual task          cmd_phase();
   extern protected virtual task          data_phase();
-  extern protected virtual task          assembling_and_send(yuu_ahb_item monitor_item);
+  extern protected virtual task          assembling_and_send(yuu_ahb_slave_item monitor_item);
   extern protected virtual task          wait_reset();
 endclass
 
@@ -48,7 +48,7 @@ function void yuu_ahb_slave_monitor::build_phase(uvm_phase phase);
 endfunction
 
 function void yuu_ahb_slave_monitor::connect_phase(uvm_phase phase);
-  this.vif = cfg.slv_vif;
+  this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
@@ -87,9 +87,9 @@ task yuu_ahb_slave_monitor::init_component();
   exokay_q.delete();
 endtask
 
-task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_item monitor_item);
+task yuu_ahb_slave_monitor::assembling_and_send(yuu_ahb_slave_item monitor_item);
   int len = address_q.size()-1;
-  yuu_ahb_item item = yuu_ahb_item::type_id::create("monitor_item");
+  yuu_ahb_slave_item item = yuu_ahb_slave_item::type_id::create("monitor_item");
 
   #0;
   item.copy(monitor_item);
@@ -149,7 +149,7 @@ task yuu_ahb_slave_monitor::cmd_phase();
     if (address_q.size() > 0) begin
       assembling_and_send(monitor_item);
     end
-    monitor_item = yuu_ahb_item::type_id::create("monitor_item");
+    monitor_item = yuu_ahb_slave_item::type_id::create("monitor_item");
     `uvm_do_callbacks(yuu_ahb_slave_monitor, yuu_ahb_slave_monitor_callback, pre_collect(this, monitor_item));
 
     monitor_item.direction  = yuu_ahb_direction_e'(vif.mon_cb.hwrite);

@@ -5,11 +5,11 @@
 `ifndef YUU_AHB_SLAVE_DRIVER_SV
 `define YUU_AHB_SLAVE_DRIVER_SV
 
-class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_item);
+class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface  vif;
-  uvm_analysis_port #(yuu_ahb_item) out_driver_port;
+  uvm_analysis_port #(yuu_ahb_slave_item) out_driver_port;
 
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_slave_config  cfg;
   uvm_event_pool        events;
   protected process processes[string];
   protected yuu_common_addr_map maps[];
@@ -49,7 +49,7 @@ function void yuu_ahb_slave_driver::build_phase(uvm_phase phase);
 endfunction
 
 function void yuu_ahb_slave_driver::connect_phase(uvm_phase phase);
-  this.vif = cfg.slv_vif;
+  this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 

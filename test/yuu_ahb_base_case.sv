@@ -37,37 +37,35 @@ class yuu_ahb_base_case extends uvm_test;
 
     cfg.ahb_if = vif;
     begin
-      yuu_ahb_agent_config m_cfg = yuu_ahb_agent_config::type_id::create("e0_m0");
+      yuu_ahb_master_config m_cfg = yuu_ahb_master_config::type_id::create("e0_m0");
       m_cfg.index = 0;
       m_cfg.idle_enable = True;
       m_cfg.busy_enable = True;
-      m_cfg.use_response = False;
-      m_cfg.agent_type = MASTER;
+      m_cfg.use_response = True;
       cfg.set_config(m_cfg);
     end
     begin
-      yuu_ahb_agent_config s_cfg = yuu_ahb_agent_config::type_id::create("e0_s0");
+      yuu_ahb_slave_config s_cfg = yuu_ahb_slave_config::type_id::create("e0_s0");
       s_cfg.index = 0;
       s_cfg.set_map(0, 32'hF000_0000);
       s_cfg.mem_init_pattern = PATTERN_RANDOM;
       s_cfg.wait_enable = False;
-      s_cfg.agent_type = SLAVE;
       cfg.set_config(s_cfg);
     end
 
     uvm_config_db#(yuu_ahb_env_config)::set(this, "env", "cfg", cfg);
     env = yuu_ahb_env::type_id::create("env", this);
-
-    model = new("model");
-    model.build();
-    model.lock_model();
-    model.reset();
   endfunction : build_phase
 
   function void connect_phase(uvm_phase phase);
-    model.default_map.set_sequencer(env.vsequencer.master_sequencer[0], env.master[0].adapter);
-    if (cfg.mst_cfg[0].use_reg_model)
+    if (cfg.mst_cfg[0].use_reg_model) begin
+      model = new("model");
+      model.build();
+      model.lock_model();
+      model.reset();
+      model.default_map.set_sequencer(env.vsequencer.master_sequencer[0], env.master[0].adapter);
       env.master[0].predictor.map = model.default_map;
+    end
     vsequencer = env.vsequencer;
   endfunction
 endclass

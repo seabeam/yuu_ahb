@@ -28,7 +28,7 @@ endclass : yuu_ahb_reg_extension
 
 
 class yuu_ahb_master_adapter extends uvm_reg_adapter;
-  yuu_ahb_agent_config cfg;
+  yuu_ahb_master_config cfg;
 
   `uvm_object_utils(yuu_ahb_master_adapter)
 
@@ -42,7 +42,7 @@ function yuu_ahb_master_adapter::new(string name="yuu_ahb_master_adapter");
 endfunction
 
 function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus_op rw);
-  yuu_ahb_item reg_item = yuu_ahb_item::type_id::create("reg_item");
+  yuu_ahb_master_item reg_item = yuu_ahb_master_item::type_id::create("reg_item");
   uvm_reg_item item = get_item();
 
   if (cfg == null)
@@ -111,10 +111,10 @@ function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus
 endfunction
 
 function void yuu_ahb_master_adapter::bus2reg(uvm_sequence_item bus_item, ref uvm_reg_bus_op rw);
-  yuu_ahb_item item;
+  yuu_ahb_master_item item;
 
   if (!$cast(item, bus_item))
-    `uvm_fatal("bus2reg", "Provided bus_item is not of the correct type(yuu_ahb_item)")
+    `uvm_fatal("bus2reg", "Provided bus_item is not of the correct type(yuu_ahb_master_item)")
 
   rw.kind = int'(item.direction) ? UVM_WRITE : UVM_READ;
   rw.addr = item.address[0];

@@ -18,8 +18,8 @@ class yuu_ahb_single_base_case extends uvm_test;
 
   yuu_ahb_master_agent  master;
   yuu_ahb_slave_agent   slave;
-  yuu_ahb_agent_config  mst_cfg;
-  yuu_ahb_agent_config  slv_cfg;
+  yuu_ahb_master_config mst_cfg;
+  yuu_ahb_slave_config  slv_cfg;
   yuu_ahb_virtual_sequencer vsequencer;
   slave_ral_model model;
 
@@ -33,30 +33,28 @@ class yuu_ahb_single_base_case extends uvm_test;
 
   function void build_phase(uvm_phase phase);
     events = new("events");
-    mst_cfg = yuu_ahb_agent_config::type_id::create("mst_cfg");
-    slv_cfg = yuu_ahb_agent_config::type_id::create("slv_cfg");
+    mst_cfg = yuu_ahb_master_config::type_id::create("mst_cfg");
+    slv_cfg = yuu_ahb_slave_config::type_id::create("slv_cfg");
     mst_cfg.events = events;
     slv_cfg.events = events;
     uvm_config_db#(virtual yuu_ahb_master_interface)::get(null, get_full_name(), "yuu_ahb_master_interface", mst_vif);
     uvm_config_db#(virtual yuu_ahb_slave_interface)::get(null, get_full_name(), "yuu_ahb_slave_interface", slv_vif);
 
-    mst_cfg.mst_vif = mst_vif;
+    mst_cfg.vif = mst_vif;
     mst_cfg.index = 0;
     mst_cfg.idle_enable = True;
     mst_cfg.busy_enable = True;
     mst_cfg.use_response = False;
     mst_cfg.set_map(0, 32'hF000_0000);
-    mst_cfg.agent_type = MASTER;
 
-    slv_cfg.slv_vif = slv_vif;
+    slv_cfg.vif = slv_vif;
     slv_cfg.index = 0;
     slv_cfg.mem_init_pattern = PATTERN_RANDOM;
     slv_cfg.wait_enable = False;
     slv_cfg.set_map(0, 32'hF000_0000);
-    slv_cfg.agent_type = SLAVE;
 
-    uvm_config_db#(yuu_ahb_agent_config)::set(this, "master", "cfg", mst_cfg);
-    uvm_config_db#(yuu_ahb_agent_config)::set(this, "slave", "cfg", slv_cfg);
+    uvm_config_db#(yuu_ahb_master_config)::set(this, "master", "cfg", mst_cfg);
+    uvm_config_db#(yuu_ahb_slave_config)::set(this, "slave", "cfg", slv_cfg);
     master  = yuu_ahb_master_agent::type_id::create("master", this);
     slave   = yuu_ahb_slave_agent::type_id::create("slave", this);
 

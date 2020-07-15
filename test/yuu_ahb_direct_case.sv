@@ -15,7 +15,7 @@ class yuu_master_direct_sequence extends yuu_ahb_master_sequence_base;
   task body();
     uvm_event master_done = events.get("master_done");
 
-    req = yuu_ahb_item::type_id::create("req");
+    req = yuu_ahb_master_item::type_id::create("req");
     req.cfg = cfg;
 
     req.randomize() with {start_address == 32'h80000100;

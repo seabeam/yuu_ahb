@@ -6,16 +6,16 @@
 `define YUU_AHB_SLAVE_AGENT_SV
 
 class yuu_ahb_slave_agent extends uvm_agent;
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_slave_config  cfg;
 
   yuu_ahb_slave_sequencer sequencer;
   yuu_ahb_slave_driver    driver;
   yuu_ahb_slave_monitor   monitor;
-  yuu_ahb_coverage       coverage;
+  yuu_ahb_coverage        coverage;
   yuu_ahb_analyzer        analyzer;
 
-  uvm_analysis_port  #(yuu_ahb_item)  out_driver_port;
-  uvm_analysis_port  #(yuu_ahb_item)  out_monitor_port;
+  uvm_analysis_port #(yuu_ahb_slave_item) out_driver_port;
+  uvm_analysis_port #(yuu_ahb_item)       out_monitor_port;
 
   `uvm_component_utils_begin(yuu_ahb_slave_agent)
   `uvm_component_utils_end
@@ -30,7 +30,7 @@ function yuu_ahb_slave_agent::new(string name, uvm_component parent);
 endfunction
 
 function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
-  if (!uvm_config_db #(yuu_ahb_agent_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
+  if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
     `uvm_fatal("build_phase", "Cannot get slave configuration");
   if (cfg == null)
     `uvm_fatal("build_phase", "Get a null slave configuration")
@@ -38,7 +38,7 @@ function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   monitor = yuu_ahb_slave_monitor::type_id::create("monitor", this);
   monitor.cfg = cfg;
   if (cfg.is_active == UVM_ACTIVE) begin
-    uvm_config_db #(yuu_ahb_agent_config)::set(this, "sequencer", "cfg", cfg);
+    uvm_config_db#(yuu_ahb_slave_config)::set(this, "sequencer", "cfg", cfg);
     sequencer = yuu_ahb_slave_sequencer::type_id::create("sequencer", this);
     driver = yuu_ahb_slave_driver::type_id::create("driver", this);
     sequencer.cfg = cfg;

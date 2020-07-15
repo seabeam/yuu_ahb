@@ -10,8 +10,8 @@ class yuu_ahb_env_config extends uvm_object;
 
   uvm_event_pool events;
   
-  yuu_ahb_agent_config  mst_cfg[$];
-  yuu_ahb_agent_config  slv_cfg[$];
+  yuu_ahb_master_config mst_cfg[$];
+  yuu_ahb_slave_config  slv_cfg[$];
 
   boolean compare_enable = False;
   boolean protocol_check_enable = False;
@@ -38,18 +38,27 @@ function void yuu_ahb_env_config::set_config(yuu_ahb_agent_config cfg);
     `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
 
   cfg.events = events;
-  if (cfg.agent_type == MASTER) begin
-    if(cfg.index >= 0)
-      cfg.mst_vif = ahb_if.get_master_if(cfg.index);
-    mst_cfg.push_back(cfg);
-  end
-  else if (cfg.agent_type == SLAVE) begin
-    if (cfg.index >= 0)
-      cfg.slv_vif = ahb_if.get_slave_if(cfg.index);
-    slv_cfg.push_back(cfg);
-  end
-  else
-    `uvm_fatal("set_config", $sformatf("Invalid yuu_ahb agent configure object type: %s", cfg.agent_type))
+  case(cfg.get_type_name())
+    "yuu_ahb_master_config": begin
+      yuu_ahb_master_config mcfg = yuu_ahb_master_config::type_id::create("config");
+
+      $cast(mcfg, cfg);
+      if(mcfg.index >= 0)
+        mcfg.vif = ahb_if.get_master_if(mcfg.index);
+      mst_cfg.push_back(mcfg);
+    end
+    "yuu_ahb_slave_config": begin
+      yuu_ahb_slave_config scfg = yuu_ahb_slave_config::type_id::create("config");
+
+      $cast(scfg, cfg);
+      if(scfg.index >= 0)
+        scfg.vif = ahb_if.get_slave_if(scfg.index);
+      slv_cfg.push_back(scfg);
+    end
+    default: begin
+      `uvm_fatal("set_config", $sformatf("Invalid agent config object type: %s", cfg.get_type_name()))
+    end
+  endcase
 endfunction
 
 function void yuu_ahb_env_config::set_configs(yuu_ahb_agent_config cfg[]);

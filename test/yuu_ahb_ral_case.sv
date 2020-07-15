@@ -24,9 +24,11 @@ class yuu_master_ral_virtual_sequence extends yuu_ahb_virtual_sequence;
         #100ns;
         model.common.RA.write(status, 32'h1234);
         #100ns;
-        model.common.RB.write(status, 32'h1234);
+        model.common.RB.write(status, 32'h4321);
         model.common.RA.read(status, value);
         #100ns;
+        if (value != 32'h1234)
+          `uvm_fatal("body", $sformatf("Expect value is 32'h1234 but 32'h%0h get", value))
         `uvm_info("body", $sformatf("Register A value is %8h", value), UVM_LOW);
       end
       rsp_seq.start(p_sequencer.slave_sequencer[0]);

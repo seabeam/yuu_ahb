@@ -17,10 +17,10 @@ class yuu_ahb_master_driver_callback extends uvm_callback;
     super.new(name);
   endfunction
 
-  virtual task pre_send(yuu_ahb_master_driver driver, yuu_ahb_item item);
+  virtual task pre_send(yuu_ahb_master_driver driver, yuu_ahb_master_item item);
   endtask
 
-  virtual task post_send(yuu_ahb_master_driver driver, yuu_ahb_item item);
+  virtual task post_send(yuu_ahb_master_driver driver, yuu_ahb_master_item item);
   endtask
 endclass
 
@@ -32,10 +32,10 @@ class yuu_ahb_master_monitor_callback extends uvm_callback;
     super.new(name);
   endfunction
 
-  virtual task pre_collect(yuu_ahb_master_monitor monitor, yuu_ahb_item item);
+  virtual task pre_collect(yuu_ahb_master_monitor monitor, yuu_ahb_master_item item);
   endtask
 
-  virtual task post_collect(yuu_ahb_master_monitor monitor, yuu_ahb_item item);
+  virtual task post_collect(yuu_ahb_master_monitor monitor, yuu_ahb_master_item item);
   endtask
 endclass
 
@@ -47,10 +47,10 @@ class yuu_ahb_slave_driver_callback extends uvm_callback;
     super.new(name);
   endfunction
 
-  virtual task pre_send(yuu_ahb_slave_driver driver, yuu_ahb_item item);
+  virtual task pre_send(yuu_ahb_slave_driver driver, yuu_ahb_slave_item item);
   endtask
 
-  virtual task post_send(yuu_ahb_slave_driver driver, yuu_ahb_item item);
+  virtual task post_send(yuu_ahb_slave_driver driver, yuu_ahb_slave_item item);
   endtask
 endclass
 
@@ -62,10 +62,10 @@ class yuu_ahb_slave_monitor_callback extends uvm_callback;
     super.new(name);
   endfunction
 
-  virtual task pre_collect(yuu_ahb_slave_monitor monitor, yuu_ahb_item item);
+  virtual task pre_collect(yuu_ahb_slave_monitor monitor, yuu_ahb_slave_item item);
   endtask
 
-  virtual task post_collect(yuu_ahb_slave_monitor monitor, yuu_ahb_item item);
+  virtual task post_collect(yuu_ahb_slave_monitor monitor, yuu_ahb_slave_item item);
   endtask
 endclass
 

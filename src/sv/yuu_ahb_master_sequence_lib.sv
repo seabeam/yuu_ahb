@@ -6,11 +6,11 @@
 `define YUU_AHB_MASTER_SEQUENCE_LIB_SV
 
 typedef class yuu_ahb_master_sequencer;
-class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_item);
+class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_master_item);
   virtual yuu_ahb_master_interface vif;
 
-  yuu_ahb_agent_config cfg;
-  uvm_event_pool       events;
+  yuu_ahb_master_config cfg;
+  uvm_event_pool        events;
 
   int unsigned n_item = 10;
 
@@ -23,7 +23,7 @@ class yuu_ahb_master_sequence_base extends uvm_sequence #(yuu_ahb_item);
 
   virtual task pre_start();
     cfg = p_sequencer.cfg;
-    vif = cfg.mst_vif;
+    vif = cfg.vif;
     events = cfg.events;
   endtask
 

@@ -6,10 +6,10 @@
 `define YUU_AHB_SLAVE_SEQUENCE_LIB_SV
 
 typedef class yuu_ahb_slave_sequencer;
-class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_item);
+class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_slave_item);
   virtual yuu_ahb_slave_interface vif;
 
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_slave_config  cfg;
   uvm_event_pool        events;
 
   yuu_ahb_error error_object;
@@ -23,7 +23,7 @@ class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_item);
 
   task pre_start();
     cfg = p_sequencer.cfg;
-    vif = cfg.slv_vif;
+    vif = cfg.vif;
     events = cfg.events;
   endtask
 
