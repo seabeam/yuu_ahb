@@ -69,6 +69,7 @@ class yuu_ahb_base_case extends uvm_test;
     cfg.idle_enable = True;
     cfg.busy_enable = True;
     cfg.use_response = True;
+    cfg.coverage_enable = True;
   endfunction
   
   virtual function void config_slave(ref yuu_ahb_slave_config cfg);

@@ -10,8 +10,10 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
   uvm_event_pool        events;
 
   yuu_ahb_item item;
+  yuu_ahb_trans_e trans;
+  yuu_ahb_response_e resp;
 
-  covergroup ahb_transaction_cg();
+  covergroup ahb_transaction_common_cg();
     direction: coverpoint item.direction {
       bins ahb_write = {WRITE};
       bins ahb_read = {READ};
@@ -30,7 +32,7 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
       bins ahb_size1024 = {SIZE1024};
     }
 
-    burst:  coverpoint item.burst{
+    burst:  coverpoint item.burst {
       bins ahb_signle = {SINGLE};
       bins ahb_incr = {INCR};
       bins ahb_wrap4 = {WRAP4};
@@ -47,10 +49,30 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
     excl:   coverpoint item.excl;
   endgroup
   
+  covergroup ahb_trans_cg();
+    trans: coverpoint trans {
+      bins ahb_busy = {BUSY};
+      bins ahb_nonseq = {NONSEQ};
+      bins ahb_seq  = {SEQ};
+    }
+  endgroup
+
+  covergroup ahb_response_cg();
+    response: coverpoint resp {
+      bins ahb_okay   = {OKAY};
+      bins ahb_error  = {ERROR};
+    }
+  endgroup
+
+//  ahb_transaction_common_cg inst_ahb_transaction_common_cg;
+//  ahb_trans_cg              inst_ahb_trans_cg;
+//  ahb_response_cg           inst_ahb_response_cg;
+
   `uvm_component_utils_begin(yuu_ahb_coverage)
   `uvm_component_utils_end
 
   extern                   function      new(string name, uvm_component parent);
+  extern           virtual function void build_phase(uvm_phase phase);
   extern           virtual function void connect_phase(uvm_phase phase);
   extern           virtual task          run_phase(uvm_phase phase);
 
@@ -59,8 +81,12 @@ endclass
 
 function yuu_ahb_coverage::new(string name, uvm_component parent);
   super.new(name, parent);
+  ahb_transaction_common_cg = new;
+  ahb_trans_cg = new;
+  ahb_response_cg = new;
+endfunction
 
-  ahb_transaction_cg = new;
+function void yuu_ahb_coverage::build_phase(uvm_phase phase);
 endfunction
 
 function void yuu_ahb_coverage::connect_phase(uvm_phase phase);
@@ -74,7 +100,16 @@ endtask
 function void yuu_ahb_coverage::write(yuu_ahb_item t);
   item = yuu_ahb_item::type_id::create("item");
   item.copy(t);
-  ahb_transaction_cg.sample();
+
+  ahb_transaction_common_cg.sample();
+  foreach (t.trans[i]) begin
+    trans = t.trans[i];
+    ahb_trans_cg.sample();
+  end
+  foreach (t.response[i]) begin
+    resp = t.response[i];
+    ahb_response_cg.sample();
+  end
 endfunction
 
 `endif
