@@ -52,6 +52,7 @@
 ../test/yuu_ahb_base_case.sv
 ../test/yuu_ahb_direct_case.sv
 ../test/yuu_ahb_ral_case.sv
+../test/yuu_b2b_case.sv
 
 
 //-------------------------------------
