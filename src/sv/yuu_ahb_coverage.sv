@@ -15,9 +15,38 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
     direction: coverpoint item.direction {
       bins ahb_write = {WRITE};
       bins ahb_read = {READ};
-    }
-  endgroup
+    };
 
+    length: coverpoint item.length;
+
+    size:   coverpoint item.size {
+      bins ahb_size8 = {SIZE8};
+      bins ahb_size16 = {SIZE16};
+      bins ahb_size32 = {SIZE32};
+      bins ahb_size64 = {SIZE64};
+      bins ahb_size128 = {SIZE128};
+      bins ahb_size256 = {SIZE256};
+      bins ahb_size512 = {SIZE512};
+      bins ahb_size1024 = {SIZE1024};
+    };
+
+    burst:  coverpoint item.burst{
+      bins ahb_signle = {SIGNLE};
+      bins ahb_incr = {INCR};
+      bins ahb_wrap4 = {WRAP4};
+      bins ahb_incr4 = {INCR4};
+      bins ahb_wrap8 = {WRAP8};
+      bins ahb_incr8 = {INCR8};
+      bins ahb_wrap16 = {WRAP16};
+      bins ahb_incr16 = {INCR16};
+    };
+
+    master: coverpoint item.master;
+    lock:   coverpoint item.lock;
+    nonsec: coverpoint item.nonsec;
+    excl:   coverpoint item.excl;
+  endgroup
+  
   `uvm_component_utils_begin(yuu_ahb_coverage)
   `uvm_component_utils_end
 
