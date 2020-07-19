@@ -5,14 +5,33 @@
 `ifndef YUU_AHB_COVERAGE_SV
 `define YUU_AHB_COVERAGE_SV
 
+// Class: yuu_ahb_coverage
+// AHB functional coverage collector, which receives transaction out from monitor to 
+// process.
 class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
+  // Variable: cfg
+  // AHB agent configuration object.
   yuu_ahb_agent_config  cfg;
+
+  // Variable: events
+  // Global event pool for component communication.
   uvm_event_pool        events;
 
+  // Variable: item
+  // Transaction received from monitor for coverage sampling.
   yuu_ahb_item item;
+
+  // Variable: trans
+  // HTRANS received from monitor for coverage sampling.
   yuu_ahb_trans_e trans;
+
+  // Variable: resp
+  // HRESP received from monitor for coverage sampling.
   yuu_ahb_response_e resp;
 
+  // Coverage: ahb_transaction_common_cg
+  // Basic coverage group of collect direction, length, size, 
+  // burst and other coverpoints.
   covergroup ahb_transaction_common_cg();
     direction: coverpoint item.direction {
       bins ahb_write = {WRITE};
@@ -49,6 +68,8 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
     excl:   coverpoint item.excl;
   endgroup
   
+  // Coverage: ahb_trans_cg
+  // HTRANS information expected to sample.
   covergroup ahb_trans_cg();
     trans: coverpoint trans {
       bins ahb_busy = {BUSY};
@@ -56,7 +77,9 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
       bins ahb_seq  = {SEQ};
     }
   endgroup
-
+  
+  // Coverage: ahb_response_cg
+  // HRESP information expected to sample.
   covergroup ahb_response_cg();
     response: coverpoint resp {
       bins ahb_okay   = {OKAY};
@@ -64,21 +87,18 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
     }
   endgroup
 
-//  ahb_transaction_common_cg inst_ahb_transaction_common_cg;
-//  ahb_trans_cg              inst_ahb_trans_cg;
-//  ahb_response_cg           inst_ahb_response_cg;
-
   `uvm_component_utils_begin(yuu_ahb_coverage)
   `uvm_component_utils_end
 
   extern                   function      new(string name, uvm_component parent);
   extern           virtual function void build_phase(uvm_phase phase);
   extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          run_phase(uvm_phase phase);
 
   extern           virtual function void write(yuu_ahb_item t);
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_coverage::new(string name, uvm_component parent);
   super.new(name, parent);
   ahb_transaction_common_cg = new;
@@ -86,17 +106,21 @@ function yuu_ahb_coverage::new(string name, uvm_component parent);
   ahb_response_cg = new;
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_coverage::build_phase(uvm_phase phase);
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_coverage::connect_phase(uvm_phase phase);
   this.events = cfg.events;
 endfunction
 
-task yuu_ahb_coverage::run_phase(uvm_phase phase);
-endtask
-
-
+// Function: write
+// UVM built-in method. A user implemention of uvm_analysis_imp.
+// In this class, user can override this method to add, remove or 
+// update user coverage group sampling.
 function void yuu_ahb_coverage::write(yuu_ahb_item t);
   item = yuu_ahb_item::type_id::create("item");
   item.copy(t);
