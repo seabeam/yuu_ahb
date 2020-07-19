@@ -11,6 +11,7 @@ Following is the task list under development:
 - [x] Support register burst access
 - [ ] Add AHB protocal checker
 - [ ] Add more AHB4/5 feature
+- [ ] Add comment
 - [ ] Add document 
 
 ## Note
