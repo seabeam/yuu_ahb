@@ -5,11 +5,19 @@
 `ifndef YUU_AHB_SLAVE_CONFIG_SV
 `define YUU_AHB_SLAVE_CONFIG_SV
 
+// Class: yuu_ahb_slave_config
+// Configuration object of yuu_ahb_slave_agent.
 class yuu_ahb_slave_config extends yuu_ahb_agent_config;
-  // group: slave
+  // Variable: vif
+  // AHB bus interface handle.
   virtual yuu_ahb_slave_interface vif;
 
+  // Variable: wait_enable
+  // The switch of slave random wait cycles.
   boolean wait_enable = True;
+
+  // Variable: mem_init_pattern
+  // The initial pattern of built-in memory of slave driver.
   yuu_common_mem_pattern_e mem_init_pattern = PATTERN_ALL_0;
   
   
@@ -22,10 +30,14 @@ class yuu_ahb_slave_config extends yuu_ahb_agent_config;
   extern function boolean check_valid();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_slave_config::new (string name="yuu_ahb_slave_config");
   super.new(name);
 endfunction
 
+// Function: check_valid
+// Check the validity of the configuration.
 function boolean yuu_ahb_slave_config::check_valid();
   return True;
 endfunction
