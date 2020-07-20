@@ -12,7 +12,7 @@ class yuu_ahb_master_item extends yuu_ahb_item;
   rand int unsigned busy_delay[];
 
   constraint c_idle {
-    soft idle_delay inside {[0:16]};
+    soft idle_delay inside {[0:`YUU_AHB_MAX_DELAY]};
     if (!cfg.idle_enable) {
       idle_delay == 0;
     }
@@ -21,7 +21,7 @@ class yuu_ahb_master_item extends yuu_ahb_item;
   constraint c_busy {
     busy_delay.size() == len+1;
     foreach (busy_delay[i]) {
-      soft busy_delay[i] inside {[0:16]};
+      soft busy_delay[i] inside {[0:`YUU_AHB_MAX_DELAY]};
       if (!cfg.busy_enable || len == 0) {
         busy_delay[i] == 0;
       }

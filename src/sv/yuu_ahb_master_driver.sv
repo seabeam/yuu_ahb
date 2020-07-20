@@ -6,11 +6,24 @@
 `define YUU_AHB_MASTER_DRIVER_SV
 
 class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
+  // Variable: vif
+  // AHB master interface handle.
   virtual yuu_ahb_master_interface vif;
+
+  // Variable: out_driver_port
+  // Analysis port out from driver.
   uvm_analysis_port #(yuu_ahb_master_item) out_driver_port;
 
+  // Variable: cfg
+  // AHB master agent configuration object.
   yuu_ahb_master_config cfg;
+
+  // Variable: events
+  // Global event pool for component communication.
   uvm_event_pool        events;
+
+  // Variable: processes
+  // Processes for handling reset
   protected process processes[string];
   protected semaphore m_cmd_sem, m_data_sem;
   boolean error_key = False;

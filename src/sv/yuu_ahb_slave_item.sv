@@ -15,7 +15,7 @@ class yuu_ahb_slave_item extends yuu_ahb_item;
   }
 
   constraint c_wait {
-    soft wait_delay inside {[0:16]};
+    soft wait_delay inside {[0:`YUU_AHB_MAX_DELAY]};
     if (!cfg.wait_enable) {
       wait_delay == 0;
     }

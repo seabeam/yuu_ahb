@@ -171,9 +171,9 @@ task yuu_ahb_slave_driver::drive_bus();
   
   req.data = new[1];
   if (req.direction == WRITE) begin
-    yuu_ahb_addr_t low_boundary = req.address[0][7:0] % (`YUU_AHB_ADDR_WIDTH/8);
+    yuu_ahb_addr_t low_boundary = req.address[0][7:0] % (`YUU_AHB_MAX_ADDR_WIDTH/8);
     yuu_ahb_addr_t high_boundary = low_boundary+(1<<int'(req.size));
-    yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_ADDR_WIDTH/8);
+    yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_MAX_ADDR_WIDTH/8);
     int strobe = 0;
 
     for (yuu_ahb_addr_t i=low_boundary; i<high_boundary; i++)
@@ -190,7 +190,7 @@ task yuu_ahb_slave_driver::drive_bus();
     handshake.reset();
   end
   else begin
-    yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_ADDR_WIDTH/8);
+    yuu_ahb_addr_t mem_addr = req.address[0]/(`YUU_AHB_MAX_ADDR_WIDTH/8);
     m_mem.read(mem_addr, rdata);
     if (req.response[0] != ERROR) begin
       vif.drv_cb.hrdata <= rdata;

@@ -5,29 +5,72 @@
 `ifndef YUU_AHB_MASTER_ADAPTER_SV
 `define YUU_AHB_MASTER_ADAPTER_SV
 
+// Class: yuu_ahb_reg_extension
+// Register extension for adapter.
 class yuu_ahb_reg_extension extends uvm_object;
+  // Variable: byte_offset
+  // Byte address base on register address.
   yuu_ahb_addr_t    byte_offset;
+
+  // Variable: data
+  // Register payload.
   yuu_ahb_data_t    data[];
+
+  // Variable: size
+  // User defined HSIZE.
   yuu_ahb_size_e    size;
+
+  // Variable: burst
+  // User defined HBURST.
   yuu_ahb_burst_e   burst = yuu_ahb_pkg::INCR;
+
+  // Variable: prot0
+  // User defined HPROT[0].
   yuu_ahb_prot0_e   prot0 = DATA_ACCESS;
+
+  // Variable: prot1
+  // User defined HPROT[1].
   yuu_ahb_prot1_e   prot1 = PRIVILEGED_ACCESS;
+
+  // Variable: prot2
+  // User defined HPROT[2].
   yuu_ahb_prot2_e   prot2 = NON_BUFFERABLE;
+
+  // Variable: prot3
+  // User defined HPROT[3].
   yuu_ahb_prot3_e   prot3 = NON_CACHEABLE;
+
+  // Variable: master
+  // User defined HMASTER.
   bit[3:0]          master;
+
+  // Variable: lock
+  // User defined HMASTLOCK.
   bit               lock;
+
+  // Variable: nonsec
+  // User defined HNONSEC.
   yuu_ahb_nonsec_e  nonsec = NON_SECURE;
+
+  // Variable: excl
+  // User defined HEXCL.
   yuu_ahb_excl_e    excl = NON_EXCLUSIVE;
 
   `uvm_object_utils(yuu_ahb_reg_extension)
 
+  // Function: new
+  // Constructor of object.
   function new(string name="yuu_ahb_reg_extension");
     super.new(name);
   endfunction
 endclass : yuu_ahb_reg_extension
 
 
+// Class: yuu_ahb_master_adapter
+// AHB register adapter.
 class yuu_ahb_master_adapter extends uvm_reg_adapter;
+  // Variable: cfg
+  // AHB agent configuration object.
   yuu_ahb_master_config cfg;
 
   `uvm_object_utils(yuu_ahb_master_adapter)
@@ -37,10 +80,14 @@ class yuu_ahb_master_adapter extends uvm_reg_adapter;
   extern function void              bus2reg(uvm_sequence_item bus_item, ref uvm_reg_bus_op rw);
 endclass : yuu_ahb_master_adapter
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_master_adapter::new(string name="yuu_ahb_master_adapter");
   super.new(name);
 endfunction
 
+// Function: reg2bus
+// UVM built-in method. Transfer AHB transaction to pin level information.
 function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus_op rw);
   yuu_ahb_master_item reg_item = yuu_ahb_master_item::type_id::create("reg_item");
   uvm_reg_item item = get_item();
@@ -110,6 +157,8 @@ function uvm_sequence_item yuu_ahb_master_adapter::reg2bus(const ref uvm_reg_bus
   return reg_item;
 endfunction
 
+// Function: bus2reg
+// UVM built-in method. Transfer pin level information to AHB transaction.
 function void yuu_ahb_master_adapter::bus2reg(uvm_sequence_item bus_item, ref uvm_reg_bus_op rw);
   yuu_ahb_master_item item;
 

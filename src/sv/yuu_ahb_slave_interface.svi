@@ -8,14 +8,14 @@
 interface yuu_ahb_slave_interface();
   logic                           hclk;
   logic                           hreset_n;
-  logic [`YUU_AHB_ADDR_WIDTH-1:0] haddr;
+  logic [`YUU_AHB_MAX_ADDR_WIDTH-1:0] haddr;
   logic [1:0]                     htrans;
   logic [2:0]                     hburst;
   logic                           hwrite;
   logic [2:0]                     hsize;
   logic                           hsel;
-  logic [`YUU_AHB_DATA_WIDTH-1:0] hwdata;
-  logic [`YUU_AHB_DATA_WIDTH-1:0] hrdata;
+  logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hwdata;
+  logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hrdata;
   logic                           hready_i;
   logic                           hready_o;
   logic [1:0]                     hresp;
