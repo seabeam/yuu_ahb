@@ -24,11 +24,11 @@ class yuu_ahb_agent_config extends uvm_object;
 
   // Variable: addr_width
   // Address width of HADDR, default value is 32.
-  int unsigned addr_width = `YUU_AHB_ADDR_WIDTH;
+  int unsigned addr_width = `YUU_AHB_MAX_ADDR_WIDTH;
 
   // Variable: data_width
   // Data width of HWDATA/HRADATA, default value is 32.
-  int unsigned data_width = `YUU_AHB_DATA_WIDTH;
+  int unsigned data_width = `YUU_AHB_MAX_DATA_WIDTH;
 
   // Variable: analysis_enable
   // Enable throughput analysis component of agent.
@@ -70,13 +70,13 @@ class yuu_ahb_agent_config extends uvm_object;
     `uvm_field_enum        (uvm_active_passive_enum,  is_active,              UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  extern function                     new(string name="yuu_ahb_agent_config");
-  extern function boolean             check_valid();
-  extern function void                set_map(yuu_ahb_addr_t low, yuu_ahb_addr_t high);
-  extern function void                set_maps(yuu_ahb_addr_t lows[], yuu_ahb_addr_t highs[]);
-  extern function yuu_common_addr_map get_map();
-  extern function void                get_maps(ref yuu_common_addr_map maps[]);
-  extern function boolean             is_multi_range();
+  extern         function                     new(string name="yuu_ahb_agent_config");
+  extern virtual function boolean             check_valid();
+  extern virtual function void                set_map(yuu_ahb_addr_t low, yuu_ahb_addr_t high);
+  extern virtual function void                set_maps(yuu_ahb_addr_t lows[], yuu_ahb_addr_t highs[]);
+  extern virtual function yuu_common_addr_map get_map();
+  extern virtual function void                get_maps(ref yuu_common_addr_map maps[]);
+  extern virtual function boolean             is_multi_range();
 endclass
 
 // Function: new
@@ -108,8 +108,8 @@ endfunction
 //
 // Set master/slave address ranges
 // Para:
-//  low   - (yuu_ahb_addr_t[]) low address boundaries
-//  high  - (yuu_ahb_addr_t[]) high address boundaries
+//  low   - low address boundaries
+//  high  - high address boundaries
 function void yuu_ahb_agent_config::set_maps(yuu_ahb_addr_t lows[], yuu_ahb_addr_t highs[]);
   if (lows.size() == 0|| highs.size() == 0)
     `uvm_error("set_maps", "The lows or highs array is empty")

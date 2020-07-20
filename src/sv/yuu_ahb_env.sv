@@ -5,11 +5,23 @@
 `ifndef YUU_AHB_ENV_SV
 `define YUU_AHB_ENV_SV
 
+// Class: yuu_ahb_env
+// AHB environment class, a container of masters and slaves
 class yuu_ahb_env extends uvm_env;
+  // Variable: cfg
+  // AHB agent configuration object.
   yuu_ahb_env_config  cfg;
 
+  // Variable: master
+  // AHB master agent instances.
   yuu_ahb_master_agent      master[];
+
+  // Variable: slave
+  // AHB slave agent instances.
   yuu_ahb_slave_agent       slave[];
+
+  // Variable: vsequencer
+  // AHB virtual sequencer handle.
   yuu_ahb_virtual_sequencer vsequencer;
 
   `uvm_component_utils(yuu_ahb_env)
@@ -21,10 +33,14 @@ class yuu_ahb_env extends uvm_env;
   extern protected virtual function void address_check();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_env::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: build_phase
+// UVM built-in method.
 function void yuu_ahb_env::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
@@ -57,6 +73,8 @@ function void yuu_ahb_env::build_phase(uvm_phase phase);
   vsequencer.cfg = cfg;
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_env::connect_phase(uvm_phase phase);
   foreach (cfg.mst_cfg[i]) begin
     cfg.mst_cfg[i].events = cfg.events;
@@ -69,6 +87,8 @@ function void yuu_ahb_env::connect_phase(uvm_phase phase);
 endfunction
 
 
+// Function: address_check
+// Check master/slave's address conflict
 function void yuu_ahb_env::address_check();
   yuu_ahb_addr_t addr_ass[int];
   yuu_ahb_addr_t low_addr[$];

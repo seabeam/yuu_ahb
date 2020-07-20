@@ -5,15 +5,30 @@
 `ifndef YUU_AHB_ENV_CONFIG_SV
 `define YUU_AHB_ENV_CONFIG_SV
 
+// Class: yuu_ahb_env_config
 class yuu_ahb_env_config extends uvm_object;
+  // Variable: vif
+  // AHB bus interface handle.
   virtual yuu_ahb_interface ahb_if;
 
+  // Variable: events
+  // Global event pool for component communication.
   uvm_event_pool events;
   
+  // Variable: mst_cfg
+  // AHB master configuration pool.
   yuu_ahb_master_config mst_cfg[$];
+
+  // Variable: slv_cfg
+  // AHB slave configuration pool.
   yuu_ahb_slave_config  slv_cfg[$];
 
+  // Variable: compare_enable
+  // Enable scoreboard.
   boolean compare_enable = False;
+
+  // Variable: protocol_check_enable
+  // Bus protocol check enable.
   boolean protocol_check_enable = False;
 
   `uvm_object_utils_begin(yuu_ahb_env_config)
@@ -29,10 +44,16 @@ class yuu_ahb_env_config extends uvm_object;
   extern virtual function boolean check_valid();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_env_config::new(string name="yuu_ahb_env_config");
   super.new(name);
 endfunction
 
+// Function: set_config
+// Set user configuration to environment configuration pool.
+// Para:
+//  cfg - Agent configuration.
 function void yuu_ahb_env_config::set_config(yuu_ahb_agent_config cfg);
   if (cfg == null)
     `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
@@ -61,11 +82,17 @@ function void yuu_ahb_env_config::set_config(yuu_ahb_agent_config cfg);
   endcase
 endfunction
 
+// Function: set_configs
+// Set user configurations to environment configuration pool.
+// Para:
+//  cfg - Agent configurations array.
 function void yuu_ahb_env_config::set_configs(yuu_ahb_agent_config cfg[]);
   foreach (cfg[i])
     set_config(cfg[i]);
 endfunction
 
+// Function: check_valid
+// Check the validity of the configuration.
 function boolean yuu_ahb_env_config::check_valid();
   foreach (mst_cfg[i]) begin
     if (!mst_cfg[i].check_valid()) begin

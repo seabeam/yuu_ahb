@@ -6,68 +6,164 @@
 `define YUU_AHB_ITEM_SV
 
 class yuu_ahb_item extends uvm_sequence_item;
+  // Variable: start_address
   // The start address issued by the master.
   rand yuu_ahb_addr_t       start_address;
-  // The transaction payload
+
+  // Variable: data
+  // The transaction payload.
   rand yuu_ahb_data_t       data[];
+
+  // Variable: len
   // The burst length.
   rand int unsigned         len;
+
+  // Variable: trans
+  // The trans information. Used by HTRANS.
        yuu_ahb_trans_e      trans[];
+
+  // Variable: response
+  // The response information. Used by HRESP.
   rand yuu_ahb_response_e   response[];
+
+  // Variable: direction
+  // The direction information. Used by HWRITE.
   rand yuu_ahb_direction_e  direction;
-  // The size of burst, 1 byte, 2 bytes etc. 
+
+  // Variable: burst_size
+  // (AMBA) The size of burst, 1 byte, 2 bytes etc. 
   rand yuu_ahb_burst_size_e burst_size;
+
+  // Variable: size
+  // The size information. Used by HSIZE.
   rand yuu_ahb_size_e       size;
+
+  // Variable: burst
+  // The burst information. Used by HBURST.
   rand yuu_ahb_burst_e      burst;
-  // The type of burst: FIXED, INCR or WRAP
+
+  // Variable: burst_type
+  // (AMBA) The type of burst: FIXED, INCR or WRAP.
   rand yuu_ahb_burst_type_e burst_type;
+
+  // Variable: prot0
+  // The protection control information. Used by HPROT[0].
   rand yuu_ahb_prot0_e      prot0 = DATA_ACCESS;
+
+  // Variable: prot1
+  // The protection control information. Used by HPROT[1].
   rand yuu_ahb_prot1_e      prot1 = PRIVILEGED_ACCESS;
+
+  // Variable: prot2
+  // The protection control information. Used by HPROT[2].
   rand yuu_ahb_prot2_e      prot2 = NON_BUFFERABLE;
+
+  // Variable: prot3
+  // The protection control information. Used by HPROT[3].
   rand yuu_ahb_prot3_e      prot3 = NON_CACHEABLE;
+
+  // Variable: prot3_emt
+  // The protection control information, extended memory type. Used by HPROT[3].
   rand yuu_ahb_emt_prot3_e  prot3_emt = NON_MODIFIABLE;
+
+  // Variable: prot4_emt
+  // The protection control information, extended memory type. Used by HPROT[4].
   rand yuu_ahb_emt_prot4_e  prot4_emt = NO_LOOKUP;
+
+  // Variable: prot5_emt
+  // The protection control information, extended memory type. Used by HPROT[5].
   rand yuu_ahb_emt_prot5_e  prot5_emt = NO_ALLOCATE;
+
+  // Variable: prot6_emt
+  // The protection control information, extended memory type. Used by HPROT[6].
   rand yuu_ahb_emt_prot6_e  prot6_emt = NON_SHAREABLE;
+  
+  // Variable: master
+  // The master identifier information. Used by HMASTER.
        bit[3:0]             master;
+  
+  // Variable: lock
+  // The locked transfer information. Used by HMASTLOCK.
   rand bit                  lock    = 1'b0;
+
+  // Variable: nonsec
+  // The secure transfer information. Used by HNONSEC.
   rand yuu_ahb_nonsec_e     nonsec  = NON_SECURE;
+
+  // Variable: excl
+  // The exclusive transfer information. Used by HEXCL.
   rand yuu_ahb_excl_e       excl    = NON_EXCLUSIVE;
+
+  // Variable: exokay
+  // The exclusive response information. Used by HEXOKAY.
   rand yuu_ahb_exokay_e     exokay  = EXOKAY;
 
+  // Variable: address
   // The address of transfer N in a burst.
        yuu_ahb_addr_t       address[];
+  
+  // Variable: aligned_address
   // The aligned version of the start address.
        yuu_ahb_addr_t       aligned_address;
+  
+  // Variable: low_boundary
   // The lowest address of burst
        yuu_ahb_addr_t       low_boundary;
+  
+  // Variable: high_boundary
   // The highest address of burst
        yuu_ahb_addr_t       high_boundary;
+
+  // Variable: wrap_boundary
   // The lowest address within a wrapping burst.
        yuu_ahb_addr_t       wrap_boundary;
+
+  // Variable: low_byte_lane
   // The byte lane of the lowest addressed byte of a transfer.
        yuu_ahb_lane_t       lower_byte_lane[];
+
+  // Variable: upper_byte_lane
   // The byte lane of the highest addressed byte of a transfer.
        yuu_ahb_lane_t       upper_byte_lane[];
+  
+  // Variable: number_bytes
   // The maximum number of bytes in each data transfer.
        int unsigned         number_bytes;
+
+  // Variable: burst_length
   // The total number of data transfers within a burst.
        int unsigned         burst_length;
+
+  // Variable: data_bus_bytes
   // The number of byte lanes in the data bus.
        int unsigned         data_bus_bytes;
 
+  // Variable: address_aligned_enable
+  // Enable address aligned.
   rand boolean address_aligned_enable = False;
-       
+
+  // Variable: location
+  // Transfer location.  
        yuu_ahb_location_e   location[];
+  
+  // Variable: start_time
+  // The start time of transaction assert on bus.
        real                 start_time;
+
+  // Variable: end_time
+  // The end time of transaction deassert on bus.
        real                 end_time;
 
+  // Constraint: c_ahb_size
+  // Size of payload, response and burst_size constraint.
   constraint c_ahb_size {
     data.size() == len+1;
     response.size() == len+1;
-    burst_size <= $clog2(`YUU_AHB_DATA_WIDTH/8);
+    burst_size <= $clog2(`YUU_AHB_MAX_DATA_WIDTH/8);
   }
 
+  // Constraint: c_ahb_align
+  // Address alignment constraint.
   constraint c_ahb_align {
     address_aligned_enable == True;
     burst_type == AHB_WRAP -> address_aligned_enable == True;
@@ -82,6 +178,8 @@ class yuu_ahb_item extends uvm_sequence_item;
     }
   }
 
+  // Constraint: c_ahb_burst_type
+  // burst and len constraint.
   constraint c_ahb_burst_type {
     burst == SINGLE -> len == 1-1;
     burst inside {INCR4, WRAP4}   -> len == 4-1;
@@ -94,6 +192,8 @@ class yuu_ahb_item extends uvm_sequence_item;
     soft burst dist {SINGLE:/10, INCR4:/20, INCR8:/20, INCR16:/20, INCR:/21, WRAP4:/3, WRAP8:/3, WRAP16:/3};
   }
 
+  // Constraint: c_ahb_burst_size
+  // size and burst_size constraint.
   constraint c_ahb_burst_size {
     size == SIZE8    <-> burst_size == BYTE1;
     size == SIZE16   <-> burst_size == BYTE2;
@@ -105,11 +205,14 @@ class yuu_ahb_item extends uvm_sequence_item;
     size == SIZE1024 <-> burst_size == BYTE128;
   }
 
-
+  // Constraint: c_ahb_exclusive
+  // excl and len constraint.
   constraint c_ahb_exclusive {
     excl == 1'b1 -> len == 0;
   }
 
+  // Constraint: c_ahb_1k_boundary
+  // Burst address should never cross 1K boundary.
   constraint c_ahb_1k_boundary {
     if (burst_type == AHB_INCR) {
       start_address[9:0]+(len+1)*number_bytes <= 1024;
@@ -164,16 +267,22 @@ class yuu_ahb_item extends uvm_sequence_item;
   extern virtual function void data_process();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_item::new(string name="yuu_ahb_item");
   super.new(name);
 endfunction
 
+// Function: post_randomize
+// SV built-in function.
 function void yuu_ahb_item::post_randomize();
   common_process();
   command_process();
   data_process();
 endfunction
 
+// Function: common_process
+// Process AMBA common properties.
 function void yuu_ahb_item::common_process();
   if (burst_type == AHB_FIXED)
     len = 0;
@@ -210,7 +319,7 @@ function void yuu_ahb_item::common_process();
     end
   end
 
-  data_bus_bytes = `YUU_AHB_DATA_WIDTH/8;
+  data_bus_bytes = `YUU_AHB_MAX_DATA_WIDTH/8;
   lower_byte_lane = new[burst_length];
   upper_byte_lane = new[burst_length];
   lower_byte_lane[0] = start_address-(yuu_ahb_addr_t'(start_address/data_bus_bytes))*data_bus_bytes;
@@ -221,6 +330,8 @@ function void yuu_ahb_item::common_process();
   end
 endfunction
 
+// Function: command_process
+// Process AHB command information.
 function void yuu_ahb_item::command_process();
   // Location
   location = new[len+1];
@@ -230,6 +341,8 @@ function void yuu_ahb_item::command_process();
   location[len] = LAST;
 endfunction
 
+// Function: data_process
+// Process AHB data information.
 function void yuu_ahb_item::data_process();
   if (direction == READ)
     foreach (data[i])

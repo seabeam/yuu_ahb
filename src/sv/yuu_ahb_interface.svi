@@ -8,11 +8,23 @@
 `include "yuu_ahb_master_interface.svi"
 `include "yuu_ahb_slave_interface.svi"
 
+// Interface: yuu_ahb_interface
+// AHB bus interface. It is a wrapper of AHB masters and slaves.
 interface yuu_ahb_interface();
+  // Variable: hreset_n
+  // Reset signal of AHB bus.
   logic hreset_n;
+
+  // Variable: hclk
+  // Global clock signal of AHB bus.
   logic hclk;
 
+  // Variable: master_if
+  // The binding of master interfaces.
   yuu_ahb_master_interface  master_if[16]();
+
+  // Variable: slave_if
+  // The binding of slave interfaces.
   yuu_ahb_slave_interface   slave_if[16]();
 
 
@@ -20,43 +32,54 @@ interface yuu_ahb_interface();
   genvar i;
 
   generate
-    for (i=0; i<`YUU_AHB_MASTER_NUM; i++) begin : master_reset_connection
+    for (i=0; i<`YUU_AHB_MAX_MASTER_NUM; i++) begin : master_reset_connection
       assign master_if[i].hreset_n = hreset_n;
     end
-    for (i=0; i<`YUU_AHB_SLAVE_NUM; i++) begin : slave_reset_connection
+    for (i=0; i<`YUU_AHB_MAX_SLAVE_NUM; i++) begin : slave_reset_connection
       assign slave_if[i].hreset_n = hreset_n;
     end
   endgenerate
 
   generate
-    for (i=0; i<`YUU_AHB_MASTER_NUM; i++) begin : master_clock_connection
+    for (i=0; i<`YUU_AHB_MAX_MASTER_NUM; i++) begin : master_clock_connection
       assign master_if[i].hclk = hclk;
     end
-    for (i=0; i<`YUU_AHB_SLAVE_NUM; i++) begin : slave_clock_connection
+    for (i=0; i<`YUU_AHB_MAX_SLAVE_NUM; i++) begin : slave_clock_connection
       assign slave_if[i].hclk = hclk;
     end
   endgenerate
 
 
-  // Methods 
+  // Function: check_master_define
+  // Check the index exceeds the maximum master number.
+  // Para:
+  //  idx - The master index.
   function void check_master_define(int idx);
-    if (idx>=`YUU_AHB_MASTER_NUM) begin
-      $display("[FATAL] yuu_ahb_interface: the master index %0d has not been defined, check the YUU_AHB_MASTER_NUM define", idx);
+    if (idx>=`YUU_AHB_MAX_MASTER_NUM) begin
+      $display("[FATAL] yuu_ahb_interface: the master index %0d has not been defined, check the YUU_AHB_MAX_MASTER_NUM define", idx);
       $finish;
     end
   endfunction
 
+  // Function: check_slave_define
+  // Check the index exceeds the maximum slave number.
+  // Para:
+  //  idx - The slave index.
   function void check_slave_define(int idx);
-    if (idx>=`YUU_AHB_SLAVE_NUM) begin
-      $display("[FATAL] yuu_ahb_interface: the slave index %0d has not been defined, check the YUU_AHB_SLAVE_NUM define", idx);
+    if (idx>=`YUU_AHB_MAX_SLAVE_NUM) begin
+      $display("[FATAL] yuu_ahb_interface: the slave index %0d has not been defined, check the YUU_AHB_MAX_SLAVE_NUM define", idx);
       $finish;
     end
   endfunction
 
+  // Function: get_master_if
+  // Get master interface from binding.
+  // Para:
+  //  idx - The master index.
   function virtual yuu_ahb_master_interface get_master_if(int idx);
     check_master_define(idx);
     
-    // Max: 64
+    // Max: 16
     case(idx)
       00: return master_if[00];
       01: return master_if[01];
@@ -77,10 +100,14 @@ interface yuu_ahb_interface();
     endcase
   endfunction
 
+  // Function: get_slave_if
+  // Get slave interface from binding.
+  // Para:
+  //  idx - The slave index.
   function virtual yuu_ahb_slave_interface get_slave_if(int idx);
     check_slave_define(idx);
     
-    // Max: 64
+    // Max: 16
     case(idx)
       00: return slave_if[00];
       01: return slave_if[01];

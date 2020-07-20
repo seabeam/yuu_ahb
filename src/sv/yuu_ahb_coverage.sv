@@ -118,7 +118,7 @@ function void yuu_ahb_coverage::connect_phase(uvm_phase phase);
 endfunction
 
 // Function: write
-// UVM built-in method. A user implemention of uvm_analysis_imp.
+// UVM built-in method. A user implementation of uvm_analysis_imp.
 // In this class, user can override this method to add, remove or 
 // update user coverage group sampling.
 function void yuu_ahb_coverage::write(yuu_ahb_item t);
