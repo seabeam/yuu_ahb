@@ -6,29 +6,29 @@
 `define YUU_AHB_SLAVE_INTERFACE_SVI
 
 interface yuu_ahb_slave_interface();
-  logic                           hclk;
-  logic                           hreset_n;
+  logic                               hclk;
+  logic                               hreset_n;
   logic [`YUU_AHB_MAX_ADDR_WIDTH-1:0] haddr;
-  logic [1:0]                     htrans;
-  logic [2:0]                     hburst;
-  logic                           hwrite;
-  logic [2:0]                     hsize;
-  logic                           hsel;
+  logic [1:0]                         htrans;
+  logic [2:0]                         hburst;
+  logic                               hwrite;
+  logic [2:0]                         hsize;
+  logic                               hsel;
   logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hwdata;
   logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hrdata;
-  logic                           hready_i;
-  logic                           hready_o;
-  logic [1:0]                     hresp;
+  logic                               hready_i;
+  logic                               hready_o;
+  logic [1:0]                         hresp;
 
-  logic [3:0]                     hprot;
-  logic [6:3]                     hprot_emt;
-  logic [3:0]                     hmaster;
-  logic                           hmastlock;
-  logic                           hnonsec;
-  logic                           hexokay;
+  logic [3:0]                         hprot;
+  logic [6:3]                         hprot_emt;
+  logic [3:0]                         hmaster;
+  logic                               hmastlock;
+  logic                               hnonsec;
+  logic                               hexokay;
 
-  logic                           excl_write_enable;
-  logic [31:0]                    transfer_num;
+  logic                               excl_write_enable;
+  logic [31:0]                        transfer_num;
 
   clocking cb @(posedge hclk);
   endclocking

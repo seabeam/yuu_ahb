@@ -6,31 +6,31 @@
 `define YUU_AHB_MASTER_INTERFACE_SVI
 
 interface yuu_ahb_master_interface();
-  logic                           hclk;
-  logic                           hreset_n;
+  logic                               hclk;
+  logic                               hreset_n;
   logic [`YUU_AHB_MAX_ADDR_WIDTH-1:0] haddr;
-  logic [1:0]                     htrans;
-  logic [2:0]                     hburst;
-  logic                           hwrite;
-  logic [2:0]                     hsize;
+  logic [1:0]                         htrans;
+  logic [2:0]                         hburst;
+  logic                               hwrite;
+  logic [2:0]                         hsize;
   logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hwdata;
   logic [`YUU_AHB_MAX_DATA_WIDTH-1:0] hrdata;
-  logic                           hready_i;
-  logic [1:0]                     hresp;
+  logic                               hready_i;
+  logic [1:0]                         hresp;
 
-  logic [3:0]                     hprot;
-  logic [6:3]                     hprot_emt;
-  logic [3:0]                     hmaster;
-  logic                           hmastlock;
-  logic                           hnonsec;
-  logic                           hexcl;
-  logic                           hexokay;
-
-  logic [31:0]                    upper_byte_lane;
-  logic [31:0]                    lower_byte_lane;
-  logic [31:0]                    burst_num;
-  logic [31:0]                    burst_idx;
-  logic [31:0]                    transfer_idx;
+  logic [3:0]                         hprot;
+  logic [6:3]                         hprot_emt;
+  logic [3:0]                         hmaster;
+  logic                               hmastlock;
+  logic                               hnonsec;
+  logic                               hexcl;
+  logic                               hexokay;
+  
+  logic [31:0]                        upper_byte_lane;
+  logic [31:0]                        lower_byte_lane;
+  logic [31:0]                        burst_num;
+  logic [31:0]                        burst_idx;
+  logic [31:0]                        transfer_idx;
 
   clocking cb @(posedge hclk);
   endclocking

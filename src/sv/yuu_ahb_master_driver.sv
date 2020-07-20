@@ -5,6 +5,8 @@
 `ifndef YUU_AHB_MASTER_DRIVER_SV
 `define YUU_AHB_MASTER_DRIVER_SV
 
+// Class: yuu_ahb_master_driver
+// Driver implementation of AHB master
 class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   // Variable: vif
   // AHB master interface handle.
@@ -23,9 +25,19 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   uvm_event_pool        events;
 
   // Variable: processes
-  // Processes for handling reset
+  // Processes for handling reset.
   protected process processes[string];
-  protected semaphore m_cmd_sem, m_data_sem;
+
+  // Variable: m_cmd_sem
+  // Semaphore for pipeline in command phase.
+  protected semaphore m_cmd_sem;
+
+  // Variable: m_data_sem
+  // Semaphore for pipeline in data phase.
+  protected semaphore m_data_sem;
+
+  // Variable: error_key
+  // Error process flag
   boolean error_key = False;
 
   `uvm_register_cb(yuu_ahb_master_driver, yuu_ahb_master_driver_callback)
@@ -48,10 +60,14 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   extern protected virtual task          send_response(input yuu_ahb_master_item item);
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_master_driver::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: build_phase
+// UVM built-in method.
 function void yuu_ahb_master_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
@@ -60,11 +76,15 @@ function void yuu_ahb_master_driver::build_phase(uvm_phase phase);
   m_data_sem = new(1);
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_master_driver::connect_phase(uvm_phase phase);
   this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
+// Task: run_phase
+// UVM built-in method.
 task yuu_ahb_master_driver::run_phase(uvm_phase phase);
   init_component();
   fork
@@ -75,6 +95,8 @@ task yuu_ahb_master_driver::run_phase(uvm_phase phase);
 endtask
 
 
+// Task: init_component
+// Internal resource initialize.
 task yuu_ahb_master_driver::init_component();
   m_cmd_sem.try_get();
   m_cmd_sem.put();
@@ -84,6 +106,8 @@ task yuu_ahb_master_driver::init_component();
   reset_signal();
 endtask
 
+// Task: reset_signal
+// Reset interface signal.
 task yuu_ahb_master_driver::reset_signal();
   vif.drv_cb.haddr    <= 'h0;
   vif.drv_cb.htrans   <= 2'h0;
@@ -102,6 +126,8 @@ task yuu_ahb_master_driver::reset_signal();
   vif.drv_cb.lower_byte_lane <= 'h0;
 endtask
 
+// Task: get_and_drive
+// Fetch transaction from sequencer and drive on bus.
 task yuu_ahb_master_driver::get_and_drive();
   uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
   process proc_drive;
@@ -130,6 +156,10 @@ task yuu_ahb_master_driver::get_and_drive();
   end
 endtask
 
+// Task: cmd_phase
+// Main drive task, command phase.
+// Para:
+//  item - item expect to drive
 task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
   uvm_event drive_cmd_begin = events.get($sformatf("%s_driver_drive_cmd_begin", cfg.get_name()));
   uvm_event drive_cmd_end = events.get($sformatf("%s_driver_drive_cmd_end", cfg.get_name()));
@@ -195,6 +225,10 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
   `uvm_info("cmd_phase", "Transaction end", UVM_HIGH)
 endtask
 
+// Task: data_phase
+// Main drive task, data phase.
+// Para:
+//  item - item expect to drive
 task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
   uvm_event drive_data_begin = events.get($sformatf("%s_driver_drive_data_begin", cfg.get_name()));
   uvm_event drive_data_end = events.get($sformatf("%s_driver_drive_data_end", cfg.get_name()));
@@ -264,6 +298,10 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
   m_data_sem.put();
 endtask
 
+// Task: send_response
+// Send response back to sequencer.
+// Para:
+//  item - the transaction after driving on bus
 task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
   rsp = yuu_ahb_master_item::type_id::create("rsp");
   rsp.set_id_info(item);
@@ -272,6 +310,8 @@ task yuu_ahb_master_driver::send_response(input yuu_ahb_master_item item);
   // rsp.print();
 endtask
 
+// Task: wait_reset
+// Thread of reset waiting for handle on-the-fly reset.
 task yuu_ahb_master_driver::wait_reset();
   uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
 
@@ -287,6 +327,8 @@ task yuu_ahb_master_driver::wait_reset();
   end
 endtask
 
+// Task: error_proc
+// Response error detect, then set the error flag for processing.
 task yuu_ahb_master_driver::error_proc();
   uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
   process proc_error;

@@ -6,6 +6,7 @@
 `define YUU_AHB_ENV_CONFIG_SV
 
 // Class: yuu_ahb_env_config
+// Configuration class for AHB environment.
 class yuu_ahb_env_config extends uvm_object;
   // Variable: vif
   // AHB bus interface handle.

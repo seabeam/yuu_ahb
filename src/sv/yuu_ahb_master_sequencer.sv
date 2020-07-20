@@ -5,10 +5,19 @@
 `ifndef YUU_AHB_MASTER_SEQUENCER_SV
 `define YUU_AHB_MASTER_SEQUENCER_SV
 
+// Class: yuu_ahb_master_sequencer
+// Sequencer implementation of AHB master
 class yuu_ahb_master_sequencer extends uvm_sequencer #(yuu_ahb_master_item);
+  // Variable: vif
+  // AHB master interface handle.
   virtual yuu_ahb_master_interface vif;
 
+  // Variable: cfg
+  // AHB master agent configuration object.
   yuu_ahb_master_config cfg;
+
+  // Variable: events
+  // Global event pool for component communication.
   uvm_event_pool        events;
 
   `uvm_component_utils(yuu_ahb_master_sequencer)
@@ -17,10 +26,14 @@ class yuu_ahb_master_sequencer extends uvm_sequencer #(yuu_ahb_master_item);
   extern           virtual function void connect_phase(uvm_phase phase);
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_master_sequencer::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_master_sequencer::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
 

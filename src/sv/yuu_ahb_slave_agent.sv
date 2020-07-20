@@ -5,16 +5,39 @@
 `ifndef YUU_AHB_SLAVE_AGENT_SV
 `define YUU_AHB_SLAVE_AGENT_SV
 
+// Class: yuu_ahb_slave_agent
+// Container class for AHB slave.
 class yuu_ahb_slave_agent extends uvm_agent;
+  // Variable: cfg
+  // AHB slave agent configuration object.
   yuu_ahb_slave_config  cfg;
 
+  // Variable: sequencer
+  // AHB slave sequencer.
   yuu_ahb_slave_sequencer sequencer;
+  
+  // Variable: driver
+  // AHB slave driver.
   yuu_ahb_slave_driver    driver;
+  
+  // Variable: monitor
+  // AHB slave monitor.
   yuu_ahb_slave_monitor   monitor;
+  
+  // Variable: coverage
+  // AHB slave functional coverage collector.
   yuu_ahb_coverage        coverage;
+  
+  // Variable: analyzer
+  // AHB slave throughput analyzer.
   yuu_ahb_analyzer        analyzer;
 
+  // Variable: out_driver_port
+  // Analysis port out from driver.
   uvm_analysis_port #(yuu_ahb_slave_item) out_driver_port;
+  
+  // Variable: out_driver_port
+  // Analysis port out from driver.
   uvm_analysis_port #(yuu_ahb_item)       out_monitor_port;
 
   `uvm_component_utils_begin(yuu_ahb_slave_agent)
@@ -25,10 +48,14 @@ class yuu_ahb_slave_agent extends uvm_agent;
   extern virtual function void connect_phase(uvm_phase phase);
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_slave_agent::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: build_phase
+// UVM built-in method.
 function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
     `uvm_fatal("build_phase", "Cannot get slave configuration");
@@ -54,6 +81,8 @@ function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   end
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_slave_agent::connect_phase(uvm_phase phase);
   out_monitor_port = monitor.out_monitor_port;
 

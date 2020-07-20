@@ -5,6 +5,8 @@
 `ifndef YUU_AHB_ITEM_SV
 `define YUU_AHB_ITEM_SV
 
+// Class: yuu_ahb_item
+// AHB base transaction.
 class yuu_ahb_item extends uvm_sequence_item;
   // Variable: start_address
   // The start address issued by the master.

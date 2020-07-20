@@ -5,6 +5,8 @@
 `ifndef YUU_AHB_MASTER_CONFIG_SV
 `define YUU_AHB_MASTER_CONFIG_SV
 
+// Class: yuu_ahb_master_config
+// Configuration class for AHB master.
 class yuu_ahb_master_config extends yuu_ahb_agent_config;
   // Variable: vif
   // AHB master interface handle.

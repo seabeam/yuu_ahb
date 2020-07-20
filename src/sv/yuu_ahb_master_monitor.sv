@@ -5,22 +5,67 @@
 `ifndef YUU_AHB_MASTER_MONITOR_SV
 `define YUU_AHB_MASTER_MONITOR_SV
 
+// Class: yuu_ahb_master_monitor
+// Monitor implementation of AHB master
 class yuu_ahb_master_monitor extends uvm_monitor;
+  // Variable: vif
+  // AHB master interface handle.
   virtual yuu_ahb_master_interface  vif;
+
+  // Variable: out_monitor_port
+  // Analysis port out from monitor.
   uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
+  // Variable: cfg
+  // AHB master agent configuration object.
   yuu_ahb_master_config cfg;
-  uvm_event_pool        events;
-  protected process processes[string];
-  protected semaphore m_cmd, m_data;
 
+  // Variable: events
+  // Global event pool for component communication.
+  uvm_event_pool        events;
+
+  // Variable: processes
+  // Processes for handling reset
+  protected process processes[string];
+
+  // Variable: m_cmd_sem
+  // Semaphore for pipeline in command phase.
+  protected semaphore m_cmd_sem;
+
+  // Variable: m_data_sem
+  // Semaphore for pipeline in data phase.
+  protected semaphore m_data_sem;
+
+  // Variable: monitor_item
+  // Collected item send out monitor for further analyzing.
   protected yuu_ahb_master_item monitor_item;
+
+  // Variable: address_q
+  // Address queue to store temporary address information.
   protected yuu_ahb_addr_t      address_q[$];
+  
+  // Variable: data_q
+  // Data queue to store temporary data information.
   protected yuu_ahb_data_t      data_q[$];
+  
+  // Variable: trans_q
+  // Trans queue to store temporary trans information.
   protected yuu_ahb_trans_e     trans_q[$];
+  
+  // Variable: response_q
+  // Response queue to store temporary response information.
   protected yuu_ahb_response_e  response_q[$];
+  
+  // Variable: exokay_q
+  // EXOKAY queue to store temporary exokay information.
   protected yuu_ahb_exokay_e    exokay_q[$];
+  
+  // Variable: busy_q
+  // Busy queue to store temporary busy information.
   protected int unsigned        busy_q[$];
+  
+  // Variable: idle_q
+  // Idle queue to store temporary idle information.
   protected int unsigned        idle_q[$];
 
   `uvm_register_cb(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback)
@@ -41,23 +86,31 @@ class yuu_ahb_master_monitor extends uvm_monitor;
   extern protected virtual task          wait_reset();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_master_monitor::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: build_phase
+// UVM built-in method.
 function void yuu_ahb_master_monitor::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
-  m_cmd = new(1);
-  m_data = new(1);
+  m_cmd_sem = new(1);
+  m_data_sem = new(1);
   out_monitor_port = new("out_monitor_port", this);
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_master_monitor::connect_phase(uvm_phase phase);
   this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
+// Task: run_phase
+// UVM built-in method.
 task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
   process proc_monitor;
 
@@ -83,11 +136,13 @@ task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
 endtask
 
 
+// Task: init_component
+// Internal resource initialize.
 task yuu_ahb_master_monitor::init_component();
-  m_cmd.try_get();
-  m_cmd.put();
-  m_data.try_get();
-  m_data.put();
+  m_cmd_sem.try_get();
+  m_cmd_sem.put();
+  m_data_sem.try_get();
+  m_data_sem.put();
   address_q.delete();
   data_q.delete();
   trans_q.delete();
@@ -97,6 +152,10 @@ task yuu_ahb_master_monitor::init_component();
   exokay_q.delete();
 endtask
 
+// Task: assembling_and_send
+// Assemble collected information into transaction and send out monitor.
+// Para:
+//  monitor_item - the item collected by monitor.
 task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_item);
   int len = address_q.size()-1;
   yuu_ahb_master_item item = yuu_ahb_master_item::type_id::create("monitor_item");
@@ -138,11 +197,13 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_ite
 //  item.print();
 endtask
 
+// Task: cmd_phase
+// Main monitor task, command phase.
 task yuu_ahb_master_monitor::cmd_phase();
   uvm_event monitor_cmd_begin = events.get($sformatf("%s_monitor_cmd_begin", cfg.get_name()));
   uvm_event monitor_cmd_end = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
 
-  m_cmd.get();
+  m_cmd_sem.get();
   while (vif.mon_cb.hready_i !== 1'b1)
     vif.wait_cycle();
   if (address_q.size()>0 && (vif.mon_cb.htrans == NONSEQ || vif.mon_cb.htrans == IDLE))
@@ -194,14 +255,16 @@ task yuu_ahb_master_monitor::cmd_phase();
   vif.wait_cycle();
   monitor_cmd_end.trigger();
 
-  m_cmd.put();
+  m_cmd_sem.put();
 endtask
 
+// Task: data_phase
+// Main monitor task, data phase.
 task yuu_ahb_master_monitor::data_phase();
   uvm_event monitor_data_begin = events.get($sformatf("%s_monitor_data_begin", cfg.get_name()));
   uvm_event monitor_data_end   = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
 
-  m_data.get();
+  m_data_sem.get();
   while (vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ))
     vif.wait_cycle();
   do
@@ -223,9 +286,11 @@ task yuu_ahb_master_monitor::data_phase();
     exokay_q.push_back(EXOKAY);
 
   monitor_data_end.trigger();
-  m_data.put();
+  m_data_sem.put();
 endtask
 
+// Task: count_busy
+// Count busy cycles.
 task yuu_ahb_master_monitor::count_busy();
   bit count_ready = 0;
   int count = 0;
@@ -280,6 +345,8 @@ task yuu_ahb_master_monitor::count_busy();
   join
 endtask
 
+// Task: count_idle
+// Count idle cycles.
 task yuu_ahb_master_monitor::count_idle();
   bit idle_start = 0;
   int count;
@@ -311,6 +378,8 @@ task yuu_ahb_master_monitor::count_idle();
   end
 endtask
 
+// Task: wait_reset
+// Thread of reset waiting for handle on-the-fly reset.
 task yuu_ahb_master_monitor::wait_reset();
   forever begin
     @(negedge vif.mon_mp.hreset_n);

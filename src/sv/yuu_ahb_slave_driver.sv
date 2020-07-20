@@ -5,19 +5,51 @@
 `ifndef YUU_AHB_SLAVE_DRIVER_SV
 `define YUU_AHB_SLAVE_DRIVER_SV
 
+// Class: yuu_ahb_slave_driver
+// Driver implementation of AHB slave
 class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
+  // Variable: vif
+  // AHB slave interface handle.
   virtual yuu_ahb_slave_interface  vif;
+
+  // Variable: out_driver_port
+  // Analysis port out from driver.  
   uvm_analysis_port #(yuu_ahb_slave_item) out_driver_port;
 
+  // Variable: cfg
+  // AHB slave agent configuration object.
   yuu_ahb_slave_config  cfg;
+
+  // Variable: events
+  // Global event pool for component communication.  
   uvm_event_pool        events;
+
+  // Variable: processes
+  // Processes for handling reset.
   protected process processes[string];
+
+  // Variable: maps
+  // Address infomation of slave.  
   protected yuu_common_addr_map maps[];
 
+  // Variable: m_mem
+  // Internal memory object of slave.
   protected yuu_ahb_slave_memory  m_mem;
+
+  // Variable: m_excl_start
+  // Exclusive transfer start flag.
   protected boolean               m_excl_start;
+
+  // Variable: m_excl_addr
+  // Address used in exclusive transfer.
   protected yuu_ahb_addr_t        m_excl_addr;
+
+  // Variable: m_excl_master
+  // Master identifier used in exclusive transfer.  
   protected int unsigned          m_excl_master;
+
+  // Variable: drive_count
+  // Counter of drivern transaction. 
   local     int unsigned          drive_count;
 
   `uvm_register_cb(yuu_ahb_slave_driver, yuu_ahb_slave_driver_callback)
@@ -39,20 +71,28 @@ class yuu_ahb_slave_driver extends uvm_driver #(yuu_ahb_slave_item);
   extern protected virtual task             wait_reset();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_slave_driver::new(string name, uvm_component parent);
   super.new(name, parent);
 endfunction
 
+// Function: build_phase
+// UVM built-in method.
 function void yuu_ahb_slave_driver::build_phase(uvm_phase phase);
   out_driver_port = new("out_driver_port", this);
   cfg.get_maps(maps);
 endfunction
 
+// Function: connect_phase
+// UVM built-in method.
 function void yuu_ahb_slave_driver::connect_phase(uvm_phase phase);
   this.vif = cfg.vif;
   this.events = cfg.events;
 endfunction
 
+// Task: run_phase
+// UVM built-in method.
 task yuu_ahb_slave_driver::run_phase(uvm_phase phase);
   init_component();
   fork
@@ -62,12 +102,16 @@ task yuu_ahb_slave_driver::run_phase(uvm_phase phase);
 endtask
 
 
+// Task: init_component
+// Internal resource initialize.
 task yuu_ahb_slave_driver::init_component();
   init_mem();
   reset_signal();
   drive_count = 0;
 endtask
 
+// Function: init_mem
+// Internal memory initialize.
 function void yuu_ahb_slave_driver::init_mem();
   if (!uvm_config_db #(yuu_ahb_slave_memory)::get(null, get_full_name(), "mem", m_mem)) begin
     m_mem = new;
@@ -77,6 +121,10 @@ function void yuu_ahb_slave_driver::init_mem();
   m_mem.enable_byte_align = False;
 endfunction
 
+// Function: init_mem
+// Check the address is inside slave.
+// Para:
+//  addr - the address expect to check.
 function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
   foreach (maps[i]) begin
     if (maps[i].is_contain(addr))
@@ -87,6 +135,8 @@ function boolean yuu_ahb_slave_driver::is_out(yuu_ahb_addr_t addr);
   return True;
 endfunction
 
+// Task: reset_signal
+// Reset interface signal
 task yuu_ahb_slave_driver::reset_signal();
   vif.drv_cb.hresp <= OKAY;
   vif.drv_cb.hready_o <= 1'b1;
@@ -94,6 +144,8 @@ task yuu_ahb_slave_driver::reset_signal();
   vif.drv_cb.hexokay <= 1'b1;
 endtask
 
+// Task: get_and_drive
+// Fetch transaction from sequencer and drive on bus.
 task yuu_ahb_slave_driver::get_and_drive();
   process proc_drive;
 
@@ -109,6 +161,8 @@ task yuu_ahb_slave_driver::get_and_drive();
   end
 endtask
 
+// Task: drive_bus
+// Drive transaction on bus.
 task yuu_ahb_slave_driver::drive_bus();
   uvm_event handshake   = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
   yuu_ahb_addr_t      addr;
@@ -208,6 +262,8 @@ task yuu_ahb_slave_driver::drive_bus();
   end
 endtask
 
+// Task: wait_reset
+// Thread of reset waiting for handle on-the-fly reset.
 task yuu_ahb_slave_driver::wait_reset();
   uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
 

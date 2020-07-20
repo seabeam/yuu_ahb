@@ -5,12 +5,23 @@
 `ifndef YUU_AHB_MASTER_ITEM_SV
 `define YUU_AHB_MASTER_ITEM_SV
 
+// Class: yuu_ahb_master_item
+// AHB master transaction.
 class yuu_ahb_master_item extends yuu_ahb_item;
+  // Variable: cfg
+  // AHB master agent configuration object.
   yuu_ahb_master_config cfg;
 
+  // Variable: idle_delay
+  // Idle cycles between transactions.
   rand int unsigned idle_delay;
+
+  // Variable: busy_delay
+  // Busy hold cycles inside burst transfer.
   rand int unsigned busy_delay[];
 
+  // Constraint: c_idle
+  // idle_delay range constraint.
   constraint c_idle {
     soft idle_delay inside {[0:`YUU_AHB_MAX_DELAY]};
     if (!cfg.idle_enable) {
@@ -18,6 +29,8 @@ class yuu_ahb_master_item extends yuu_ahb_item;
     }
   }
 
+  // Constraint: c_busy
+  // busy_delay range constraint.
   constraint c_busy {
     busy_delay.size() == len+1;
     foreach (busy_delay[i]) {
@@ -39,10 +52,14 @@ class yuu_ahb_master_item extends yuu_ahb_item;
   extern function void data_process();
 endclass
 
+// Function: new
+// Constructor of object.
 function yuu_ahb_master_item::new(string name="yuu_ahb_master_item");
   super.new(name);
 endfunction
 
+// Function: pre_randomize
+// SV built-in function.
 function void yuu_ahb_master_item::pre_randomize();
   if (!uvm_config_db #(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
     `uvm_fatal("pre_randomize", "Cannot get AHB configuration in transaction")
@@ -73,6 +90,8 @@ function void yuu_ahb_master_item::pre_randomize();
   end
 endfunction
 
+// Function: command_process
+// Process AHB command information.
 function void yuu_ahb_master_item::command_process();
   super.command_process();
 
@@ -87,6 +106,8 @@ function void yuu_ahb_master_item::command_process();
   busy_delay[0] = 0;
 endfunction
 
+// Function: data_process
+// Process AHB data information.
 function void yuu_ahb_master_item::data_process();
   super.data_process();
 

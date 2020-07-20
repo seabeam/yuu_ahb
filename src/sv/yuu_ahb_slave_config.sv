@@ -6,7 +6,7 @@
 `define YUU_AHB_SLAVE_CONFIG_SV
 
 // Class: yuu_ahb_slave_config
-// Configuration object of yuu_ahb_slave_agent.
+// Configuration object for AHB slave.
 class yuu_ahb_slave_config extends yuu_ahb_agent_config;
   // Variable: vif
   // AHB bus interface handle.
