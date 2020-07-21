@@ -26,10 +26,10 @@
 //-------------------------------------
 // SV Define
 //-------------------------------------
-+define+YUU_AHB_MASTER_NUM=1
-+define+YUU_AHB_SLAVE_NUM=1
-+define+YUU_AHB_ADDR_WIDTH=32
-+define+YUU_AHB_DATA_WIDTH=32
++define+YUU_AHB_MAX_MASTER_NUM=1
++define+YUU_AHB_MAX_SLAVE_NUM=1
++define+YUU_AHB_MAX_ADDR_WIDTH=32
++define+YUU_AHB_MAX_DATA_WIDTH=32
 
 //-------------------------------------
 // SV Include

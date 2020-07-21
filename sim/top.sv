@@ -44,6 +44,10 @@ module top;
   end
 
   always #7  hclk = ~hclk;
+
+  final begin
+    $display("--------------------- Simulation finish ------------------------");
+  end
 endmodule
 
 `endif

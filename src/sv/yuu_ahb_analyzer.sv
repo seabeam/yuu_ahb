@@ -76,7 +76,7 @@ function void yuu_ahb_analyzer::report_phase(uvm_phase phase);
   end
 
   tput_rate = real'(m_count)/(m_end_time - m_start_time) * 1000;
-  `uvm_info("report_phase", $sformatf("AHB %s speed is %f", cfg.agent_type, tput_rate), UVM_LOW);
+  `uvm_info("report_phase", $sformatf("AHB speed is %f", tput_rate), UVM_LOW);
 endfunction
 
 // Function: write
