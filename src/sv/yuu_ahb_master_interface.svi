@@ -5,6 +5,8 @@
 `ifndef GUARD_YUU_AHB_MASTER_INTERFACE_SVI
 `define GUARD_YUU_AHB_MASTER_INTERFACE_SVI
 
+// Interface: yuu_ahb_master_interface
+// AHB master bus interface 
 interface yuu_ahb_master_interface();
   logic                               hclk;
   logic                               hreset_n;
@@ -31,6 +33,7 @@ interface yuu_ahb_master_interface();
   logic [31:0]                        burst_num;
   logic [31:0]                        burst_idx;
   logic [31:0]                        transfer_idx;
+  logic burst_end;
 
   clocking cb @(posedge hclk);
   endclocking
@@ -146,7 +149,6 @@ interface yuu_ahb_master_interface();
     end
   end
 
-  logic burst_end;
   logic [1:0] current_trans;
   logic start_flag;
 

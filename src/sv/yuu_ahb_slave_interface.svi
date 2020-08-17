@@ -5,6 +5,8 @@
 `ifndef GUARD_YUU_AHB_SLAVE_INTERFACE_SVI
 `define GUARD_YUU_AHB_SLAVE_INTERFACE_SVI
 
+// Interface: yuu_ahb_master_interface
+// AHB master bus interface 
 interface yuu_ahb_slave_interface();
   logic                               hclk;
   logic                               hreset_n;
