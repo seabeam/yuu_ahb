@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_SLAVE_DRIVER_SV
-`define YUU_AHB_SLAVE_DRIVER_SV
+`ifndef GUARD_YUU_AHB_SLAVE_DRIVER_SV
+`define GUARD_YUU_AHB_SLAVE_DRIVER_SV
 
 // Class: yuu_ahb_slave_driver
 // Driver implementation of AHB slave

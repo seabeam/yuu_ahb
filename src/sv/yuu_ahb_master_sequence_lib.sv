@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_MASTER_SEQUENCE_LIB_SV
-`define YUU_AHB_MASTER_SEQUENCE_LIB_SV
+`ifndef GUARD_YUU_AHB_MASTER_SEQUENCE_LIB_SV
+`define GUARD_YUU_AHB_MASTER_SEQUENCE_LIB_SV
 
 typedef class yuu_ahb_master_sequencer;
 // Class: yuu_ahb_master_sequence_base

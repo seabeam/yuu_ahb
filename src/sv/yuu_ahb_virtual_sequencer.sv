@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_VIRTUAL_SEQUENCER_SV
-`define YUU_AHB_VIRTUAL_SEQUENCER_SV
+`ifndef GUARD_YUU_AHB_VIRTUAL_SEQUENCER_SV
+`define GUARD_YUU_AHB_VIRTUAL_SEQUENCER_SV
 
 // Class: yuu_ahb_virtual_sequencer
 // AHB virtual sequencer base.

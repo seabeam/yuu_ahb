@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_AGENT_CONFIG_SV
-`define YUU_AHB_AGENT_CONFIG_SV
+`ifndef GUARD_YUU_AHB_AGENT_CONFIG_SV
+`define GUARD_YUU_AHB_AGENT_CONFIG_SV
 
 // Class: yuu_ahb_agent_config
 // Configuration object of yuu_ahb_agent, which is a base class for AHB master/slave

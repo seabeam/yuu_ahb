@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_ANALYZER_SV
-`define YUU_AHB_ANALYZER_SV
+`ifndef GUARD_YUU_AHB_ANALYZER_SV
+`define GUARD_YUU_AHB_ANALYZER_SV
 
 // Class: yuu_ahb_analyzer
 // AHB throughput analyzer, which receives transaction out from monitor to process.

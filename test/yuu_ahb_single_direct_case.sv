@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_SINGLE_DIRECT_CASE_SV
-`define YUU_AHB_SINGLE_DIRECT_CASE_SV
+`ifndef GUARD_YUU_AHB_SINGLE_DIRECT_CASE_SV
+`define GUARD_YUU_AHB_SINGLE_DIRECT_CASE_SV
 
 class yuu_ahb_single_direct_case extends yuu_ahb_single_base_case;
   `uvm_component_utils(yuu_ahb_single_direct_case)

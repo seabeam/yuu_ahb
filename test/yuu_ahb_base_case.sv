@@ -3,8 +3,8 @@
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 
-`ifndef YUU_AHB_BASE_CASE_SV
-`define YUU_AHB_BASE_CASE_SV
+`ifndef GUARD_YUU_AHB_BASE_CASE_SV
+`define GUARD_YUU_AHB_BASE_CASE_SV
 
 import uvm_pkg::*;
 `include "uvm_macros.svh"

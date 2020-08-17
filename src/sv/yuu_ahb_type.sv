@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_TYPE_SV
-`define YUU_AHB_TYPE_SV
+`ifndef GUARD_YUU_AHB_TYPE_SV
+`define GUARD_YUU_AHB_TYPE_SV
 
   // Typedef: yuu_ahb_addr_t
   // AHB address type

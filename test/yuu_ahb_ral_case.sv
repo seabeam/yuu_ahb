@@ -2,8 +2,8 @@
 // Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef YUU_AHB_RAL_CASE_SV
-`define YUU_AHB_RAL_CASE_SV
+`ifndef GUARD_YUU_AHB_RAL_CASE_SV
+`define GUARD_YUU_AHB_RAL_CASE_SV
 
 class yuu_master_ral_virtual_sequence extends yuu_ahb_virtual_sequence;
   slave_ral_model model;
