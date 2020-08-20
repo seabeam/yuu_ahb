@@ -23,6 +23,7 @@ package yuu_ahb_pkg;
   `include "yuu_ahb_item.sv"
   `include "yuu_ahb_master_item.sv"
   `include "yuu_ahb_slave_item.sv"
+  `include "yuu_ahb_reg_extension.sv"
   `include "yuu_ahb_callbacks.sv"
   `include "yuu_ahb_analyzer.sv"
   `include "yuu_ahb_coverage.sv"
@@ -41,6 +42,7 @@ package yuu_ahb_pkg;
   `include "yuu_ahb_slave_agent.sv"
 
   `include "yuu_ahb_virtual_sequencer.sv"
+  `include "yuu_ahb_virtual_sequence.sv"
   `include "yuu_ahb_env.sv"
 endpackage
 

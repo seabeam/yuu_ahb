@@ -11,19 +11,19 @@
 // Interface: yuu_ahb_interface
 // AHB bus interface. It is a wrapper of AHB masters and slaves.
 interface yuu_ahb_interface();
-  // Variable: hreset_n
+  // Signal: hreset_n
   // Reset signal of AHB bus.
   logic hreset_n;
 
-  // Variable: hclk
+  // Signal: hclk
   // Global clock signal of AHB bus.
   logic hclk;
 
-  // Variable: master_if
+  // Signal: master_if
   // The binding of master interfaces.
   yuu_ahb_master_interface  master_if[16]();
 
-  // Variable: slave_if
+  // Signal: slave_if
   // The binding of slave interfaces.
   yuu_ahb_slave_interface   slave_if[16]();
 
