@@ -38,6 +38,7 @@ constraint c_ahb_align {
     burst_size==BYTE64 -> start_address[5:0]==6'b0;  
     burst_size==BYTE128 -> start_address[6:0]==7'b0;  
   }  
+}  
 
 ```
 
@@ -100,13 +101,14 @@ constraint c_ahb_1k_boundary {
   if (burst_type==AHB_INCR) {  
     start_address[9:0]+(len+1)*number_bytes <=1024;  
   }  
+}  
 
 ```
 # Properties
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `rand yuu_ahb_addr_t` | [start_address](#start_address) |
 | `rand yuu_ahb_data_t` | [data[]](#data) |
@@ -411,7 +413,7 @@ constraint c_ahb_1k_boundary {
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [post_randomize](#post_randomize) |

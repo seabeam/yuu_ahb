@@ -8,7 +8,7 @@ Driver implementation of AHB slave
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_slave_interface` | [vif](#vif) |
 | `uvm_analysis_port #(yuu_ahb_slave_item)` | [out_driver_port](#out_driver_port) |
@@ -105,7 +105,7 @@ Driver implementation of AHB slave
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |
@@ -151,7 +151,7 @@ addr - the address expect to check.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `task` | [run_phase](#run_phase) |
 | `task` | [init_component](#init_component) |

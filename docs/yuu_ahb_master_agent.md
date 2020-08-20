@@ -8,7 +8,7 @@ Container class for AHB master.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_master_config` | [cfg](#cfg) |
 | `yuu_ahb_master_sequencer` | [sequencer](#sequencer) |
@@ -97,7 +97,7 @@ Container class for AHB master.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |

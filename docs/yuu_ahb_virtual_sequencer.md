@@ -8,7 +8,7 @@ AHB virtual sequencer base.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_interface` | [vif](#vif) |
 | `yuu_ahb_env_config` | [cfg](#cfg) |
@@ -57,7 +57,7 @@ AHB virtual sequencer base.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [connect_phase](#connect_phase) |

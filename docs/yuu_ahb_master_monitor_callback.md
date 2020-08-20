@@ -8,7 +8,7 @@ AHB master monitor callback library.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 
@@ -24,7 +24,7 @@ AHB master monitor callback library.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual task` | [pre_collect](#pre_collect) |
 | `virtual task` | [post_collect](#post_collect) |

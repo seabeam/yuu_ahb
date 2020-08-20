@@ -8,7 +8,7 @@ Configuration class for AHB master.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_master_interface` | [vif](#vif) |
 | `boolean` | [idle_enable](#idle_enable) |
@@ -116,7 +116,7 @@ abort can be chosen.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function boolean` | [check_valid](#check_valid) |

@@ -8,7 +8,7 @@ Random master write sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 
@@ -24,7 +24,7 @@ Random master write sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual task` | [body](#body) |
 

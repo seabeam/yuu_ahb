@@ -8,7 +8,7 @@ Driver implementation of AHB master
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_master_interface` | [vif](#vif) |
 | `uvm_analysis_port #(yuu_ahb_master_item)` | [out_driver_port](#out_driver_port) |
@@ -81,7 +81,7 @@ Driver implementation of AHB master
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |
@@ -111,7 +111,7 @@ Driver implementation of AHB master
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `task` | [run_phase](#run_phase) |
 | `task` | [init_component](#init_component) |

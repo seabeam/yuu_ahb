@@ -29,13 +29,14 @@ constraint c_wait {
   if (!cfg.wait_enable) {  
     wait_delay==0;  
   }  
+}  
 
 ```
 # Properties
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_slave_config` | [cfg](#cfg) |
 | `rand int unsigned` | [wait_delay](#wait_delay) |
@@ -60,7 +61,7 @@ constraint c_wait {
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [pre_randomize](#pre_randomize) |

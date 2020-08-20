@@ -9,7 +9,7 @@ process.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_agent_config` | [cfg](#cfg) |
 | `uvm_event_pool` | [events](#events) |
@@ -58,7 +58,7 @@ process.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |

@@ -8,7 +8,7 @@ Configuration object for AHB slave.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_slave_interface` | [vif](#vif) |
 | `boolean` | [wait_enable](#wait_enable) |
@@ -41,14 +41,14 @@ Configuration object for AHB slave.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
-| `function yuu_ahb_slave_config::new` | [](#) |
+| `function` | [new](#new) |
 | `function boolean` | [check_valid](#check_valid) |
 
 ## Function Detailed Documentation
 
-### `function yuu_ahb_slave_config::new`  (string name="yuu_ahb_slave_config") :id=
+### `function` new (string name="yuu_ahb_slave_config") :id=new
 
 ?> **Access**: public  
 **Description**: Constructor of object.  

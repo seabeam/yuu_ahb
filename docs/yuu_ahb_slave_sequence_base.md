@@ -8,7 +8,7 @@ The base class for AHB slave sequence.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_slave_interface` | [vif](#vif) |
 | `yuu_ahb_slave_config` | [cfg](#cfg) |
@@ -49,7 +49,7 @@ The base class for AHB slave sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 
@@ -65,7 +65,7 @@ The base class for AHB slave sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `task` | [pre_start](#pre_start) |
 | `task` | [body](#body) |

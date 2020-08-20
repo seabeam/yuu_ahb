@@ -8,7 +8,7 @@ AHB virtual sequence base.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 

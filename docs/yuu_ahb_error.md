@@ -8,7 +8,7 @@ AHB error object for application error scenario of sequence
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `int unsigned` | [no_error_wt](#no_error_wt) |
 | `int unsigned` | [invalid_addr_wt](#invalid_addr_wt) |
@@ -65,7 +65,7 @@ AHB error object for application error scenario of sequence
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 

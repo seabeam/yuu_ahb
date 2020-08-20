@@ -8,7 +8,7 @@ Sequencer implementation of AHB master
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_master_interface` | [vif](#vif) |
 | `yuu_ahb_master_config` | [cfg](#cfg) |
@@ -41,7 +41,7 @@ Sequencer implementation of AHB master
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [connect_phase](#connect_phase) |

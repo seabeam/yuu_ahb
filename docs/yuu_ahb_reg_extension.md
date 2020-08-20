@@ -8,7 +8,7 @@ Register extension for adapter.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_addr_t` | [byte_offset](#byte_offset) |
 | `yuu_ahb_data_t` | [data[]](#data) |
@@ -113,7 +113,7 @@ Register extension for adapter.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 

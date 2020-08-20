@@ -8,7 +8,7 @@ Random master read sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `virtual task` | [body](#body) |

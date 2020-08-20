@@ -17,6 +17,7 @@ constraint c_idle {
   if (!cfg.idle_enable) {  
     idle_delay==0;  
   }  
+}  
 
 ```
 
@@ -33,13 +34,15 @@ constraint c_busy {
     if (!cfg.busy_enable || len==0) {  
       busy_delay[i]==0;  
     }  
+  }  
+}  
 
 ```
 # Properties
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_master_config` | [cfg](#cfg) |
 | `rand int unsigned` | [idle_delay](#idle_delay) |
@@ -72,7 +75,7 @@ constraint c_busy {
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [pre_randomize](#pre_randomize) |

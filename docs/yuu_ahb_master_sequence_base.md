@@ -8,7 +8,7 @@ The base class for AHB master sequence.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_master_interface` | [vif](#vif) |
 | `yuu_ahb_master_config` | [cfg](#cfg) |
@@ -49,7 +49,7 @@ The base class for AHB master sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 
@@ -65,7 +65,7 @@ The base class for AHB master sequence.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual task` | [pre_start](#pre_start) |
 | `virtual task` | [body](#body) |

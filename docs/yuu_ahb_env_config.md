@@ -8,7 +8,7 @@ Configuration class for AHB environment.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_interface` | [ahb_if](#ahb_if) |
 | `uvm_event_pool` | [events](#events) |
@@ -65,7 +65,7 @@ Configuration class for AHB environment.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [set_config](#set_config) |

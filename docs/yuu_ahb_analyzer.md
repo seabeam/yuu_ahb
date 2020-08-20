@@ -9,7 +9,7 @@ It can be also used for any other process user defined and based on transaction.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_agent_config` | [cfg](#cfg) |
 | `uvm_event_pool` | [events](#events) |
@@ -66,7 +66,7 @@ It can be also used for any other process user defined and based on transaction.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [connect_phase](#connect_phase) |
@@ -103,7 +103,7 @@ It can be also used for any other process user defined and based on transaction.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `task` | [run_phase](#run_phase) |
 | `task` | [measure_start](#measure_start) |

@@ -8,7 +8,7 @@ AHB environment class, a container of masters and slaves
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_env_config` | [cfg](#cfg) |
 | `yuu_ahb_master_agent` | [master[]](#master) |
@@ -49,7 +49,7 @@ AHB environment class, a container of masters and slaves
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |

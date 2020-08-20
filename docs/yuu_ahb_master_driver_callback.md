@@ -8,7 +8,7 @@ AHB master driver callback library.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 
@@ -24,7 +24,7 @@ AHB master driver callback library.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual task` | [pre_send](#pre_send) |
 | `virtual task` | [post_send](#post_send) |

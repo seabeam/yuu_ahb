@@ -9,7 +9,7 @@ agent configuration. This class includes most setting of AHB agent.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `uvm_event_pool` | [events](#events) |
 | `int` | [index](#index) |
@@ -109,9 +109,9 @@ Otherwise only monitor is working.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
-| `function yuu_ahb_agent_config::new` | [](#) |
+| `function` | [new](#new) |
 | `function boolean` | [check_valid](#check_valid) |
 | `function void` | [set_map](#set_map) |
 | `function void` | [set_maps](#set_maps) |
@@ -121,7 +121,7 @@ Otherwise only monitor is working.
 
 ## Function Detailed Documentation
 
-### `function yuu_ahb_agent_config::new`  (string name="yuu_ahb_agent_config") :id=
+### `function` new (string name="yuu_ahb_agent_config") :id=new
 
 ?> **Access**: public  
 **Description**: Constructor of object.  

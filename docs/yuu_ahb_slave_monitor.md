@@ -8,7 +8,7 @@ Monitor implementation of AHB slave
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `virtual yuu_ahb_slave_interface` | [vif](#vif) |
 | `uvm_analysis_port #(yuu_ahb_item)` | [out_monitor_port](#out_monitor_port) |
@@ -121,7 +121,7 @@ Monitor implementation of AHB slave
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |
@@ -151,7 +151,7 @@ Monitor implementation of AHB slave
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `task` | [run_phase](#run_phase) |
 | `task` | [init_component](#init_component) |

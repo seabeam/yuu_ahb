@@ -8,7 +8,7 @@ AHB register adapter.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_master_config` | [cfg](#cfg) |
 
@@ -25,7 +25,7 @@ AHB register adapter.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function uvm_sequence_item` | [reg2bus](#reg2bus) |

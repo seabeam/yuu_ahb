@@ -8,7 +8,7 @@ Container class for AHB slave.
 
 ## Member List
 
-| | |
+| prefix | identifier |
 | - | - |
 | `yuu_ahb_slave_config` | [cfg](#cfg) |
 | `yuu_ahb_slave_sequencer` | [sequencer](#sequencer) |
@@ -81,7 +81,7 @@ Container class for AHB slave.
 
 ## Prototype
 
-| | |
+| prefix | identifier |
 | - | - |
 | `function` | [new](#new) |
 | `function void` | [build_phase](#build_phase) |
