@@ -31,4 +31,3 @@
 - [yuu_ahb_virtual_sequence](yuu_ahb_virtual_sequence.md)
 - [yuu_ahb_virtual_sequencer](yuu_ahb_virtual_sequencer.md)
 - [yuu_ahb_write_sequence](yuu_ahb_write_sequence.md)
-- [_sidebar](_sidebar.md)
