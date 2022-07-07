@@ -24,19 +24,19 @@
   `define YUU_AHB_LANE_WIDTH  $clog2(`YUU_AHB_MAX_DATA_WIDTH/8)
 
   `ifndef YUU_AHB_MASTER_SETUP_TIME
-  `define YUU_AHB_MASTER_SETUP_TIME  1
+  `define YUU_AHB_MASTER_SETUP_TIME  1step
   `endif
 
   `ifndef YUU_AHB_MASTER_HOLD_TIME
-  `define YUU_AHB_MASTER_HOLD_TIME   1
+  `define YUU_AHB_MASTER_HOLD_TIME   1step
   `endif
 
   `ifndef YUU_AHB_SLAVE_SETUP_TIME
-  `define YUU_AHB_SLAVE_SETUP_TIME   1
+  `define YUU_AHB_SLAVE_SETUP_TIME   1step
   `endif
 
   `ifndef YUU_AHB_SLAVE_HOLD_TIME
-  `define YUU_AHB_SLAVE_HOLD_TIME    1
+  `define YUU_AHB_SLAVE_HOLD_TIME    1step
   `endif
 
   `ifndef YUU_AHB_MAX_DELAY
