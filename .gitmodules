@@ -1,7 +1,6 @@
-[submodule "yuu_common"]
-  path = pkg/yuu_common
-  url = https://github.com/seabeam/yuu_common.git
-
-[submodule "yuu_amba"]
-  path = pkg/yuu_amba
-  url = https://github.com/seabeam/yuu_amba.git
+[submodule "pkg/yuu_common"]
+	path = pkg/yuu_common
+	url = https://github.com/seabeam/yuu_common.git
+[submodule "pkg/yuu_amba"]
+	path = pkg/yuu_amba
+	url = https://github.com/seabeam/yuu_amba.git
