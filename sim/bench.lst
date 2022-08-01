@@ -34,8 +34,8 @@
 //-------------------------------------
 // SV Include
 //-------------------------------------
-+incdir+../../yuu_common/include
-+incdir+../../yuu_common/src/sv
++incdir+../pkg/yuu_common/include
++incdir+../pkg/yuu_common/src/sv
 +incdir+../include
 +incdir+../src/sv
 +incdir+../test
@@ -43,7 +43,7 @@
 //-------------------------------------
 // SV Filelist
 //-------------------------------------
-../../yuu_common/include/yuu_common_pkg.sv
+../pkg/yuu_common/include/yuu_common_pkg.sv
 ../include/yuu_ahb_pkg.sv
 
 //-------------------------------------

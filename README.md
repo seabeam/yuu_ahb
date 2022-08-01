@@ -16,4 +16,12 @@ Following is the task list under development:
 - [x] Add document 
 
 ## Note
-[yuu_common](https://github.com/seabeam/yuu_common "YUU UVM utilities package") package is needed  
+Submodule `yuu_common` and `yuu_amba` has been included in pkg folder, please run:
+
+git clone https://github.com/seabeam/yuu_ahb.git --recurse-submodules
+
+to clone repo if you haven't done it before;
+
+Or run below command to fulfill the submodule:
+
+git submodule update --init --recursive
