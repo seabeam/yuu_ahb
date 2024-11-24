@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_REG_EXTENSION_SV

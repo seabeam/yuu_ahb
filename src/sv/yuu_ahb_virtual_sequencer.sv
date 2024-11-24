@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_VIRTUAL_SEQUENCER_SV
@@ -14,23 +14,23 @@ class yuu_ahb_virtual_sequencer extends uvm_virtual_sequencer;
 
   // Variable: cfg
   // AHB environment configuration object.
-  yuu_ahb_env_config  cfg;
+  yuu_ahb_env_config cfg;
 
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool      events;
+  uvm_event_pool events;
 
   // Variable: master_sequencer
   // All master sequencer collection.
-  yuu_ahb_master_sequencer  master_sequencer[];
+  yuu_ahb_master_sequencer master_sequencer[];
 
   // Variable: slave_sequencer
   // All slave sequencer collection.
-  yuu_ahb_slave_sequencer   slave_sequencer[];
+  yuu_ahb_slave_sequencer slave_sequencer[];
 
   `uvm_component_utils(yuu_ahb_virtual_sequencer)
 
-  extern function      new(string name, uvm_component parent);
+  extern function new(string name, uvm_component parent);
   extern function void connect_phase(uvm_phase phase);
 endclass
 

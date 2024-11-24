@@ -1,9 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_ENV_CONFIG_SV
-`define GUARD_YUU_AHB_ENV_CONFIG_SV
+`define GUARD_YUU_AHB_ENV_CONFIG_SV 
 
 // Class: yuu_ahb_env_config
 // Configuration class for AHB environment.
@@ -15,14 +15,14 @@ class yuu_ahb_env_config extends uvm_object;
   // Variable: events
   // Global event pool for component communication.
   uvm_event_pool events;
-  
+
   // Variable: mst_cfg
   // AHB master configuration pool.
   yuu_ahb_master_config mst_cfg[$];
 
   // Variable: slv_cfg
   // AHB slave configuration pool.
-  yuu_ahb_slave_config  slv_cfg[$];
+  yuu_ahb_slave_config slv_cfg[$];
 
   // Variable: compare_enable
   // Enable scoreboard.
@@ -33,21 +33,21 @@ class yuu_ahb_env_config extends uvm_object;
   boolean protocol_check_enable = False;
 
   `uvm_object_utils_begin(yuu_ahb_env_config)
-    `uvm_field_enum         (boolean, compare_enable,         UVM_PRINT | UVM_COPY)
-    `uvm_field_enum         (boolean, protocol_check_enable,  UVM_PRINT | UVM_COPY)
-    `uvm_field_queue_object (         mst_cfg,                UVM_PRINT | UVM_COPY)
-    `uvm_field_queue_object (         slv_cfg,                UVM_PRINT | UVM_COPY)
+    `uvm_field_enum(boolean, compare_enable, UVM_PRINT | UVM_COPY)
+    `uvm_field_enum(boolean, protocol_check_enable, UVM_PRINT | UVM_COPY)
+    `uvm_field_queue_object(mst_cfg, UVM_PRINT | UVM_COPY)
+    `uvm_field_queue_object(slv_cfg, UVM_PRINT | UVM_COPY)
   `uvm_object_utils_end
 
-  extern         function         new(string name="yuu_ahb_env_config");
-  extern virtual function void    set_config(yuu_ahb_agent_config cfg);
-  extern virtual function void    set_configs(yuu_ahb_agent_config cfg[]);
+  extern function new(string name = "yuu_ahb_env_config");
+  extern virtual function void set_config(yuu_ahb_agent_config cfg);
+  extern virtual function void set_configs(yuu_ahb_agent_config cfg[]);
   extern virtual function boolean check_valid();
 endclass
 
 // Function: new
 // Constructor of object.
-function yuu_ahb_env_config::new(string name="yuu_ahb_env_config");
+function yuu_ahb_env_config::new(string name = "yuu_ahb_env_config");
   super.new(name);
 endfunction
 
@@ -56,29 +56,27 @@ endfunction
 // Para:
 //  cfg - Agent configuration.
 function void yuu_ahb_env_config::set_config(yuu_ahb_agent_config cfg);
-  if (cfg == null)
-    `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
+  if (cfg == null) `uvm_fatal("set_config", "Which yuu_ahb agent config set is null")
 
   cfg.events = events;
-  case(cfg.get_type_name())
+  case (cfg.get_type_name())
     "yuu_ahb_master_config": begin
       yuu_ahb_master_config mcfg = yuu_ahb_master_config::type_id::create("config");
 
       $cast(mcfg, cfg);
-      if(mcfg.index >= 0)
-        mcfg.vif = ahb_if.get_master_if(mcfg.index);
+      if (mcfg.index >= 0) mcfg.vif = ahb_if.get_master_if(mcfg.index);
       mst_cfg.push_back(mcfg);
     end
     "yuu_ahb_slave_config": begin
       yuu_ahb_slave_config scfg = yuu_ahb_slave_config::type_id::create("config");
 
       $cast(scfg, cfg);
-      if(scfg.index >= 0)
-        scfg.vif = ahb_if.get_slave_if(scfg.index);
+      if (scfg.index >= 0) scfg.vif = ahb_if.get_slave_if(scfg.index);
       slv_cfg.push_back(scfg);
     end
     default: begin
-      `uvm_fatal("set_config", $sformatf("Invalid agent config object type: %s", cfg.get_type_name()))
+      `uvm_fatal("set_config", $sformatf("Invalid agent config object type: %s", cfg.get_type_name()
+                 ))
     end
   endcase
 endfunction
@@ -88,8 +86,7 @@ endfunction
 // Para:
 //  cfg - Agent configurations array.
 function void yuu_ahb_env_config::set_configs(yuu_ahb_agent_config cfg[]);
-  foreach (cfg[i])
-    set_config(cfg[i]);
+  foreach (cfg[i]) set_config(cfg[i]);
 endfunction
 
 // Function: check_valid

@@ -1,28 +1,28 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
-`ifndef GUARD_YUU_AHB_SLAVE_SEQUENCE_LIB_SV
-`define GUARD_YUU_AHB_SLAVE_SEQUENCE_LIB_SV
+`ifndef GUARD_YUU_AHB_SLAVE_SEQUENCE_BASE_SV
+`define GUARD_YUU_AHB_SLAVE_SEQUENCE_BASE_SV
 
 typedef class yuu_ahb_slave_sequencer;
 // Class: yuu_ahb_slave_sequence_base
 // The base class for AHB slave sequence.
 class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_slave_item);
   // Variable: vif
-  // AHB slave interface handle.  
+  // AHB slave interface handle.
   virtual yuu_ahb_slave_interface vif;
 
   // Variable: cfg
   // AHB slave agent configuration object.
-  yuu_ahb_slave_config  cfg;
+  yuu_ahb_slave_config cfg;
 
   // Variable: events
-  // Global event pool for component communication.    
-  uvm_event_pool        events;
+  // Global event pool for component communication.
+  uvm_event_pool events;
 
   // Variable: error_object
-  // Error object for application.  
+  // Error object for application.
   yuu_ahb_error error_object;
 
   `uvm_object_utils(yuu_ahb_slave_sequence_base)
@@ -30,7 +30,7 @@ class yuu_ahb_slave_sequence_base extends uvm_sequence #(yuu_ahb_slave_item);
 
   // Function: new
   // Constructor of object.
-  function new(string name="yuu_ahb_slave_sequence_base");
+  function new(string name = "yuu_ahb_slave_sequence_base");
     super.new(name);
   endfunction
 

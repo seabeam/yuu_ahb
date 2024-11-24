@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_ERROR_SV
@@ -17,11 +17,11 @@ class yuu_ahb_error extends uvm_object;
   int unsigned invalid_addr_wt = 0;
 
   // Variable: read_only_wt
-  // Randomize constraint weight of READ_ONLY  
+  // Randomize constraint weight of READ_ONLY
   int unsigned read_only_wt = 0;
 
   // Variable: write_only_wt
-  // Randomize constraint weight of WRITE_ONLY  
+  // Randomize constraint weight of WRITE_ONLY
   int unsigned write_only_wt = 0;
 
   // Variable: corrupt_data_wt
@@ -34,11 +34,11 @@ class yuu_ahb_error extends uvm_object;
 
   constraint c_error_type {
     error_type dist {
-      NO_ERROR        := no_error_wt,
-      INVALID_ADDR    := invalid_addr_wt,
-      READ_ONLY       := read_only_wt,
-      WRITE_ONLY      := write_only_wt,
-      CORRUPT_DATA    := corrupt_data_wt
+      NO_ERROR     := no_error_wt,
+      INVALID_ADDR := invalid_addr_wt,
+      READ_ONLY    := read_only_wt,
+      WRITE_ONLY   := write_only_wt,
+      CORRUPT_DATA := corrupt_data_wt
     };
   }
 
@@ -49,7 +49,7 @@ class yuu_ahb_error extends uvm_object;
 
   // Function: new
   // Constructor of object.
-  function new(string name="yuu_ahb_error");
+  function new(string name = "yuu_ahb_error");
     super.new(name);
   endfunction
 endclass

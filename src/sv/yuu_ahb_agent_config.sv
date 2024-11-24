@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_AGENT_CONFIG_SV
@@ -11,7 +11,7 @@
 class yuu_ahb_agent_config extends uvm_object;
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool   events;
+  uvm_event_pool events;
 
   // Variable: index
   // Index of agent, by default is -1. It must be set to a non-nagetive integer which
@@ -41,6 +41,11 @@ class yuu_ahb_agent_config extends uvm_object;
   // Variable: protocol_check_enable
   // Enable AHB protocol checker for agent.
   boolean protocol_check_enable = True;
+
+  // Variable: keep_value_end_enable
+  // Keep the previous value of output signal on bus when True;
+  // Reset output signal on bus when False
+  boolean keep_value_end_enable = True;
 
   // Variable: maps
   // The address(es) which master can access, or the address(es)

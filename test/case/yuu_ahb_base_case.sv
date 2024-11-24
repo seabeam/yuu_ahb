@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,18 +64,18 @@ class yuu_ahb_base_case extends uvm_test;
   endfunction
 
   virtual function void config_master(ref yuu_ahb_master_config cfg);
-    cfg = yuu_ahb_master_config::type_id::create("e0_m0");
+    cfg = yuu_ahb_master_config::type_id::create("cfg");
     cfg.index = 0;
     cfg.idle_enable = True;
     cfg.busy_enable = True;
     cfg.use_response = True;
     cfg.coverage_enable = True;
   endfunction
-  
+
   virtual function void config_slave(ref yuu_ahb_slave_config cfg);
-    cfg = yuu_ahb_slave_config::type_id::create("e0_s0");
+    cfg = yuu_ahb_slave_config::type_id::create("cfg");
     cfg.index = 0;
-    cfg.set_map(0, 32'hF000_0000);
+    cfg.set_map(0, 32'hFFFF_FFFF);
     cfg.mem_init_pattern = PATTERN_RANDOM;
     cfg.wait_enable = False;
   endfunction

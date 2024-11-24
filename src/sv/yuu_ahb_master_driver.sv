@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_MASTER_DRIVER_SV
@@ -22,7 +22,7 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
 
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool        events;
+  uvm_event_pool events;
 
   // Variable: processes
   // Processes for handling reset.
@@ -45,19 +45,19 @@ class yuu_ahb_master_driver extends uvm_driver #(yuu_ahb_master_item);
   `uvm_component_utils_begin(yuu_ahb_master_driver)
   `uvm_component_utils_end
 
-  extern                   function      new(string name, uvm_component parent);
-  extern           virtual function void build_phase(uvm_phase phase);
-  extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          run_phase(uvm_phase phase);
+  extern function new(string name, uvm_component parent);
+  extern virtual function void build_phase(uvm_phase phase);
+  extern virtual function void connect_phase(uvm_phase phase);
+  extern virtual task run_phase(uvm_phase phase);
 
-  extern protected virtual task          init_component();
-  extern protected virtual task          reset_signal();
-  extern protected virtual task          get_and_drive();
-  extern protected virtual task          cmd_phase(input yuu_ahb_master_item item);
-  extern protected virtual task          data_phase(input yuu_ahb_master_item item);
-  extern protected virtual task          wait_reset();
-  extern protected virtual task          error_proc();
-  extern protected virtual task          send_response(input yuu_ahb_master_item item);
+  extern protected virtual task init_component();
+  extern protected virtual task reset_signal();
+  extern protected virtual task get_and_drive();
+  extern protected virtual task cmd_phase(input yuu_ahb_master_item item);
+  extern protected virtual task data_phase(input yuu_ahb_master_item item);
+  extern protected virtual task wait_reset();
+  extern protected virtual task error_proc();
+  extern protected virtual task send_response(input yuu_ahb_master_item item);
 endclass
 
 // Function: new
@@ -86,6 +86,8 @@ endfunction
 // Task: run_phase
 // UVM built-in method.
 task yuu_ahb_master_driver::run_phase(uvm_phase phase);
+  super.run_phase(phase);
+
   init_component();
   fork
     get_and_drive();
@@ -131,9 +133,10 @@ endtask
 task yuu_ahb_master_driver::get_and_drive();
   uvm_event handshake = events.get($sformatf("%s_driver_handshake", cfg.get_name()));
   process proc_drive;
+  int unsigned pre_idle_delay = 1;
 
   forever begin
-    wait(vif.drv_mp.hreset_n === 1'b1);
+    wait (vif.drv_mp.hreset_n === 1'b1);
     fork
       begin
         yuu_ahb_master_item item;
@@ -142,15 +145,21 @@ task yuu_ahb_master_driver::get_and_drive();
         processes["proc_drive"] = proc_drive;
         seq_item_port.get_next_item(item);
         handshake.trigger();
-        @(vif.drv_cb);
+        if (pre_idle_delay > 0) @(vif.drv_cb);
         out_driver_port.write(item);
-        `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item));
+        `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, pre_send(this, item
+                          ));
         fork
           cmd_phase(item);
           data_phase(item);
         join_any
         seq_item_port.item_done();
         handshake.reset();
+        repeat (item.idle_delay) begin
+          vif.wait_cycle();
+          if (!cfg.keep_value_end_enable) reset_signal();
+        end
+        pre_idle_delay = item.idle_delay;
       end
     join
   end
@@ -173,27 +182,26 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
     cur_item.copy(item);
     len = cur_item.len;
 
-    repeat(cur_item.idle_delay) vif.wait_cycle();
     `uvm_info("cmd_phase", "Transaction start", UVM_HIGH)
 
     vif.drv_cb.hwrite <= cur_item.direction;
     vif.drv_cb.hsize <= cur_item.size;
     vif.drv_cb.hburst <= cur_item.burst;
     vif.drv_cb.hprot <= {cur_item.prot3, cur_item.prot2, cur_item.prot1, cur_item.prot0};
-    vif.drv_cb.hprot_emt <= {cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt};
+    vif.drv_cb.hprot_emt <= {
+      cur_item.prot6_emt, cur_item.prot5_emt, cur_item.prot4_emt, cur_item.prot3_emt
+    };
     vif.drv_cb.hmaster <= cur_item.master;
     vif.drv_cb.hmastlock <= cur_item.lock;
     vif.drv_cb.hnonsec <= cur_item.nonsec;
     vif.drv_cb.hexcl <= cur_item.excl;
 
-    for (int i=0; i <= len; i++) begin
+    for (int i = 0; i <= len; i++) begin
       if (error_stopped.is_on()) begin
         if (error_key) begin
           error_stopped.reset();
           error_key = False;
-        end
-        else
-          error_key = True;
+        end else error_key = True;
         break;
       end
 
@@ -203,14 +211,18 @@ task yuu_ahb_master_driver::cmd_phase(input yuu_ahb_master_item item);
       vif.drv_cb.haddr <= cur_item.address[i];
       if (cur_item.busy_delay[i] > 0) begin
         vif.drv_cb.htrans <= BUSY;
-        repeat(cur_item.busy_delay[i]) vif.wait_cycle();
+        repeat (cur_item.busy_delay[i]) vif.wait_cycle();
       end
       vif.drv_cb.htrans <= cur_item.trans[i];
-      do
-        vif.wait_cycle();
-      while (vif.drv_cb.hready_i !== 1'b1);
+      do vif.wait_cycle(); while (vif.drv_cb.hready_i !== 1'b1);
 
       if (cur_item.location[i] == LAST) begin
+        if (!cfg.keep_value_end_enable) begin
+          vif.drv_cb.haddr  <= 'h0;
+          vif.drv_cb.hburst <= SINGLE;
+          vif.drv_cb.hsize  <= SIZE32;
+          vif.drv_cb.hwrite <= WRITE;
+        end
         vif.drv_cb.htrans <= IDLE;
         vif.drv_cb.hmastlock <= 1'b0;
         vif.drv_cb.hnonsec <= 1'b1;
@@ -242,12 +254,11 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
     cur_item.copy(item);
     len = cur_item.len;
 
-    while (vif.drv_cb.hready_i !== 1'b1 || vif.mon_cb.htrans !== NONSEQ)
-      vif.wait_cycle();
+    while (vif.drv_cb.hready_i !== 1'b1 || vif.htrans !== NONSEQ) vif.wait_cycle();
     `uvm_info("data_phase", "Transaction start", UVM_HIGH)
     drive_data_begin.trigger();
 
-    for (int i=0; i <= len; i++) begin
+    for (int i = 0; i <= len; i++) begin
       boolean has_got = False;
       `uvm_info("data_phase", "Beat start", UVM_HIGH)
       if (cur_item.direction == WRITE) begin
@@ -259,21 +270,18 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
       do begin
         vif.wait_cycle();
         if (vif.drv_cb.hready_i === 1'b1 && cur_item.direction == READ && !has_got) begin
-          if (i == 0)
-            cur_item.exokay = vif.drv_cb.hexokay;
+          if (i == 0) cur_item.exokay = vif.drv_cb.hexokay;
           cur_item.data[i] = vif.drv_cb.hrdata;
           cur_item.response[i] = vif.drv_cb.hresp;
           has_got = True;
         end
-      end
-      while (vif.drv_cb.hready_i !== 1'b1 || vif.mon_cb.htrans === BUSY);
+      end while (vif.drv_cb.hready_i !== 1'b1 || vif.htrans === BUSY);
       if (!has_got) begin
         if (cur_item.direction == READ) begin
           cur_item.data[i] = vif.drv_cb.hrdata;
         end
         cur_item.response[i] = vif.drv_cb.hresp;
-        if (i == 0)
-          cur_item.exokay = vif.drv_cb.hexokay;
+        if (i == 0) cur_item.exokay = vif.drv_cb.hexokay;
       end
 
       `uvm_info("data_phase", "Beat end", UVM_HIGH)
@@ -281,16 +289,14 @@ task yuu_ahb_master_driver::data_phase(input yuu_ahb_master_item item);
         if (error_key) begin
           error_stopped.reset();
           error_key = False;
-        end
-        else
-          error_key = True;
+        end else error_key = True;
         break;
       end
     end
-    `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, post_send(this, cur_item));
+    `uvm_do_callbacks(yuu_ahb_master_driver, yuu_ahb_master_driver_callback, post_send(
+                      this, cur_item));
     drive_data_end.trigger();
-    if (cfg.use_response)
-      send_response(cur_item);
+    if (cfg.use_response) send_response(cur_item);
     //cur_item.print();
     `uvm_info("data_phase", "Transaction end", UVM_HIGH)
   end
@@ -318,10 +324,8 @@ task yuu_ahb_master_driver::wait_reset();
   forever begin
     @(negedge vif.drv_mp.hreset_n);
     `uvm_warning("wait_reset", "Reset signal is asserted, transaction may be dropped")
-    if (handshake.is_on())
-      seq_item_port.item_done();
-    foreach (processes[i])
-      processes[i].kill();
+    if (handshake.is_on()) seq_item_port.item_done();
+    foreach (processes[i]) processes[i].kill();
     init_component();
     @(posedge vif.drv_mp.hreset_n);
   end
@@ -331,9 +335,9 @@ endtask
 // Response error detect, then set the error flag for processing.
 task yuu_ahb_master_driver::error_proc();
   uvm_event error_stopped = events.get($sformatf("%s_error_stopped", cfg.get_name()));
-  process proc_error;
+  process   proc_error;
 
-  wait(vif.drv_mp.hreset_n === 1'b1);
+  wait (vif.drv_mp.hreset_n === 1'b1);
   forever begin
     fork
       begin

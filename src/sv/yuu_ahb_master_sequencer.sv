@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_MASTER_SEQUENCER_SV
@@ -18,12 +18,12 @@ class yuu_ahb_master_sequencer extends uvm_sequencer #(yuu_ahb_master_item);
 
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool        events;
+  uvm_event_pool events;
 
   `uvm_component_utils(yuu_ahb_master_sequencer)
 
-  extern                   function      new(string name, uvm_component parent);
-  extern           virtual function void connect_phase(uvm_phase phase);
+  extern function new(string name, uvm_component parent);
+  extern virtual function void connect_phase(uvm_phase phase);
 endclass
 
 // Function: new

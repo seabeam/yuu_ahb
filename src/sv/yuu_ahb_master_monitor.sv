@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_MASTER_MONITOR_SV
@@ -10,7 +10,7 @@
 class yuu_ahb_master_monitor extends uvm_monitor;
   // Variable: vif
   // AHB master interface handle.
-  virtual yuu_ahb_master_interface  vif;
+  virtual yuu_ahb_master_interface vif;
 
   // Variable: out_monitor_port
   // Analysis port out from monitor.
@@ -22,7 +22,7 @@ class yuu_ahb_master_monitor extends uvm_monitor;
 
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool        events;
+  uvm_event_pool events;
 
   // Variable: processes
   // Processes for handling reset
@@ -42,48 +42,48 @@ class yuu_ahb_master_monitor extends uvm_monitor;
 
   // Variable: address_q
   // Address queue to store temporary address information.
-  protected yuu_ahb_addr_t      address_q[$];
-  
+  protected yuu_ahb_addr_t address_q[$];
+
   // Variable: data_q
   // Data queue to store temporary data information.
-  protected yuu_ahb_data_t      data_q[$];
-  
+  protected yuu_ahb_data_t data_q[$];
+
   // Variable: trans_q
   // Trans queue to store temporary trans information.
-  protected yuu_ahb_trans_e     trans_q[$];
-  
+  protected yuu_ahb_trans_e trans_q[$];
+
   // Variable: response_q
   // Response queue to store temporary response information.
-  protected yuu_ahb_response_e  response_q[$];
-  
+  protected yuu_ahb_response_e response_q[$];
+
   // Variable: exokay_q
   // EXOKAY queue to store temporary exokay information.
-  protected yuu_ahb_exokay_e    exokay_q[$];
-  
+  protected yuu_ahb_exokay_e exokay_q[$];
+
   // Variable: busy_q
   // Busy queue to store temporary busy information.
-  protected int unsigned        busy_q[$];
-  
+  protected int unsigned busy_q[$];
+
   // Variable: idle_q
   // Idle queue to store temporary idle information.
-  protected int unsigned        idle_q[$];
+  protected int unsigned idle_q[$];
 
   `uvm_register_cb(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback)
 
   `uvm_component_utils(yuu_ahb_master_monitor)
 
-  extern                   function      new(string name, uvm_component parent);
-  extern           virtual function void build_phase(uvm_phase phase);
-  extern           virtual function void connect_phase(uvm_phase phase);
-  extern           virtual task          run_phase(uvm_phase phase);
+  extern function new(string name, uvm_component parent);
+  extern virtual function void build_phase(uvm_phase phase);
+  extern virtual function void connect_phase(uvm_phase phase);
+  extern virtual task run_phase(uvm_phase phase);
 
-  extern protected virtual task          init_component();
-  extern protected virtual task          cmd_phase();
-  extern protected virtual task          data_phase();
-  extern protected virtual task          assembling_and_send(yuu_ahb_master_item monitor_item);
-  extern protected virtual task          count_busy();
-  extern protected virtual task          count_idle();
-  extern protected virtual task          wait_reset();
+  extern protected virtual task init_component();
+  extern protected virtual task cmd_phase();
+  extern protected virtual task data_phase();
+  extern protected virtual task assembling_and_send(yuu_ahb_master_item monitor_item);
+  extern protected virtual task count_busy();
+  extern protected virtual task count_idle();
+  extern protected virtual task wait_reset();
 endclass
 
 // Function: new
@@ -117,7 +117,7 @@ task yuu_ahb_master_monitor::run_phase(uvm_phase phase);
   init_component();
   fork
     forever begin
-      wait(vif.mon_mp.hreset_n === 1'b1);
+      wait (vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_monitor = process::self();
@@ -157,21 +157,21 @@ endtask
 // Para:
 //  monitor_item - the item collected by monitor.
 task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_item);
-  int len = address_q.size()-1;
+  int len = address_q.size() - 1;
   yuu_ahb_master_item item = yuu_ahb_master_item::type_id::create("monitor_item");
 
   #0;
   item.copy(monitor_item);
   item.len = len;
-  item.address = new[len+1];
-  item.data = new[len+1];
-  item.trans = new[len+1];
-  item.response = new[len+1];
+  item.address = new[len + 1];
+  item.data = new[len + 1];
+  item.trans = new[len + 1];
+  item.response = new[len + 1];
 
-  item.busy_delay = new[len+1];
-  item.location = new[len+1];
+  item.busy_delay = new[len + 1];
+  item.location = new[len + 1];
 
-  for (int i=0; i<=len; i++) begin
+  for (int i = 0; i <= len; i++) begin
     item.address[i] = address_q.pop_front();
     item.data[i] = data_q.pop_front();
     item.trans[i] = trans_q.pop_front();
@@ -182,8 +182,7 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_ite
   item.exokay = exokay_q.pop_front();
   item.idle_delay = idle_q.pop_front();
 
-  foreach (item.location[i])
-    item.location[i] = MIDDLE;
+  foreach (item.location[i]) item.location[i] = MIDDLE;
   item.location[0] = FIRST;
   item.location[len] = LAST;
 
@@ -191,10 +190,11 @@ task yuu_ahb_master_monitor::assembling_and_send(yuu_ahb_master_item monitor_ite
 
   item.end_time = $realtime();
 
-  `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, post_collect(this, item));
+  `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, post_collect(
+                    this, item));
 
   out_monitor_port.write(item);
-//  item.print();
+  //  item.print();
 endtask
 
 // Task: cmd_phase
@@ -204,9 +204,8 @@ task yuu_ahb_master_monitor::cmd_phase();
   uvm_event monitor_cmd_end = events.get($sformatf("%s_monitor_cmd_end", cfg.get_name()));
 
   m_cmd_sem.get();
-  while (vif.mon_cb.hready_i !== 1'b1)
-    vif.wait_cycle();
-  if (address_q.size()>0 && (vif.mon_cb.htrans == NONSEQ || vif.mon_cb.htrans == IDLE))
+  while (vif.mon_cb.hready_i !== 1'b1) vif.wait_cycle();
+  if (address_q.size() > 0 && (vif.mon_cb.htrans == NONSEQ || vif.mon_cb.htrans == IDLE))
     assembling_and_send(monitor_item);
 
   while(vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== IDLE)) begin
@@ -219,10 +218,10 @@ task yuu_ahb_master_monitor::cmd_phase();
 
   monitor_cmd_begin.trigger();
   if (vif.mon_cb.htrans === NONSEQ) begin
-    if (address_q.size()>0)
-      assembling_and_send(monitor_item);
+    if (address_q.size() > 0) assembling_and_send(monitor_item);
     monitor_item = yuu_ahb_master_item::type_id::create("monitor_item");
-    `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, pre_collect(this, monitor_item));
+    `uvm_do_callbacks(yuu_ahb_master_monitor, yuu_ahb_master_monitor_callback, pre_collect(
+                      this, monitor_item));
 
     monitor_item.direction = yuu_ahb_direction_e'(vif.mon_cb.hwrite);
     monitor_item.size = yuu_ahb_size_e'(vif.mon_cb.hsize);
@@ -235,16 +234,14 @@ task yuu_ahb_master_monitor::cmd_phase();
     monitor_item.prot5_emt = yuu_ahb_emt_prot5_e'(vif.mon_cb.hprot_emt[5]);
     monitor_item.prot4_emt = yuu_ahb_emt_prot4_e'(vif.mon_cb.hprot_emt[4]);
     monitor_item.prot3_emt = yuu_ahb_emt_prot3_e'(vif.mon_cb.hprot_emt[3]);
-    monitor_item.master = vif.mon_cb.hmaster  ;
+    monitor_item.master = vif.mon_cb.hmaster;
     monitor_item.lock = vif.mon_cb.hmastlock;
     monitor_item.nonsec = yuu_ahb_nonsec_e'(vif.mon_cb.hnonsec);
     monitor_item.excl = yuu_ahb_excl_e'(vif.mon_cb.hexcl);
 
     monitor_item.burst_size = yuu_ahb_burst_size_e'(monitor_item.size);
-    if (monitor_item.burst inside {WRAP4, WRAP8, WRAP16})
-      monitor_item.burst_type = AHB_WRAP;
-    else
-      monitor_item.burst_type = AHB_INCR;
+    if (monitor_item.burst inside {WRAP4, WRAP8, WRAP16}) monitor_item.burst_type = AHB_WRAP;
+    else monitor_item.burst_type = AHB_INCR;
     monitor_item.address_aligned_enable = True;
 
     monitor_item.start_time = $realtime();
@@ -262,28 +259,23 @@ endtask
 // Main monitor task, data phase.
 task yuu_ahb_master_monitor::data_phase();
   uvm_event monitor_data_begin = events.get($sformatf("%s_monitor_data_begin", cfg.get_name()));
-  uvm_event monitor_data_end   = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
+  uvm_event monitor_data_end = events.get($sformatf("%s_monitor_data_end", cfg.get_name()));
 
   m_data_sem.get();
   while (vif.mon_cb.hready_i !== 1'b1 || (vif.mon_cb.htrans !== NONSEQ && vif.mon_cb.htrans !== SEQ))
     vif.wait_cycle();
-  do
-    vif.wait_cycle();
-  while (vif.mon_cb.hready_i !== 1'b1);
+  do vif.wait_cycle(); while (vif.mon_cb.hready_i !== 1'b1);
 
   monitor_data_begin.trigger();
 
   if (monitor_item.direction == WRITE) begin
     data_q.push_back(vif.mon_cb.hwdata);
-  end
-  else if (monitor_item.direction == READ) begin
+  end else if (monitor_item.direction == READ) begin
     data_q.push_back(vif.mon_cb.hrdata);
   end
   response_q.push_back(yuu_ahb_response_e'(vif.mon_cb.hresp));
-  if (monitor_item.excl == EXCLUSIVE)
-    exokay_q.push_back(yuu_ahb_exokay_e'(vif.mon_cb.hexokay));
-  else if (exokay_q.size() == 0)
-    exokay_q.push_back(EXOKAY);
+  if (monitor_item.excl == EXCLUSIVE) exokay_q.push_back(yuu_ahb_exokay_e'(vif.mon_cb.hexokay));
+  else if (exokay_q.size() == 0) exokay_q.push_back(EXOKAY);
 
   monitor_data_end.trigger();
   m_data_sem.put();
@@ -300,7 +292,7 @@ task yuu_ahb_master_monitor::count_busy();
 
   fork
     forever begin
-      wait(vif.mon_mp.hreset_n === 1'b1);
+      wait (vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_busy0 = process::self();
@@ -321,22 +313,20 @@ task yuu_ahb_master_monitor::count_busy();
       join
     end
     forever begin
-      wait(vif.mon_mp.hreset_n === 1'b1);
+      wait (vif.mon_mp.hreset_n === 1'b1);
       fork
         begin
           proc_busy1 = process::self();
           processes["proc_busy1"] = proc_busy1;
           #0;
           if (vif.mon_cb.htrans == BUSY) begin
-            count ++;
+            count++;
             busy_start = 1;
-          end
-          else if (busy_start) begin
-            wait(count_ready == 1);
+          end else if (busy_start) begin
+            wait (count_ready == 1);
             send_already.wait_on();
             send_already.reset();
-            if (vif.mon_cb.htrans === BUSY)
-              count = 1;
+            if (vif.mon_cb.htrans === BUSY) count = 1;
           end
           vif.wait_cycle();
         end
@@ -353,7 +343,7 @@ task yuu_ahb_master_monitor::count_idle();
   process proc_idle;
 
   forever begin
-    wait(vif.mon_mp.hreset_n === 1'b1);
+    wait (vif.mon_mp.hreset_n === 1'b1);
     fork
       begin
         proc_idle = process::self();
@@ -361,15 +351,13 @@ task yuu_ahb_master_monitor::count_idle();
         if (vif.mon_cb.htrans === NONSEQ) begin
           if (idle_start) begin
             idle_q.push_back(count);
-          end
-          else begin
+          end else begin
             idle_q.push_back(0);
           end
           count = 0;
           idle_start = 0;
-        end
-        else if (vif.mon_cb.htrans === IDLE) begin
-          count ++;
+        end else if (vif.mon_cb.htrans === IDLE) begin
+          count++;
           idle_start = 1;
         end
         vif.wait_cycle();
@@ -384,8 +372,7 @@ task yuu_ahb_master_monitor::wait_reset();
   forever begin
     @(negedge vif.mon_mp.hreset_n);
     `uvm_warning("wait_reset", "Reset signal is asserted, transaction may be dropped")
-    foreach (processes[i])
-      processes[i].kill();
+    foreach (processes[i]) processes[i].kill();
     init_component();
     @(posedge vif.mon_mp.hreset_n);
   end

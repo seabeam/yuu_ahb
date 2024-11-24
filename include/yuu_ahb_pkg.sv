@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_PKG_SV
@@ -28,14 +28,12 @@ package yuu_ahb_pkg;
   `include "yuu_ahb_analyzer.sv"
   `include "yuu_ahb_coverage.sv"
 
-  `include "yuu_ahb_master_sequence_lib.sv"
   `include "yuu_ahb_master_adapter.sv"
   `include "yuu_ahb_master_sequencer.sv"
   `include "yuu_ahb_master_driver.sv"
   `include "yuu_ahb_master_monitor.sv"
   `include "yuu_ahb_master_agent.sv"
 
-  `include "yuu_ahb_slave_sequence_lib.sv"
   `include "yuu_ahb_slave_sequencer.sv"
   `include "yuu_ahb_slave_driver.sv"
   `include "yuu_ahb_slave_monitor.sv"
@@ -44,6 +42,13 @@ package yuu_ahb_pkg;
   `include "yuu_ahb_virtual_sequencer.sv"
   `include "yuu_ahb_virtual_sequence.sv"
   `include "yuu_ahb_env.sv"
+
+  `include "yuu_ahb_master_sequence_base.sv"
+  `include "yuu_ahb_master_write_sequence.sv"
+  `include "yuu_ahb_master_read_sequence.sv"
+  `include "yuu_ahb_master_raw_sequence.sv"
+  `include "yuu_ahb_slave_sequence_base.sv"
+  `include "yuu_ahb_slave_response_sequence.sv"
 endpackage
 
 `endif

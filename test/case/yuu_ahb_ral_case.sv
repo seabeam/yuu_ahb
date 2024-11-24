@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_RAL_CASE_SV
@@ -15,7 +15,7 @@ class yuu_master_ral_virtual_sequence extends yuu_ahb_virtual_sequence;
   endfunction : new
 
   task body();
-    yuu_slave_rsp_seqence       rsp_seq = new("rsp_seq");
+    yuu_ahb_slave_response_sequence       rsp_seq = new("rsp_seq");
     fork
       begin
         uvm_status_e    status;

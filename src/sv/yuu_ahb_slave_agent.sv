@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_SLAVE_AGENT_SV
@@ -10,40 +10,40 @@
 class yuu_ahb_slave_agent extends uvm_agent;
   // Variable: cfg
   // AHB slave agent configuration object.
-  yuu_ahb_slave_config  cfg;
+  yuu_ahb_slave_config cfg;
 
   // Variable: sequencer
   // AHB slave sequencer.
   yuu_ahb_slave_sequencer sequencer;
-  
+
   // Variable: driver
   // AHB slave driver.
-  yuu_ahb_slave_driver    driver;
-  
+  yuu_ahb_slave_driver driver;
+
   // Variable: monitor
   // AHB slave monitor.
-  yuu_ahb_slave_monitor   monitor;
-  
+  yuu_ahb_slave_monitor monitor;
+
   // Variable: coverage
   // AHB slave functional coverage collector.
-  yuu_ahb_coverage        coverage;
-  
+  yuu_ahb_coverage coverage;
+
   // Variable: analyzer
   // AHB slave throughput analyzer.
-  yuu_ahb_analyzer        analyzer;
+  yuu_ahb_analyzer analyzer;
 
   // Variable: out_driver_port
   // Analysis port out from driver.
   uvm_analysis_port #(yuu_ahb_slave_item) out_driver_port;
-  
+
   // Variable: out_driver_port
   // Analysis port out from driver.
-  uvm_analysis_port #(yuu_ahb_item)       out_monitor_port;
+  uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
   `uvm_component_utils_begin(yuu_ahb_slave_agent)
   `uvm_component_utils_end
 
-  extern         function      new(string name, uvm_component parent);
+  extern function new(string name, uvm_component parent);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void connect_phase(uvm_phase phase);
 endclass
@@ -59,8 +59,7 @@ endfunction
 function void yuu_ahb_slave_agent::build_phase(uvm_phase phase);
   if (!uvm_config_db#(yuu_ahb_slave_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null)
     `uvm_fatal("build_phase", "Cannot get slave configuration");
-  if (cfg == null)
-    `uvm_fatal("build_phase", "Get a null slave configuration")
+  if (cfg == null) `uvm_fatal("build_phase", "Get a null slave configuration")
 
   monitor = yuu_ahb_slave_monitor::type_id::create("monitor", this);
   monitor.cfg = cfg;

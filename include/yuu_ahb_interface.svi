@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_INTERFACE_SVI
@@ -78,7 +78,7 @@ interface yuu_ahb_interface();
   //  idx - The master index.
   function virtual yuu_ahb_master_interface get_master_if(int idx);
     check_master_define(idx);
-    
+
     // Max: 16
     case(idx)
       00: return master_if[00];
@@ -106,7 +106,7 @@ interface yuu_ahb_interface();
   //  idx - The slave index.
   function virtual yuu_ahb_slave_interface get_slave_if(int idx);
     check_slave_define(idx);
-    
+
     // Max: 16
     case(idx)
       00: return slave_if[00];

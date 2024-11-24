@@ -1,21 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_COVERAGE_SV
 `define GUARD_YUU_AHB_COVERAGE_SV
 
 // Class: yuu_ahb_coverage
-// AHB functional coverage collector, which receives transaction out from monitor to 
+// AHB functional coverage collector, which receives transaction out from monitor to
 // process.
 class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
   // Variable: cfg
   // AHB agent configuration object.
-  yuu_ahb_agent_config  cfg;
+  yuu_ahb_agent_config cfg;
 
   // Variable: events
   // Global event pool for component communication.
-  uvm_event_pool        events;
+  uvm_event_pool events;
 
   // Variable: item
   // Transaction received from monitor for coverage sampling.
@@ -30,17 +30,14 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
   yuu_ahb_response_e resp;
 
   // Coverage: ahb_transaction_common_cg
-  // Basic coverage group of collect direction, length, size, 
+  // Basic coverage group of collect direction, length, size,
   // burst and other coverpoints.
   covergroup ahb_transaction_common_cg();
-    direction: coverpoint item.direction {
-      bins ahb_write = {WRITE};
-      bins ahb_read = {READ};
-    }
+    direction: coverpoint item.direction {bins ahb_write = {WRITE}; bins ahb_read = {READ};}
 
     length: coverpoint item.len;
 
-    size:   coverpoint item.size {
+    size: coverpoint item.size {
       bins ahb_size8 = {SIZE8};
       bins ahb_size16 = {SIZE16};
       bins ahb_size32 = {SIZE32};
@@ -51,7 +48,7 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
       bins ahb_size1024 = {SIZE1024};
     }
 
-    burst:  coverpoint item.burst {
+    burst: coverpoint item.burst {
       bins ahb_signle = {SINGLE};
       bins ahb_incr = {INCR};
       bins ahb_wrap4 = {WRAP4};
@@ -63,38 +60,33 @@ class yuu_ahb_coverage extends uvm_subscriber #(yuu_ahb_item);
     }
 
     master: coverpoint item.master;
-    lock:   coverpoint item.lock;
+    lock: coverpoint item.lock;
     nonsec: coverpoint item.nonsec;
-    excl:   coverpoint item.excl;
+    excl: coverpoint item.excl;
   endgroup
-  
+
   // Coverage: ahb_trans_cg
   // HTRANS information expected to sample.
   covergroup ahb_trans_cg();
     trans: coverpoint trans {
-      bins ahb_busy = {BUSY};
-      bins ahb_nonseq = {NONSEQ};
-      bins ahb_seq  = {SEQ};
+      bins ahb_busy = {BUSY}; bins ahb_nonseq = {NONSEQ}; bins ahb_seq = {SEQ};
     }
   endgroup
-  
+
   // Coverage: ahb_response_cg
   // HRESP information expected to sample.
   covergroup ahb_response_cg();
-    response: coverpoint resp {
-      bins ahb_okay   = {OKAY};
-      bins ahb_error  = {ERROR};
-    }
+    response: coverpoint resp {bins ahb_okay = {OKAY}; bins ahb_error = {ERROR};}
   endgroup
 
   `uvm_component_utils_begin(yuu_ahb_coverage)
   `uvm_component_utils_end
 
-  extern                   function      new(string name, uvm_component parent);
-  extern           virtual function void build_phase(uvm_phase phase);
-  extern           virtual function void connect_phase(uvm_phase phase);
+  extern function new(string name, uvm_component parent);
+  extern virtual function void build_phase(uvm_phase phase);
+  extern virtual function void connect_phase(uvm_phase phase);
 
-  extern           virtual function void write(yuu_ahb_item t);
+  extern virtual function void write(yuu_ahb_item t);
 endclass
 
 // Function: new
@@ -119,7 +111,7 @@ endfunction
 
 // Function: write
 // UVM built-in method. A user implementation of uvm_analysis_imp.
-// In this class, user can override this method to add, remove or 
+// In this class, user can override this method to add, remove or
 // update user coverage group sampling.
 function void yuu_ahb_coverage::write(yuu_ahb_item t);
   item = yuu_ahb_item::type_id::create("item");

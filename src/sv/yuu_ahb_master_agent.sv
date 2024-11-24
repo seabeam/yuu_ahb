@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////////
-// Copyright 2020 seabeam@yahoo.com - Licensed under the Apache License, Version 2.0
+// Copyright 2024 seabeam@qq.com - Licensed under the MIT License, Version 2.0
 // For more information, see LICENCE in the main folder
 /////////////////////////////////////////////////////////////////////////////////////
 `ifndef GUARD_YUU_AHB_MASTER_AGENT_SV
@@ -10,48 +10,48 @@
 class yuu_ahb_master_agent extends uvm_agent;
   // Variable: cfg
   // AHB master agent configuration object.
-  yuu_ahb_master_config  cfg;
+  yuu_ahb_master_config cfg;
 
   // Variable: sequencer
   // AHB master sequencer.
-  yuu_ahb_master_sequencer  sequencer;
-  
+  yuu_ahb_master_sequencer sequencer;
+
   // Variable: driver
   // AHB master driver.
-  yuu_ahb_master_driver     driver;
-  
+  yuu_ahb_master_driver driver;
+
   // Variable: monitor
   // AHB master monitor.
-  yuu_ahb_master_monitor    monitor;
-  
+  yuu_ahb_master_monitor monitor;
+
   // Variable: coverage
   // AHB master functional coverage collector.
-  yuu_ahb_coverage          coverage;
-  
+  yuu_ahb_coverage coverage;
+
   // Variable: analyzer
   // AHB master throughput analyzer.
-  yuu_ahb_analyzer          analyzer;
-  
+  yuu_ahb_analyzer analyzer;
+
   // Variable: adapter
   // AHB master register adapter.
-  yuu_ahb_master_adapter    adapter;
-  
+  yuu_ahb_master_adapter adapter;
+
   // Variable: predictor
   // AHB master register predictor.
-  yuu_ahb_master_predictor  predictor;
-  
+  yuu_ahb_master_predictor predictor;
+
   // Variable: out_driver_port
   // Analysis port out from driver.
-  uvm_analysis_port #(yuu_ahb_master_item)  out_driver_port;
-    
+  uvm_analysis_port #(yuu_ahb_master_item) out_driver_port;
+
   // Variable: out_monitor_port
   // Analysis port out from monitor after collecting.
-  uvm_analysis_port #(yuu_ahb_item)         out_monitor_port;
+  uvm_analysis_port #(yuu_ahb_item) out_monitor_port;
 
   `uvm_component_utils_begin(yuu_ahb_master_agent)
   `uvm_component_utils_end
 
-  extern         function      new(string name, uvm_component parent);
+  extern function new(string name, uvm_component parent);
   extern virtual function void build_phase(uvm_phase phase);
   extern virtual function void connect_phase(uvm_phase phase);
   extern virtual function void end_of_elaboration_phase(uvm_phase phase);
@@ -66,7 +66,9 @@ endfunction
 // Function: build_phase
 // UVM built-in method.
 function void yuu_ahb_master_agent::build_phase(uvm_phase phase);
-  if (!uvm_config_db #(yuu_ahb_master_config)::get(null, get_full_name(), "cfg", cfg) && cfg == null) begin
+  if (!uvm_config_db#(yuu_ahb_master_config)::get(
+          null, get_full_name(), "cfg", cfg
+      ) && cfg == null) begin
     `uvm_fatal("build_phase", "Cannot get master configuration");
   end
 
@@ -124,7 +126,8 @@ endfunction
 function void yuu_ahb_master_agent::end_of_elaboration_phase(uvm_phase phase);
   if (cfg.use_reg_model) begin
     if (predictor.map == null)
-      `uvm_fatal("end_of_elaboration_phase", "When register model used, the predictor map should be set")
+      `uvm_fatal("end_of_elaboration_phase",
+                 "When register model used, the predictor map should be set")
   end
 endfunction
 
